@@ -33,8 +33,9 @@ const UserOverview = () => {
     try {
       const response = await axios.post(
         "https://baggagebugs-81tp.onrender.com/api/v1/user/logout",
+        {},
         {
-          withCredentials: true, // ✅ REQUIRED to send cookies
+          withCredentials: true,
         }
       );
       console.log("logged out");
@@ -43,6 +44,7 @@ const UserOverview = () => {
       console.log(error);
     }
   };
+  
   return (
     <>
       <div className="flex h-screen w-full overflow-hidden">
