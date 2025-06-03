@@ -19,6 +19,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { GoogleApi } from "../../../utills";
 const LandingPage = () => {
   // const location = useLocation();
   // const[isLoggedIn, setIsLoggedIn] = useState(false);
@@ -120,7 +121,7 @@ const LandingPage = () => {
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: "AIzaSyAEOzozYCsDelJTwhv-pOJtxNk69SPgEzo", // Replace with your key
+    googleMapsApiKey: GoogleApi, // Replace with your key
   });
 
   const onLoad = React.useCallback(
