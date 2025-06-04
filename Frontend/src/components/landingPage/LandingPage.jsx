@@ -15,6 +15,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useSelector } from "react-redux";
 import { GoogleApi } from "../../../utills";
+import axios from "axios";
 const LandingPage = () => {
   // const location = useLocation();
   // const[isLoggedIn, setIsLoggedIn] = useState(false);
@@ -132,22 +133,22 @@ const LandingPage = () => {
     setMap(null);
   }, []);
   const [isPartner, setIsPartner] = useState(false);
-   const handleLogoutClick = async () => {
-      try {
-        const response = await axios.post(
-          "https://baggagebugs-81tp.onrender.com/api/v1/user/logout",
-          {},
-          {
-            withCredentials: true,
-          }
-        );
-        console.log("logged out");
-        navigate("/");
-        dispatch({ type: "login/login" });
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  const handleLogoutClick = async () => {
+    try {
+      const response = await axios.post(
+        "https://baggagebugs-81tp.onrender.com/api/v1/user/logout",
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      console.log("logged out");
+      navigate("/");
+      dispatch({ type: "login/login" });
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <>
       <div className="page p-2 pl-15 pr-15">
@@ -167,9 +168,7 @@ const LandingPage = () => {
                   navigate("/login");
                 }
               }}
-            >
-              {isLoggedIn && !isPartner && "User Overview "}
-              {isLoggedIn && isPartner && "Partner Overview "}
+            > 
               {isLoggedIn ? "Logout" : "Login"}
             </div>
             <div className="relative">
