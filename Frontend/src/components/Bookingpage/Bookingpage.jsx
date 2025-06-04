@@ -13,6 +13,7 @@ import "slick-carousel/slick/slick-theme.css";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
+import { GoogleApi } from "../../../utills";
 
 const Bookingpage = () => {
   // bringing the name of the page from landingpage
@@ -54,7 +55,7 @@ const Bookingpage = () => {
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: "AIzaSyAEOzozYCsDelJTwhv-pOJtxNk69SPgEzo",
+    googleMapsApiKey: GoogleApi,
   });
 
   const [map, setMap] = useState(null);
@@ -88,7 +89,7 @@ const Bookingpage = () => {
       const geoRes = await fetch(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
           prevLocation
-        )}&key=AIzaSyAEOzozYCsDelJTwhv-pOJtxNk69SPgEzo`
+        )}&key=${GoogleApi}` // Use GoogleApi from utills.js
       );
       const geoData = await geoRes.json();
 
@@ -97,7 +98,7 @@ const Bookingpage = () => {
         setCenter(location);
 
         const facilityRes = await axios.post(
-          "https://baggagebugs-81tp.onrender.com/api/v1/map/facilitiesBySearch",
+          "/api/map/facilitiesBySearch",
           { userCoordinates: [location.lng, location.lat] },
           { withCredentials: true }
         );
@@ -125,7 +126,7 @@ const Bookingpage = () => {
           console.log("Coordinates:", coordsArray[i]);
           try {
             const distance1 = await axios.post(
-              "https://baggagebugs-81tp.onrender.com/api/v1/map/facilitiesDistanceTime",
+              "/api/map/facilitiesDistanceTime",
               {
                 userCoordinates: [center.lng, center.lat],
                 facilityCoordinates: coordsArray[i], // coordsArray[i] is already an array
