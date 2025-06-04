@@ -90,10 +90,10 @@ const DashboardDetails = () => {
   const [timing, setTiming] = useState("9AM - 9PM");
   console.log(
     name,
-     email,
-     address,
+    email,
+    address,
     phone,
-     services,
+    services,
     capacity,
     wifi,
     typeof limited,
@@ -121,10 +121,10 @@ const DashboardDetails = () => {
         },
         {
           withCredentials: true,
-         
-        }   
-      );console.log("Registered Successfully:", response.data);
-      navigate("/dashboard");
+        }
+      );
+      console.log("Registered Successfully:", response.data);
+      handleItemClick("Details");
       // Optional: Log form data if response status is 400
     } catch (error) {
       console.error("Error while registering facility:", error);
@@ -136,7 +136,10 @@ const DashboardDetails = () => {
       <div className="page-details p-2 sm:px-10">
         {/* NAVBAR */}
         <div className="navbar flex flex-col sm:flex-row items-start sm:items-center p-2 m-4 justify-between text-2xl gap-4">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={handleLogoClick}>
+          <div
+            className="flex items-center gap-2 cursor-pointer"
+            onClick={handleLogoClick}
+          >
             <div className="logo-bag"></div>
             <div className="logo"></div>
           </div>

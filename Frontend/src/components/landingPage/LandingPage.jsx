@@ -132,6 +132,22 @@ const LandingPage = () => {
     setMap(null);
   }, []);
   const [isPartner, setIsPartner] = useState(false);
+   const handleLogoutClick = async () => {
+      try {
+        const response = await axios.post(
+          "https://baggagebugs-81tp.onrender.com/api/v1/user/logout",
+          {},
+          {
+            withCredentials: true,
+          }
+        );
+        console.log("logged out");
+        navigate("/");
+        dispatch({ type: "login/login" });
+      } catch (error) {
+        console.log(error);
+      }
+    };
   return (
     <>
       <div className="page p-2 pl-15 pr-15">
@@ -141,8 +157,20 @@ const LandingPage = () => {
             <div className="logo"></div>
           </div>
           <div className="nav-links flex gap-15">
-            <div className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 px-4 cursor-pointer bg-white" onClick={() => navigate("/")}>
-               Login
+            <div
+              className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 px-4 cursor-pointer bg-white"
+              onClick={() => {
+                if (isLoggedIn) {
+                  // Handle logout here (e.g., clear token, redirect)
+                  handleLogoutClick(); // assuming you have a logout function
+                } else {
+                  navigate("/login");
+                }
+              }}
+            >
+              {isLoggedIn && !isPartner && "User Overview "}
+              {isLoggedIn && isPartner && "Partner Overview "}
+              {isLoggedIn ? "Logout" : "Login"}
             </div>
             <div className="relative">
               <select className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 pr-10 bg-white">
