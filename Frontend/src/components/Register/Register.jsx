@@ -3,8 +3,7 @@ import React, { useState } from "react";
 import "../../styles/Login.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useSelector, useDispatch } from "react-redux";
-import { ProductionApi } from "../../../utills";
+import { useSelector, useDispatch } from "react-redux"; 
 const GoogleIcon = () => <span className="googleimg"></span>;
 const FacebookIcon = () => <span className="fbimg"></span>;
 const StoreIcon = () => <span className="bimg"></span>;
@@ -28,7 +27,7 @@ const Register = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        `${ProductionApi}/user/register`,
+        `https://baggagebugs-81tp.onrender.com/api/v1/user/register`,
         {
           firstName,
           lastName,

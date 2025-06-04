@@ -36,7 +36,7 @@ const UserOverview = () => {
   const handleLogoutClick = async () => {
     try {
       const response = await axios.post(
-        "api/user/logout",
+        "https://baggagebugs-81tp.onrender.com/api/v1/user/logout",
         {},
         {
           withCredentials: true,

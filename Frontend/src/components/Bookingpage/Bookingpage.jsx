@@ -98,7 +98,7 @@ const Bookingpage = () => {
         setCenter(location);
 
         const facilityRes = await axios.post(
-          "/api/map/facilitiesBySearch",
+          "https://baggagebugs-81tp.onrender.com/api/v1/map/facilitiesBySearch",
           { userCoordinates: [location.lng, location.lat] },
           { withCredentials: true }
         );
@@ -126,7 +126,7 @@ const Bookingpage = () => {
           console.log("Coordinates:", coordsArray[i]);
           try {
             const distance1 = await axios.post(
-              "/api/map/facilitiesDistanceTime",
+              "https://baggagebugs-81tp.onrender.com/api/v1/map/facilitiesDistanceTime",
               {
                 userCoordinates: [center.lng, center.lat],
                 facilityCoordinates: coordsArray[i], // coordsArray[i] is already an array
