@@ -124,7 +124,7 @@ const DashboardDetails = () => {
         }
       );
       console.log("Registered Successfully:", response.data);
-      setPrevDetails(true); // Hide the previous details section
+      handleItemClick("Details");
       // Optional: Log form data if response status is 400
     } catch (error) {
       console.error("Error while registering facility:", error);
