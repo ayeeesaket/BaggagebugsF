@@ -33,7 +33,7 @@ const Login = () => {
     setError("");
     try {
       const response = await axios.post(
-        "/api/user/login",
+        "api/user/login",
         { email, password },
         {
           withCredentials: true, // ✅ REQUIRED to send cookies
