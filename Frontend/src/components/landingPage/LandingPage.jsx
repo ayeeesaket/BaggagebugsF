@@ -166,7 +166,7 @@ const LandingPage = () => {
                   // Handle logout here (e.g., clear token, redirect)
                   handleLogoutClick(); // assuming you have a logout function
                 } else {
-                  navigate("/login");
+                  navigate("/");
                 }
               }}
             > 
