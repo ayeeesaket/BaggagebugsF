@@ -10,7 +10,7 @@ const FacebookIcon = () => <span className="fbimg"></span>;
 const StoreIcon = () => <span className="bimg"></span>;
 
 const SocialButton = ({ icon, text }) => (
-  <button className="flex items-center gap-10 p-3 w-full border border-[#28d3fa] bg-white max-w-xs rounded-lg text-[#FA8128] transition">
+  <button className="flex items-center gap-10 p-3 w-full border border-[#28d3fa] bg-white max-w-xs rounded-lg text-black transition">
     {icon} {text}
   </button>
 );
@@ -33,7 +33,7 @@ const Login = () => {
     setError("");
     try {
       const response = await axios.post(
-        "https://baggagebugs-81tp.onrender.com/api/v1/user/login",
+        "https://baggagebugs-1.onrender.com/api/v1/user/login",
         { email, password },
         {
           withCredentials: true, // ✅ REQUIRED to send cookies
@@ -72,31 +72,31 @@ const Login = () => {
             </h1>
             <button
               onClick={() => navigate("/landingpage")}
-              className="text-3xl text-[#FA8128] ml-auto"
+              className="text-3xl text-black ml-auto"
             >
               ×
             </button>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
-            <h2 className="text-2xl text-[#63C5DA] mb-2">Login</h2>
+            <h2 className="text-2xl text-black mb-2">Login</h2>
             <input
               type="email"
               placeholder="E-mail"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-[300px] p-2 rounded-lg border-2 border-[#63C5DA] placeholder-[#F8934A] text-gray-700 focus:ring-2 focus:ring-[#FA8128] outline-none"
+              className="w-[300px] p-2 rounded-lg border-2 border-[#63C5DA]  text-gray-700 focus:ring-2 focus:ring-[#FA8128] outline-none"
             />
             <input
               type="password"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-[300px] p-2 rounded-lg border-2 border-[#63C5DA] placeholder-[#F8934A] text-gray-700 focus:ring-2 focus:ring-[#FA8128] outline-none"
+              className="w-[300px] p-2 rounded-lg border-2 border-[#63C5DA]  text-gray-700 focus:ring-2 focus:ring-[#FA8128] outline-none"
             />
             {error && <p className="text-red-500 text-sm">{error}</p>}
 
-            <p className="text-[#63C5DA] underline cursor-pointer text-sm">
+            <p className="text-black underline cursor-pointer text-sm">
               Forgot password?
             </p>
 
@@ -108,7 +108,7 @@ const Login = () => {
             </button>
 
             <div className="flex space-x-1 ml-24">
-              <p className="text-[#63C5DA] text-sm">no account?</p>
+              <p className=" text-black text-sm">no account?</p>
               <span
                 onClick={handleRegister}
                 className="underline text-[#FA8128] text-sm cursor-pointer"

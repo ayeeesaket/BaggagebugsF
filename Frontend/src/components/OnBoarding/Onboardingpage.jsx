@@ -1,217 +1,436 @@
-import React from 'react';
-import { useState } from "react"
-import CarryOnBag from '../../assets/CarryOnBag.svg'; // Correct import
-import { ChevronDown, Menu, ArrowDown, ArrowUp } from "lucide-react"
-import yellowlargetravelbackpack from '../../assets/yellowlargetravelbackpack.svg';
-import suitcasewithstickers from '../../assets/suitcasewithstickers.svg';
+import React, { useState } from "react";
+import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
+import { useNavigate } from "react-router-dom";
+import "../../styles/LandingPage.css";
+import { TbArrowBack } from "react-icons/tb";
+import { FaLock } from "react-icons/fa";
+import { GiWorld } from "react-icons/gi";
+import { GiHamburgerMenu } from "react-icons/gi";
+import { IoIosSearch } from "react-icons/io";
+import { BsArrowLeftCircle } from "react-icons/bs";
+import { BsArrowRightCircle } from "react-icons/bs";
+import { HiArrowNarrowRight } from "react-icons/hi";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import { useSelector } from "react-redux";
+const Onboardingpage = () => {
+  const imgArr = [
+    {
+      img: "/Tower.svg",
+    },
+    {
+      img: "/Tower.svg",
+    },
+    {
+      img: "/Tower.svg",
+    },
+    {
+      img: "/Tower.svg",
+    },
+    {
+      img: "/Tower.svg",
+    },
+    {
+      img: "/Tower.svg",
+    },
+  ];
+  const settings = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    prevArrow: (
+      <div className="custom-arrow-left absolute top-1/2 -translate-y-1/2 left-[-40px] z-10">
+        <BsArrowLeftCircle className="text-4xl text-[#63C5DA] cursor-pointer hover:text-[#47a7bf] transition-all duration-300" />
+      </div>
+    ),
+    nextArrow: (
+      <div className="custom-arrow-right absolute top-1/2 -translate-y-1/2 right-[-40px] z-10">
+        <BsArrowRightCircle className="text-4xl text-[#63C5DA] cursor-pointer hover:text-[#47a7bf] transition-all duration-300" />
+      </div>
+    ),
+  };
 
-function Onboardingpage() {
-    const [capacity, setCapacity] = useState(5)
-    
-        const increaseCapacity = () => {
-          setCapacity((prev) => prev + 1)
-        }
-      
-        const decreaseCapacity = () => {
-          if (capacity > 1) {
-            setCapacity((prev) => prev - 1)
-          }
-        }
+  const reviewsArr = [
+    { name: "Sophie Leone", review: "A Happy Customer", img: "/person.svg" },
+    { name: "John Doe", review: "Great Service!", img: "/person.svg" },
+    { name: "Jane Smith", review: "Highly Recommend!", img: "/person.svg" },
+    { name: "Mark Johnson", review: "Very Satisfied!", img: "/person.svg" },
+  ];
+  const settings2 = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    prevArrow: (
+      <div className="custom-arrow-left">
+        <BsArrowLeftCircle className="text-4xl text-[#63C5DA] cursor-pointer hover:text-[#47a7bf] transition-all duration-300" />
+      </div>
+    ),
+    nextArrow: (
+      <div className="custom-arrow-right">
+        <BsArrowRightCircle className="text-4xl text-[#63C5DA] cursor-pointer hover:text-[#47a7bf] transition-all duration-300" />
+      </div>
+    ),
+  };
   return (
     <>
-            {/* Header */}
-            <header className="flex justify-between items-center p-4 md:p-6">
-        <div className="flex items-center">
-          <img
-            src={CarryOnBag} 
-            alt="Baggage Bugs Logo"
-            width={40}
-            height={40}
-            className="mr-2"
-          />
-          <h1 className="text-2xl font-medium">
-            <span className="text-[#63C5DA]">Baggage</span> <span className="text-[#FA8128]">Bugs</span>
-          </h1>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="border text-[#FA8128] rounded-full px-4 py-2 flex items-center">
-            <span className="mr-2 text-black">English</span>
-            <ChevronDown className="text-[#FA8128]" size={16} />
+      <div className="page p-2 pl-15 pr-15">
+        <div className="navbar flex p-2 pl-15 pr-15  m-4 justify-between text-2xl ">
+          <div className="flex">
+            <div className="logo-bag"></div>
+            <div className="logo"></div>
           </div>
-          <button className="text-[#FA8128]">
-            <Menu size={32} />
-          </button>
+          <div className="nav-links flex gap-15">
+            <div className="relative">
+              <select className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 pr-10 bg-white">
+                <option value="en">English</option>
+                <option value="es">Spanish</option>
+                <option value="fr">French</option>
+                <option value="de">German</option>
+              </select>
+              <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                <img src="/Dropdown.svg" alt="" className="w-7 h-7" />
+              </div>
+            </div>
+            <div className="burger p-2">
+              <GiHamburgerMenu
+                size={35}
+                color="#FA8128"
+                onClick={() => {
+                  if (isLoggedIn) {
+                    navigate("/useroverview");
+                  }
+                  if (isPartner && isLoggedIn) {
+                    navigate("/partneroverview");
+                  }
+                }}
+                className="cursor-pointer"
+              />
+            </div>
+          </div>
         </div>
-      </header>
-      {/* Header */}
-      <section className="relative w-full py-12 overflow-hidden">
-  <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between">
-    
-    {/* Backpack Image on the Left, touching ellipse */}
-    <div className="md:w-[40%] flex justify-end md:mr-[-80px] mt-10 md:mt-0 z-10">
-      <img
-        src={yellowlargetravelbackpack}
-        alt="Backpack with luggage"
-        className="w-[400px] h-auto"
-      />
-    </div>
+        <div className="section-1 flex justify-between">
+          <div className="section-1-left mt-[-2%] h-[600px] w-[850px]"></div>
+          <div className="section-1-right h-[600px] w-[800px] pt-15 pb-10 pr-15  flex-col justify-between text-right">
+            <div className="text-[#FA8128] text-[25px]   ">
+              Trusted by 200+ bagpackers
+            </div>
+            <div className=" ">
+              <div className="text-[#FA8128] text-[55px] font-bold mb-[-15px] ">
+                Keep your Luggage Safe
+              </div>
+              <div className="text-[#63C5DA] text-[55px] mb-[-15px] ">
+                Wherever You Go
+              </div>
+              <div className="text-[#FA8128] text-[30px] ">
+                Starting from 10€ an hour
+              </div>
+            </div>
+            <div className="flex flex-col items-end mt-10">
+              <div className="relative w-[500px]">
+                <input
+                  className="border-2 rounded-4xl p-2 w-full mb-2 text-[#63C5DA] font-extrabold shadow-md pr-12 h-12"
+                  placeholder="Barcelona"
+                  type="text"
+                  onChange={(e) => setQuery(e.target.value)}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" &&
+                    navigate("/bookingpage", { state: { query, isLoggedIn } })
+                  }
+                />
+                <span className="absolute right-4 top-1/2 transform -translate-y-4 text-[#63C5DA]">
+                  <IoIosSearch size={24} />
+                </span>
+              </div>
 
-    {/* Oval Ellipse with Content on the Right */}
-    <div className="relative w-full md:w-[60%] h-[400px] flex items-center pr-6 md:pr-12">
-      {/* Oval Ellipse */}
-      <div className="absolute right-0 top-0 w-[250%] h-[80%] border-4 border-orange-400 rounded-full translate-x-1/2" />
+              <button
+                onClick={() => {
+                  navigate("/bookingpage", { state: { isLoggedIn, query } });
+                }}
+                className="pl-12 pr-12 py-2 text-white rounded-4xl bg-[#FA8128] shadow-md"
+              >
+                Search
+              </button>
+            </div>
 
-      {/* Content inside the ellipse */}
-      <div className="relative z-10 text-right ml-auto">
-        <h2 className="text-3xl text-orange-500 mb-4">
-          Earn money effortlessly!
-        </h2>
-        <p className="text-xl text-sky-400 leading-relaxed mb-6">
-          Life isn’t just about parcels<br />
-          Why not boost your income by storing<br />
-          luggage?
-        </p>
-        <button className="bg-orange-500 hover:bg-orange-600 text-white text-base font-medium py-2 px-6 rounded-full shadow-md transition-all">
-          Become a partner
-        </button>
+            <div className="mt-10 flex flex-col items-end">
+              <div className="flex items-center text-[#FA8128] text-[22px] gap-2 justify-end">
+                <TbArrowBack />
+                <span>Free Cancellation</span>
+              </div>
+
+              <div className="flex items-center text-[#FA8128] text-[22px] gap-2 justify-end">
+                <FaLock />
+                Luggage Protection €10,000
+              </div>
+
+              <div className="flex items-center text-[#FA8128] text-[22px] gap-2 justify-end">
+                <GiWorld />
+                10000+ spots
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* section2 */}
+
+        <div className="section-2 flex  items-center mt-10  gap-48 ml-30 ">
+          <div className="section-2-left h-[500px] w-[500px] ml-10 pt-30 pb-8 pl-16 flex-col justify-between text-left border-4 rounded-[50%] border-[#FA8128]">
+            <div className="flex flex-col gap-1">
+              <div className="steps text-[20px] leading-tight">Step 1</div>
+              <div className="steps-content text-[#63C5DA] text-[35px] leading-none">
+                Book Luggage <span className="text-[#FA8128]">Storage</span>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1 mt-6">
+              <div className="steps text-[20px] leading-tight">Step 2</div>
+              <div className="steps-content text-[#63C5DA] text-[35px] leading-none">
+                Drop Your <span className="text-[#FA8128]">Luggage</span>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1 mt-6">
+              <div className="steps text-[20px] leading-tight">Step 3</div>
+              <div className="steps-content text-[#63C5DA] text-[35px] leading-none">
+                Enjoy Your <span className="text-[#FA8128]">Stay</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="luggage-man h-[500px] w-[20px] z-50 translate-x-[370px] translate-y-10 absolute"></div>
+
+          <div className="section-2-right h-[450px] w-[400px] flex flex-col justify-center items-end pr-5 leading-tight">
+            <div className="text-[#63C5DA] text-[50px] font-bold">
+              How does it
+            </div>
+            <div className="text-[#FA8128] text-[50px] font-bold">work?</div>
+          </div>
+        </div>
+
+        <div className="section-5 mt-50">
+          <div className="w-[75%] ml-[4%] mt-28 p-10 pr-20 border-2 border-[#63C5DA] border-l-0 ">
+            <div className="text-[50px] font-bold  leading-tight">
+              <div className="text-[#FA8128] ">
+                Why team up with Baggage Bugs?
+              </div>
+            </div>
+
+            <div className="text-[#FA8128]  text-[30px] leading-tight mt-8">
+              <div className="text-[#63C5DA]">Zero cost, zero commitment</div>
+              <div className="text-[80%]">
+                Store luggage on your terms, hassle-free!
+              </div>
+            </div>
+            <div className="text-[#FA8128]  text-[30px] leading-tight mt-8">
+              <div className="text-[#63C5DA]">
+                7 Day support - Got questions?
+              </div>
+              <div className="text-[80%]">We've got answers, anytime.</div>
+            </div>
+            <div className="text-[#FA8128]  text-[30px] leading-tight mt-8">
+              <div className="text-[#63C5DA]">
+                You store the bags, we handle the rest. Payments?
+              </div>
+              <div className="text-[80%]">Straight to your accounts.</div>
+            </div>
+            <div className="text-[#FA8128]  text-[30px] leading-tight mt-8">
+              <div className="text-[#63C5DA]">Free promo for your biz</div>
+              <div className="text-[80%]">
+                More exposure, more customers, more cash!
+              </div>
+            </div>
+          </div>
+          <div className="luggage-onboarding z-10 absolute translate-x-[1050px] -translate-y-[580px]"></div>
+        </div>
+        <div className="section-4 mt-45 flex flex-col items-center">
+          <div className="text-[#63C5DA] text-[45px] font-bold text-center">
+            <span className="text-[#FA8128]">Reviews </span>
+            from our Backpackers
+          </div>
+
+          <Slider {...settings2} className="w-[80%]  mt-10  ">
+            {reviewsArr.map((review, index) => (
+              <div
+                key={index}
+                className="reviews h-[500px] w-[70%] p-5 flex justify-between items-center border-[#63C5DA] mt-5 mx-auto"
+              >
+                {/* Middle Content */}
+                <div className="flex flex-[70%] border-2 border-[#63C5DA] p-5 px-10 text-center items-center rounded-lg shadow-md box-border w-full">
+                  {/* Image Section */}
+                  <div className="reviews-left flex-[35%] flex justify-center items-center">
+                    <img
+                      src={review.img}
+                      alt="Person"
+                      className="h-[80%] w-auto object-cover shadow-[-8px_-8px_10px_#FA8128,-8px_8px_10px_#FA8128]"
+                    />
+                  </div>
+                  {/* Text Section */}
+                  <div className="reviews-right flex-[65%] text-left pl-5">
+                    <p className="text-2xl font-bold text-gray-700">
+                      {review.name}
+                    </p>
+                    <p className="text-lg text-gray-500 mt-2">
+                      {review.review}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Right Arrow */}
+              </div>
+            ))}
+          </Slider>
+        </div>
+
+        <div className="section-7 mt-25 mx-auto max-w-[90%]">
+          <div className="text-[#FA8128] text-[45px] font-bold text-center ">
+            Frequently <span className="text-[#63C5DA]">Asked Questions</span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-6 mt-8 text-center">
+            <div className="p-4 border border-[#63C5DA] rounded-lg shadow-md bg-white">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg text-[#FA8128] font-semibold">
+                  What is Baggage Bugs storage?
+                </h3>
+                <HiArrowNarrowRight className="text-[#63C5DA] text-2xl ml-2" />
+              </div>
+            </div>
+
+            <div className="p-4 border border-[#63C5DA] rounded-lg shadow-md bg-white">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg text-[#FA8128] font-semibold">
+                  How to book luggage storage?
+                </h3>
+                <HiArrowNarrowRight className="text-[#63C5DA] text-2xl ml-2" />
+              </div>
+            </div>
+
+            <div className="p-4 border border-[#63C5DA] rounded-lg shadow-md bg-white">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg text-[#FA8128] font-semibold">
+                  How much does luggage cost?
+                </h3>
+                <HiArrowNarrowRight className="text-[#63C5DA] text-2xl ml-2" />
+              </div>
+            </div>
+
+            <div className="p-4 border border-[#63C5DA] rounded-lg shadow-md bg-white">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg text-[#FA8128] font-semibold">
+                  Cost of 2 days of luggage?
+                </h3>
+                <HiArrowNarrowRight className="text-[#63C5DA] text-2xl ml-2" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="section-9 mt-40 w-full pl-[7%]  pr-[4%]  flex h-[500px]">
+          <div className="section-9-left w-[50%]   flex flex-col gap-5">
+            <div className="leading-tight">
+              <div className="text-[#FA8128] text-[70px] font-bold ">About</div>
+              <div className="text-[#63C5DA] text-[70px] font-bold  ">
+                Baggage Bugs
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <img src="/Rating.svg" alt="Star" className="w-8 h-8" />
+              <img src="/Rating.svg" alt="Star" className="w-8 h-8" />
+              <img src="/Rating.svg" alt="Star" className="w-8 h-8" />
+              <img src="/Rating.svg" alt="Star" className="w-8 h-8" />
+              <img src="/Rating.svg" alt="Star" className="w-8 h-8" />
+            </div>
+            <div className="leading-tight">
+              <div className="text-[#63C5DA] text-[25px] ">
+                5 star ratings by <span className="text-[#FA8128] ">2345+</span>{" "}
+                verified{" "}
+              </div>
+              <div className="text-[#63C5DA] text-[25px] ">bag packers </div>
+            </div>
+            <div className="font-light text-[40px] flex gap-5">
+              <a
+                href="https://www.instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src="/Instagram.svg"
+                  alt="Instagram"
+                  className="w-10 h-10"
+                />
+              </a>
+              <a
+                href="https://www.facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src="/Facebook.svg" alt="Facebook" className="w-10 h-10" />
+              </a>
+              <a
+                href="https://www.linkedin.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src="/LinkedIn.svg" alt="LinkedIn" className="w-10 h-10" />
+              </a>
+              <a
+                href="https://www.twitter.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src="/X.svg" alt="Twitter" className="w-10 h-10" />
+              </a>
+            </div>
+
+            <div className="">
+              <div className="text-[#FA8128] text-[25px]  ">Contact Us</div>
+              <div className="text-[#63C5DA] text-[25px]  ">
+                baggagebugs123@gmail.com
+              </div>
+              <div className="text-[#63C5DA] text-[25px]  ">
+                +88 8373746498{" "}
+              </div>
+            </div>
+          </div>
+          <div className="section-9-right w-[50%]  text-[32px] text-[#63C5DA] flex flex-col justify-between">
+            <div className="">
+              <span className="text-[#FA8128] font-bold">Baggage Bugs</span> is
+              a collaborative luggage storage network, partnering with trusted
+              shops worldwide to provide a secure and convenient solution for
+              travelers.
+            </div>
+            <div className="">
+              <span className="text-[#FA8128] font-bold">
+                Say goodbye to the hassle
+              </span>{" "}
+              of carrying heavy bags while exploring a new city.
+            </div>
+            <div className="">
+              Your luggage will always have a
+              <span className="text-[#FA8128] font-bold">safe place</span>,
+              allowing you to enjoy your journey to the fullest!
+            </div>
+            <div className="mt-10">
+              <button
+                onClick={() => {
+                  setIsPartner(true);
+                  navigate("/partneroverview");
+                }}
+                className="bg-[#FA8128] text-white px-3 py-2 rounded-lg shadow-md hover:bg-[#f77a20] transition cursor-pointer"
+              >
+                Become a Partner
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</section>
-
-      <h1 className="text-4xl md:text-5xl font-bold mb-8 pl-4 md:pl-6">
-        <span className="text-[#FA8128]">Storing luggage with Baggage Bugs is a total</span>
-        <br />
-        <span className="text-[#63C5DA]">game-changer!</span>
-        </h1>
-
-      
-
-      <div className="flex flex-col md:flex-row gap-6">
-        
-
-  {/* Left Column */}
-  <div className="w-full md:w-1/2 border-4 border-[#63C5DA] p-6 rounded-md md:rounded-l-none md:border-l-0">
-    <div className="space-y-8">
-      <div>
-        <h2 className="text-2xl font-bold text-[#F47B20]">No costs, just cash!</h2>
-        <p className="text-[#63C5DA] text-lg">Keep 100% of the profits.</p>
-      </div>
-
-      <div>
-        <h2 className="text-2xl font-bold text-[#FA8128]">Money straight to your account</h2>
-        <p className="text-[#63C5DA] text-lg">Get paid every month hassle-free.</p>
-      </div>
-
-      <div>
-        <h2 className="text-2xl font-bold text-[#FA8128]">Get noticed!</h2>
-        <p className="text-[#63C5DA] text-lg">Let the world discover your business for free.</p>
-      </div>
-
-      <div>
-        <h2 className="text-2xl font-bold text-[#FA8128]">More bags, more bucks!</h2>
-        <p className="text-[#63C5DA] text-lg">Every customer is a potential buyer for you.</p>
-      </div>
-    </div>
-  </div>
-
-  {/* Right Column */}
-  <div className="w-full md:w-1/2 flex flex-col justify-between items-center gap-8">
-    
-    {/* Capacity Control */}
-    <div className="flex items-center gap-4">
-      <div className="bg-white border border-[#63C5DA] text-[#63C5DA] py-2 px-4 flex items-center rounded-l-md">
-        <span className="text-lg font-medium">Your capacity</span>
-      </div>
-
-      <div className="bg-[#FA8128] text-white py-2 px-6 flex items-center rounded-r-md">
-        <button onClick={decreaseCapacity} className="mr-2 focus:outline-none" aria-label="Decrease capacity">
-          <ArrowDown size={16} />
-        </button>
-        <span className="text-xl font-bold mx-2">{capacity}</span>
-        <button onClick={increaseCapacity} className="ml-2 focus:outline-none" aria-label="Increase capacity">
-          <ArrowUp size={16} />
-        </button>
-      </div>
-    </div>
-
-    {/* Estimate Section */}
-    <div className="text-center">
-      <h2 className="text-[#63C5DA] text-4xl font-bold">Upto</h2>
-      <p className="text-[#FA8128] text-5xl font-bold">450EUR/month</p>
-      <button className="text-[#63C5DA] text-sm underline mt-1">How is this estimated?</button>
-    </div>
-
-    {/* Calculate Button */}
-    <button className="bg-[#FA8128] text-white text-xl font-bold py-3 px-10 rounded-full hover:bg-[#e06a10] transition-colors">
-      Calculate
-    </button>
-  </div>
-
-</div>
- {/* TeamUp  */}
-
- <section className="px-4 md:px-8 py-12 mt-8">
-  <h2 className="text-2xl md:text-3xl text-[#FA8128] font-bold text-center mb-12">
-    Why team up with Baggage Bugs?
-  </h2>
-
-  <div className="flex flex-col md:flex-row items-center">
-    {/* Text Content */}
-    <div className="md:w-1/2 max-w-3xl space-y-10 mb-8 md:mb-0">
-  <div>
-    <h3 className="text-[#63C5DA] text-3xl leading-snug">Zero cost, zero commitment</h3>
-    <p className="text-[#FA8128] text-xl leading-relaxed">
-      Store luggage on your terms, hassle-free!
-    </p>
-  </div>
-
-  <div>
-    <h3 className="text-[#63C5DA] text-3xl leading-snug">7-day support – Got questions?</h3>
-    <p className="text-[#FA8128] text-xl leading-relaxed">
-      We've got answers, anytime.
-    </p>
-  </div>
-
-  <div>
-    <h3 className="text-[#63C5DA] text-3xl leading-snug">You store the bags, we handle the rest. Payments?</h3>
-    <p className="text-[#FA8128] text-xl leading-relaxed">
-      Straight to your account!
-    </p>
-  </div>
-
-  <div>
-    <h3 className="text-[#63C5DA] text-3xl leading-snug">Free promo for your biz</h3>
-    <p className="text-[#FA8128] text-xl leading-relaxed">
-      More exposure, more customers, more cash!
-    </p>
-  </div>
-
-  <div className="pt-6">
-    <button className="bg-orange-500 text-white rounded-full px-10 py-4 text-xl hover:bg-orange-600 transition">
-      Join
-    </button>
-  </div>
-</div>
-
-
-
-    {/* Image aligned right */}
-    <div className="md:w-1/2 flex justify-end">
-      <img
-        src={suitcasewithstickers}
-        alt="Suitcase with stickers"
-        width={400}
-        height={400}
-        className="max-w-full h-auto"
-      />
-    </div>
-  </div>
-</section>
-
-
     </>
-  )
-}
+  );
+};
 
-export default Onboardingpage
+export default Onboardingpage;

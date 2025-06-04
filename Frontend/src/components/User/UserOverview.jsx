@@ -2,9 +2,13 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/Login.css";
 import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
 const UserOverview = () => {
   const navigate = useNavigate();
+  const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
+  const dispatch = useDispatch();
 
+  console.log("UserOverview isLoggedIn:", isLoggedIn);
   const GoogleIcon = () => <span className="googleimg"></span>;
   const FacebookIcon = () => <span className="fbimg"></span>;
   const StoreIcon = () => <span className="bimg"></span>;
@@ -32,7 +36,7 @@ const UserOverview = () => {
   const handleLogoutClick = async () => {
     try {
       const response = await axios.post(
-        "https://baggagebugs-81tp.onrender.com/api/v1/user/logout",
+        "api/user/logout",
         {},
         {
           withCredentials: true,
@@ -40,6 +44,7 @@ const UserOverview = () => {
       );
       console.log("logged out");
       navigate("/");
+      dispatch({ type: "login/login" });
     } catch (error) {
       console.log(error);
     }

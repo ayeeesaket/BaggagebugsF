@@ -9,15 +9,10 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { IoIosSearch } from "react-icons/io";
 import { BsArrowLeftCircle } from "react-icons/bs";
 import { BsArrowRightCircle } from "react-icons/bs";
-import { FaInstagram } from "react-icons/fa";
-import { RiFacebookCircleLine } from "react-icons/ri";
-import { BsTwitterX } from "react-icons/bs";
-import { TbBrandLinkedin } from "react-icons/tb";
 import { HiArrowNarrowRight } from "react-icons/hi";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 const LandingPage = () => {
   // const location = useLocation();
@@ -145,6 +140,9 @@ const LandingPage = () => {
             <div className="logo"></div>
           </div>
           <div className="nav-links flex gap-15">
+            <div className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 px-4 cursor-pointer bg-white" onClick={() => navigate("/")}>
+               Login
+            </div>
             <div className="relative">
               <select className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 pr-10 bg-white">
                 <option value="en">English</option>
@@ -161,10 +159,9 @@ const LandingPage = () => {
                 size={35}
                 color="#FA8128"
                 onClick={() => {
-                  if (isLoggedIn) {
+                  if (isLoggedIn && !isPartner) {
                     navigate("/useroverview");
-                  }
-                  if (isPartner && isLoggedIn) {
+                  } else if (isPartner && isLoggedIn) {
                     navigate("/partneroverview");
                   }
                 }}
@@ -197,7 +194,10 @@ const LandingPage = () => {
                   placeholder="Barcelona"
                   type="text"
                   onChange={(e) => setQuery(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && navigate("/bookingpage", { state: { query, isLoggedIn } })}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" &&
+                    navigate("/bookingpage", { state: { query, isLoggedIn } })
+                  }
                 />
                 <span className="absolute right-4 top-1/2 transform -translate-y-4 text-[#63C5DA]">
                   <IoIosSearch size={24} />
@@ -206,9 +206,9 @@ const LandingPage = () => {
 
               <button
                 onClick={() => {
-                  navigate("/bookingpage", { state: { isLoggedIn , query } });
+                  navigate("/bookingpage", { state: { isLoggedIn, query } });
                 }}
-                className="pl-12 pr-12 py-2 text-white rounded-4xl bg-[#FA8128] shadow-md"
+                className="pl-12 pr-12 py-2 text-white rounded-4xl bg-[#FA8128] shadow-md hover:bg-[#e4711f] "
               >
                 Search
               </button>
@@ -530,6 +530,7 @@ const LandingPage = () => {
                 onClick={() => {
                   setIsPartner(true);
                   navigate("/partneroverview");
+                  console.log("Become a Partner clicked", isPartner);
                 }}
                 className="bg-[#FA8128] text-white px-3 py-2 rounded-lg shadow-md hover:bg-[#f77a20] transition cursor-pointer"
               >

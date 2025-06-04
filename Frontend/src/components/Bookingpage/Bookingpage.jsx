@@ -45,6 +45,11 @@ const Bookingpage = () => {
   //  New state for selected facility ID
 
   const navigate = useNavigate();
+
+  const handleLogoClick = () => {
+    navigate("/landingpage");
+  };
+
   const containerStyle = { width: "100%", height: "700px" };
 
   const { isLoaded } = useJsApiLoader({
@@ -221,7 +226,7 @@ const Bookingpage = () => {
     <div className="main h-screen w-full">
       {/* Navbar */}
       <div className="navbar flex p-2 pl-16 m-4 justify-between text-2xl">
-        <div className="flex">
+        <div className="flex cursor-pointer" onClick={handleLogoClick}>
           <div className="logo-bag" />
           <div className="logo" />
         </div>
@@ -294,7 +299,7 @@ const Bookingpage = () => {
 
         {/* Language Dropdown */}
         <div className="relative mt-2">
-          <div
+          {/* <div
             className="flex items-center cursor-pointer"
             onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
           >
@@ -303,8 +308,8 @@ const Bookingpage = () => {
               color="#FA8128"
               className="w-15 h-12 mr-5 rounded-2xl border border-[#FA8128]"
             />
-          </div>
-          {showLanguageDropdown && (
+          </div> */}
+          {/* {showLanguageDropdown && (
             <div className="absolute right-0 mt-2 w-[150px] bg-white border border-[#63C5DA] rounded-lg shadow-md">
               <ul className="text-[#FA8128]">
                 {["English", "Spanish", "French", "German"].map((lang) => (
@@ -318,7 +323,7 @@ const Bookingpage = () => {
                 ))}
               </ul>
             </div>
-          )}
+          )} */}
         </div>
 
         <div className="relative mt-3">

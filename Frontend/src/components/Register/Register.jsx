@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import "../../styles/Login.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import { useSelector, useDispatch } from "react-redux";
 const GoogleIcon = () => <span className="googleimg"></span>;
 const FacebookIcon = () => <span className="fbimg"></span>;
 const StoreIcon = () => <span className="bimg"></span>;
@@ -26,23 +26,28 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "api/user/register",
-        { firstName, lastName, email, password }
-      );
+      const response = await axios.post("api/user/register", {
+        firstName,
+        lastName,
+        email,
+        password,
+      });
       console.log("hello");
+      navigate("/landingpage");
+      dispatch({ type: "login/login" });
+      navi;
     } catch (error) {
       console.log(error);
     }
   };
-
+  const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
+  const dispatch = useDispatch();
   return (
     <div className="login-main flex h-screen w-full overflow-hidden">
       {/* LEFT SIDE */}
       <div className="left-pane w-[30%] h-full relative bg-[#FA8128] flex items-center justify-center overflow-hidden">
         <div className="globeimg absolute top-10 left-0 w-[60%] h-[60%] opacity-50 z-0" />
         <div className="passport-img absolute z-10" />
-        
       </div>
 
       {/* RIGHT SIDE */}
@@ -62,8 +67,6 @@ const Register = () => {
               ×
             </button>
           </div>
-
-           
 
           <form onSubmit={handleRegister} className="space-y-4">
             <h2 className="text-2xl text-[#63C5DA] mb-2">Register</h2>

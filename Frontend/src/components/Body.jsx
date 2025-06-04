@@ -12,6 +12,7 @@ import Profile from "./Profile/Profile";
 import Reviews from "./Reviews/Reviews";
 import Reservation from "./reservation/Reservation";
 import UserBookings from "./User/UserBookings";
+import Onboardingpage from "./OnBoarding/Onboardingpage";
 const Body = () => {
   const approuter = createBrowserRouter([
     { path: "/", element: <Login /> },
@@ -26,6 +27,7 @@ const Body = () => {
     { path: "/reviews", element: <Reviews /> },
     { path: "reservation", element: <Reservation /> },
     { path: "/userbookings", element: <UserBookings /> },
+    { path: "/onboarding", element: <Onboardingpage /> },
   ]);
   return (
     <div>

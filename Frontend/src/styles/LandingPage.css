@@ -51,6 +51,13 @@
   width: 1200px;
   height: 720px;
 }
+.luggage-onboarding{
+  background-image: url("../assets/suitcasewithstickers.svg"); /* Directly from the public folder */
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  width: 400px;
+  height: 550px;
+}
 /* .tower{
   background-image: url("/Tower.svg"); 
   background-size: 100% 100%; 
