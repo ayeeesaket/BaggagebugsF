@@ -19,7 +19,7 @@ const Bookingpage = () => {
   // bringing the name of the page from landingpage
   const location = useLocation();
   const query = location.state?.query || "";
-
+  const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
   useEffect(() => {
     console.log("Query from previous page:", query);
   }, [query]);
@@ -328,7 +328,15 @@ const Bookingpage = () => {
         </div>
 
         <div className="relative mt-3">
-          <GiHamburgerMenu size={40} color="#FA8128" onClick={() =>  navigate("/useroverview")}/>
+          <GiHamburgerMenu
+            size={40}
+            color="#FA8128"
+            onClick={() => {
+              if (isLoggedIn) {
+                navigate("/useroverview");
+              }
+            }}
+          />
         </div>
       </div>
 

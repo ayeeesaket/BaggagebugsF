@@ -9,6 +9,7 @@ input:focus {
   border-color: #63C5DA !important; /* Keeps the border color the same */
   box-shadow: none; /* Removes any focus shadow (ring) */
 }
+
 @media (max-width: 768px) {
   .details-div > .row-1,
   .details-div > .row-2,

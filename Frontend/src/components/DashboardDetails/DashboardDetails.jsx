@@ -124,7 +124,7 @@ const DashboardDetails = () => {
          
         }   
       );console.log("Registered Successfully:", response.data);
-
+      navigate("/dashboard");
       // Optional: Log form data if response status is 400
     } catch (error) {
       console.error("Error while registering facility:", error);
@@ -186,7 +186,7 @@ const DashboardDetails = () => {
             </div>
             <button
               onClick={handleDetailsAPI}
-              className="bg-[#FA8128] text-white px-3 py-3  rounded-3xl"
+              className="bg-[#FA8128] text-white px-3 py-3  rounded-3xl cursor-pointer"
             >
               Save
             </button>
