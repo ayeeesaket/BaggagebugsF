@@ -4,6 +4,7 @@ import "../../styles/Login.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
+import { ProductionApi } from "../../../utills";
 const GoogleIcon = () => <span className="googleimg"></span>;
 const FacebookIcon = () => <span className="fbimg"></span>;
 const StoreIcon = () => <span className="bimg"></span>;
@@ -26,12 +27,15 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/api/user/register", {
-        firstName,
-        lastName,
-        email,
-        password,
-      });
+      const response = await axios.post(
+        `${ProductionApi}/user/register`,
+        {
+          firstName,
+          lastName,
+          email,
+          password,
+        }
+      );
       console.log("hello");
       navigate("/landingpage");
       dispatch({ type: "login/login" });
