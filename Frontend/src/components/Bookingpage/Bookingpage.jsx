@@ -328,7 +328,7 @@ const Bookingpage = () => {
         </div>
 
         <div className="relative mt-3">
-          <GiHamburgerMenu size={40} color="#FA8128" />
+          <GiHamburgerMenu size={40} color="#FA8128" onClick={() =>  navigate("/useroverview")}/>
         </div>
       </div>
 

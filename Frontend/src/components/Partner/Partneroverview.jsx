@@ -35,7 +35,11 @@ const Partneroverview = () => {
   const handleLogoutClick = async () => {
     try {
       const response = await axios.post(
-        "https://baggagebugs-81tp.onrender.com/api/v1/user/logout"
+        "https://baggagebugs-81tp.onrender.com/api/v1/user/logout",
+        {},
+        {
+          withCredentials: true,
+        }
       );
       console.log("logged out");
       navigate("/");
