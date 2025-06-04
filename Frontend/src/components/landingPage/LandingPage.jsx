@@ -13,7 +13,7 @@ import { HiArrowNarrowRight } from "react-icons/hi";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { useSelector } from "react-redux";
+import { useSelector , useDispatch } from "react-redux";
 import { GoogleApi } from "../../../utills";
 import axios from "axios";
 const LandingPage = () => {
@@ -133,6 +133,7 @@ const LandingPage = () => {
     setMap(null);
   }, []);
   const [isPartner, setIsPartner] = useState(false);
+  const dispatch = useDispatch();
   const handleLogoutClick = async () => {
     try {
       const response = await axios.post(
