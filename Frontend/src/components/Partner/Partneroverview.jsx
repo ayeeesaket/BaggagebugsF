@@ -14,7 +14,7 @@ const Partneroverview = () => {
 
   const SocialButton = ({ icon, text, onClick }) => (
     <button
-      className="flex items-center gap-4 p-3 w-full border border-[#28d3fa] bg-white max-w-xs rounded-lg text-[#FA8128] transition hover:shadow-md"
+      className="flex items-center gap-4 p-3 w-full border border-[#28d3fa] bg-white max-w-xs rounded-lg cursor-pointer  transition hover:shadow-md"
       onClick={onClick}
     >
       {icon} {text}

@@ -31,7 +31,13 @@ const Reservation = () => {
             </div>
           </div>
           <div className="burger p-2">
-            <GiHamburgerMenu size={30} className="text-[#FA8128]" />
+            <GiHamburgerMenu
+              size={30}
+              className="text-[#FA8128] cursor-pointer"
+              onClick={() => {
+                navigate("/partneroverview");
+              }}
+            />
           </div>
         </div>
       </div>
@@ -39,10 +45,10 @@ const Reservation = () => {
       {/* TOP SECTION */}
       <div className="top-div w-full flex flex-col lg:flex-row flex-wrap gap-4 items-start lg:items-center justify-between px-4 sm:px-10 pb-4">
         <div className="text-div font-bold">
-          <div className="text-div-1 text-[#FA8128] text-4xl sm:text-5xl mb-2">
+          <div className="text-div-1   text-[#FA8128] text-4xl sm:text-5xl mb-2">
             Reservations
           </div>
-          <div className="text-div-2 text-2xl sm:text-3xl text-[#63C5DA]">
+          <div className="text-div-2 text-2xl sm:text-3xl text-[#63C5DA] ">
             No Upcoming Reservations
           </div>
         </div>
@@ -76,26 +82,24 @@ const Reservation = () => {
       {/* BOTTOM SECTION */}
       <div className="bottom-div w-full flex-1 px-4 sm:px-10 pb-10 overflow-y-auto">
         <div className="reviews-div border-2 border-[#63C5DA] p-5 space-y-4">
-          <div className="reviews-top flex flex-col md:flex-row justify-between items-start md:items-center p-4 border-b border-gray-200 text-[#FA8128] gap-2">
+          <div className="reviews-top flex flex-col md:flex-row justify-between items-start md:items-center p-4 border-b border-gray-200   gap-2">
             <div className="name font-semibold text-lg">Pratham Karmarkar</div>
             <div className="booking-id text-sm md:text-base">
               Booking Id : 1234
             </div>
           </div>
 
-          <div className="luggage-name text-[#FA8128] font-medium text-lg">
-            Luggage 001
-          </div>
-          <div className="address text-[#FA8128] text-sm md:text-base">
+          <div className="luggage-name   font-medium text-lg">Luggage 001</div>
+          <div className="address   text-sm md:text-base">
             Queens Maritoon, Melbourne
           </div>
 
           <div className="reviews-bottom mt-4 flex flex-col md:flex-row justify-between gap-4 items-start md:items-center">
             <div className="flex flex-col sm:flex-row gap-3">
-              <div className="drop border-2 border-[#63C5DA] px-4 py-2 rounded-md text-sm text-[#FA8128] shadow-sm">
+              <div className="drop border-2 border-[#63C5DA] px-4 py-2 rounded-md text-sm   shadow-sm">
                 drop off date
               </div>
-              <div className="pickup border-2 border-[#63C5DA] px-4 py-2 rounded-md text-sm text-[#FA8128] shadow-sm">
+              <div className="pickup border-2 border-[#63C5DA] px-4 py-2 rounded-md text-sm   shadow-sm">
                 pickup date
               </div>
             </div>

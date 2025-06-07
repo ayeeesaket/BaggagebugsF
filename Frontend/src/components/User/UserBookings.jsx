@@ -29,7 +29,7 @@ const UserBookings = () => {
               </div>
             </div>
             <div className="burger p-2">
-              <GiHamburgerMenu size={30} className="text-[#FA8128]" />
+              <GiHamburgerMenu size={30} className="text-[#FA8128] cursor-pointer" onClick={()=>{navigate("/useroverview")}} />
             </div>
           </div>
         </div>

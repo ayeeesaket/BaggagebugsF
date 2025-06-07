@@ -9,7 +9,7 @@ const FacebookIcon = () => <span className="fbimg"></span>;
 const StoreIcon = () => <span className="bimg"></span>;
 
 const SocialButton = ({ icon, text }) => (
-  <button className="flex items-center gap-10 p-3 w-full border border-[#28d3fa] bg-white max-w-xs rounded-lg text-[#FA8128] transition">
+  <button className="flex items-center gap-10 p-3 w-full border border-[#28d3fa] bg-white max-w-xs rounded-lg text-black transition">
     {icon} {text}
   </button>
 );
@@ -65,41 +65,41 @@ const Register = () => {
             </h1>
             <button
               onClick={() => navigate("/landingpage")}
-              className="text-3xl text-[#FA8128] ml-auto"
+              className="text-3xl  ml-auto"
             >
               ×
             </button>
           </div>
 
           <form onSubmit={handleRegister} className="space-y-4">
-            <h2 className="text-2xl text-[#63C5DA] mb-2">Register</h2>
+            <h2 className="text-2xl text-black mb-2">Register</h2>
 
             <input
               type="text"
               placeholder="First Name"
               onChange={(e) => setFirstName(e.target.value)}
-              className="w-[300px] p-2 rounded-lg border-2 border-[#63C5DA] placeholder-[#F8934A] text-gray-700 focus:ring-2 focus:ring-[#FA8128] outline-none"
+              className="w-[300px] p-2 rounded-lg border-2 border-[#63C5DA]   text-gray-700 focus:ring-2 focus:ring-[#FA8128] outline-none"
             />
             <input
               type="text"
               placeholder="Last Name"
               onChange={(e) => setLastName(e.target.value)}
-              className="w-[300px] p-2 rounded-lg border-2 border-[#63C5DA] placeholder-[#F8934A] text-gray-700 focus:ring-2 focus:ring-[#FA8128] outline-none"
+              className="w-[300px] p-2 rounded-lg border-2 border-[#63C5DA]   text-gray-700 focus:ring-2 focus:ring-[#FA8128] outline-none"
             />
             <input
               type="email"
               placeholder="E-mail"
               onChange={(e) => setEmail(e.target.value)}
-              className="w-[300px] p-2 rounded-lg border-2 border-[#63C5DA] placeholder-[#F8934A] text-gray-700 focus:ring-2 focus:ring-[#FA8128] outline-none"
+              className="w-[300px] p-2 rounded-lg border-2 border-[#63C5DA]   text-gray-700 focus:ring-2 focus:ring-[#FA8128] outline-none"
             />
             <input
               type="password"
               placeholder="Password"
               onChange={(e) => setPassword(e.target.value)}
-              className="w-[300px] p-2 rounded-lg border-2 border-[#63C5DA] placeholder-[#F8934A] text-gray-700 focus:ring-2 focus:ring-[#FA8128] outline-none"
+              className="w-[300px] p-2 rounded-lg border-2 border-[#63C5DA]   text-gray-700 focus:ring-2 focus:ring-[#FA8128] outline-none"
             />
 
-            <p className="text-[#63C5DA] underline cursor-pointer text-sm">
+            <p className="text-black underline cursor-pointer text-sm">
               Forgot password?
             </p>
 
@@ -111,7 +111,7 @@ const Register = () => {
             </button>
 
             <div className="flex  ml-10 space-x-1">
-              <p className="text-[#63C5DA] text-sm">Already have an account?</p>
+              <p className="text-black text-sm">Already have an account?</p>
               <span
                 onClick={handletoLogin}
                 className="underline text-[#FA8128] text-sm cursor-pointer"

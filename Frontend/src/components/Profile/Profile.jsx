@@ -106,8 +106,14 @@ const Profile = () => {
                 <img src="/Dropdown.svg" alt="" className="w-7 h-7" />
               </div>
             </div>
-            <div className="burger p-2">
-              <GiHamburgerMenu size={35} color="#FA8128" />
+            <div className="burger p-2 cursor-pointer">
+              <GiHamburgerMenu
+                size={35}
+                color="#FA8128"
+                onClick={() => {
+                  navigate("/useroverview");
+                }}
+              />
             </div>
           </div>
         </div>
@@ -118,7 +124,6 @@ const Profile = () => {
               <div className="heading-left text-[32px] md:text-[50px] text-[#63C5DA] underline font-bold">
                 My Ads
               </div>
-              <div className="subheading-left text-[#63C5DA]">Hudson Lane</div>
             </div>
             <div className="flex flex-col gap-10 text-[20px] md:text-[22px] text-center font-bold">
               {menuItems.map((item, index) => (
@@ -144,12 +149,12 @@ const Profile = () => {
                 <div className="flex flex-col gap-14">
                   <div className="row-1 flex justify-between items-center">
                     <input
-                      className="content-input   border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
+                      className="content-input  text-black border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
                       placeholder="First Name"
                       onChange={(e) => setFirstName(e.target.value)}
                     />
                     <input
-                      className="content-input  border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
+                      className="content-input  text-black border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
                       placeholder="Last Name"
                       onChange={(e) => setLastName(e.target.value)}
                     />
@@ -157,12 +162,12 @@ const Profile = () => {
                   <div className="row-2 flex justify-between items-center">
                     <input
                       type="date"
-                      className="content-input   border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
+                      className="content-input text-black  border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
                       placeholder="Date of Birth"
                       onChange={(e) => setDateOfBirth(e.target.value)}
                     />
                     <input
-                      className="content-input  border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
+                      className="content-input text-black border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
                       placeholder="Email"
                       onChange={(e) => setEmail(e.target.value)}
                     />
@@ -170,14 +175,14 @@ const Profile = () => {
                   <div className="row-3 flex justify-between items-center">
                     <input
                       type="number"
-                      className="content-input   border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
+                      className="content-input text-black border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
                       placeholder="Phone Number"
                       onChange={(e) => setPhoneNo(e.target.value)}
                     />
                   </div>
 
                   <button
-                    className="bg-[#FA8128] text-white px-3 py-1  rounded-3xl w-26"
+                    className="bg-[#FA8128] text-white px-3 py-1  rounded-3xl w-26 cursor-pointer  hover:bg-[#e96e12] transition duration-300"
                     onClick={handleApi}
                   >
                     Save
@@ -188,7 +193,7 @@ const Profile = () => {
             {selectedItem === "Notifications" && (
               <div className="notification-div flex flex-col gap-10 px-5 md:px-10 pt-10 text-[20px] md:text-[24px] h-full text-[#FA8128] font-bold">
                 <div className="my-notifications"> My Notifications</div>
-                <div className="text-[#63C5DA] text-[18px]">
+                <div className="text-black text-[18px]">
                   {" "}
                   Choose your notification preferences and how you prefer to be
                   contacted.
@@ -196,7 +201,7 @@ const Profile = () => {
                 <div className="text-[#FA8128] text-[18px]">
                   Message/Reminders
                 </div>
-                <div className="text-[#63C5DA] text-[18px]">
+                <div className="text-black text-[18px]">
                   Recieve my booking information
                 </div>
                 <div className="flex items-center justify-between w-full">
@@ -227,7 +232,7 @@ const Profile = () => {
                   </>
                 ) : (
                   <div>
-                    <div className="bank-yes-div flex flex-col gap-4 text-[#FA8128] font-bold">
+                    <div className="bank-yes-div flex flex-col gap-4 text-black font-bold">
                       <div className="bank-row-1 flex flex-col md:flex-row gap-2">
                         <div className="bank-row-1-detail md:w-1/2">
                           Account Holder Name
@@ -244,13 +249,7 @@ const Profile = () => {
                           placeholder="Lorem ipsum"
                         />
                       </div>
-                      <div className="bank-row-3 flex flex-col md:flex-row gap-2">
-                        <div className="bank-row-3-detail md:w-1/2">BSB</div>
-                        <input
-                          className="content-input border-2 border-[#63C5DA] rounded px-2 py-2 w-full text-[18px] md:text-[20px]"
-                          placeholder="Lorem ipsum"
-                        />
-                      </div>
+
                       <div className="bank-row-4 flex flex-col md:flex-row gap-2">
                         <div className="bank-row-4-detail md:w-1/2">
                           Account Number
@@ -315,7 +314,7 @@ const Profile = () => {
                 <div className="row-1 flex justify-between items-center">
                   <input
                     type="password"
-                    className="content-input   border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
+                    className="content-input text-black  border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
                     placeholder="Current Password"
                     onChange={(e) => setOldPassword(e.target.value)}
                   />
@@ -323,7 +322,7 @@ const Profile = () => {
                 <div className="row-2 flex justify-between items-center">
                   <input
                     type="password"
-                    className="content-input   border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
+                    className="content-input text-black    border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
                     placeholder="New Password"
                     onChange={(e) => setNewPassword(e.target.value)}
                   />
@@ -331,18 +330,18 @@ const Profile = () => {
                 <div className="row-2 flex justify-between items-center">
                   <input
                     type="password"
-                    className="content-input   border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
+                    className="content-input text-black   border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
                     placeholder="Re-enter Password"
                     onChange={(e) => setConfirmPassword(e.target.value)}
                   />
                 </div>
-                <div className="text-[#63C5DA] text-[15px]">
+                <div className="text-black text-[15px]">
                   Your password must be at least 8 characters long and include
                   at least one letter and one number. Increase its security by
                   including special characters.
                 </div>
                 <button
-                  className="bg-[#FA8128] text-white px-3 py-1  rounded-3xl w-60"
+                  className="bg-[#FA8128] hover:bg-[#e96e12] cursor-pointer text-white px-3 py-1 rounded-3xl w-60 transition duration-300"
                   onClick={handlePasswordApi}
                 >
                   Reset Password

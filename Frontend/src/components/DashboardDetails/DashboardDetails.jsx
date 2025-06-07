@@ -156,7 +156,14 @@ const DashboardDetails = () => {
               </div>
             </div>
             <div className="burger p-2">
-              <GiHamburgerMenu size={35} color="#FA8128" />
+              <GiHamburgerMenu
+                size={35}
+                color="#FA8128"
+                className="cursor-pointer"
+                onClick={() => {
+                  navigate("/partneroverview");
+                }}
+              />
             </div>
           </div>
         </div>
@@ -169,7 +176,6 @@ const DashboardDetails = () => {
               <div className="heading-left text-[32px] md:text-[50px] text-[#63C5DA] underline font-bold">
                 My Ads
               </div>
-              <div className="subheading-left text-[#63C5DA]">Hudson Lane</div>
             </div>
             <div className="flex flex-col gap-5 text-[20px] md:text-[22px] text-center font-bold">
               {menuItems.map((item, index) => (
@@ -201,7 +207,7 @@ const DashboardDetails = () => {
             {selectedItem === "Details" && (
               <>
                 {detailsAdded ? (
-                  <div className="details-div flex flex-col justify-between px-5 md:px-10 pt-10 text-[20px] md:text-[24px] h-full text-[#FA8128] font-bold">
+                  <div className="details-div flex flex-col justify-between px-5 md:px-10 pt-10 text-[20px] md:text-[24px] h-full   font-bold">
                     <div className="row-1 flex">
                       <div className="row-1-detail flex-[30%]">
                         Facility Name
@@ -232,12 +238,7 @@ const DashboardDetails = () => {
                               </button>
                             </div>
                           ) : (
-                            <span
-                              className="cursor-pointer hover:underline items-center"
-                              onClick={handleFirstEditClick}
-                            >
-                              Edit
-                            </span>
+                            <span></span>
                           )}
                         </div>
                       </div>
@@ -245,10 +246,6 @@ const DashboardDetails = () => {
                     <div className="row-2 flex">
                       <div className="row-2-detail flex-[30%]">
                         Contact Information of the Partner
-                      </div>
-
-                      <div className="edit text-[#63C5DA] flex-[25%] text-right">
-                        Edit
                       </div>
                     </div>
                     <div className="row-3 flex ">
@@ -282,7 +279,7 @@ const DashboardDetails = () => {
                         <option value="airport-luggage">Airport Luggage</option>
                       </select>
 
-                      <div className="edit text-[#63C5DA] flex-[25%] text-right">
+                      <div className="edit text-white flex-[25%] text-right">
                         Edit
                       </div>
                     </div>
@@ -293,7 +290,7 @@ const DashboardDetails = () => {
                         placeholder="wolfer dog streetrnckclc"
                         onChange={(e) => setAddress(e.target.value)}
                       />
-                      <div className="edit text-[#63C5DA] flex-[25%] text-right">
+                      <div className="edit text-white flex-[25%] text-right">
                         Edit
                       </div>
                     </div>
@@ -340,7 +337,7 @@ const DashboardDetails = () => {
                           CCtv
                         </button>
                       </div>
-                      <div className="content-edit text-[#63C5DA] flex-[25%] text-right">
+                      <div className="content-edit text-white flex-[25%] text-right">
                         Edit
                       </div>
                     </div>
@@ -350,7 +347,7 @@ const DashboardDetails = () => {
                     {prevDetails ? (
                       <div className="bottom-div w-full max-h-[65vh] px-4 md:px-10 overflow-auto">
                         <div className="reviews-div border-2 border-[#63C5DA] p-5">
-                          <div className="reviews-top flex flex-col md:flex-row justify-between items-start md:items-center p-4 border-b border-gray-200 text-[#FA8128] gap-2">
+                          <div className="reviews-top flex flex-col md:flex-row justify-between items-start md:items-center p-4 border-b border-gray-200   gap-2">
                             <div className="name font-semibold text-lg">
                               Facility 001
                             </div>
@@ -360,10 +357,10 @@ const DashboardDetails = () => {
                           </div>
                           <div className="flex justify-between">
                             <div>
-                              <div className="luggage-name text-[#FA8128] font-medium text-lg">
+                              <div className="luggage-name   font-medium text-lg">
                                 Luggage 001
                               </div>
-                              <div className="address text-[#FA8128] text-sm md:text-base">
+                              <div className="address   text-sm md:text-base">
                                 Queens Maritoon, Melbourne
                               </div>
                             </div>
@@ -376,7 +373,7 @@ const DashboardDetails = () => {
                           </div>
                         </div>
                         <div
-                          className="bank-acc p-3 border-[#63C5DA] text-[#FA8128] mt-10 ml-10 border-2 w-fit flex items-center gap-2 cursor-pointer"
+                          className="bank-acc p-3 border-[#63C5DA]   mt-10 ml-10 border-2 w-fit flex items-center gap-2 cursor-pointer"
                           onClick={() => isDetailsAdded(true)}
                         >
                           Add New Facility
@@ -385,7 +382,7 @@ const DashboardDetails = () => {
                       </div>
                     ) : (
                       <div
-                        className="bank-acc p-3 border-[#63C5DA] text-[#FA8128] mt-10 ml-10 border-2 w-fit flex items-center gap-2 cursor-pointer"
+                        className="bank-acc p-3 border-[#63C5DA]   mt-10 ml-10 border-2 w-fit flex items-center gap-2 cursor-pointer"
                         onClick={() => isDetailsAdded(true)}
                       >
                         Add New Facility
@@ -512,7 +509,6 @@ const DashboardDetails = () => {
                         Open 24 hours a day and 7 days a week
                       </div>
                     </div>
-                    <div className="edit text-[#63C5DA]">Edit</div>
                   </div>
 
                   {isYes3Clicked ? (
@@ -556,7 +552,7 @@ const DashboardDetails = () => {
                   )}
 
                   {isYes3Clicked && (
-                    <div className="flex flex-col gap-1 mt-3">
+                    <div className="flex flex-col gap-1 mt-3 text-black">
                       {[
                         "Monday",
                         "Tuesday",
@@ -570,9 +566,7 @@ const DashboardDetails = () => {
                           key={day}
                           className="flex justify-between items-center text-[18px]"
                         >
-                          <div className="text-[#FA8128]">
-                            Are you open on {day}s?
-                          </div>
+                          <div className="">Are you open on {day}s?</div>
                           <label className="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" className="sr-only peer" />
                             <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2   rounded-full peer peer-checked:bg-[#FA8128] transition-all duration-300"></div>
@@ -592,16 +586,15 @@ const DashboardDetails = () => {
                         reservations
                       </div>
                     </div>
-                    <div className="edit text-[#63C5DA]">Edit</div>
                   </div>
-                  <div className="available-right-item3 flex flex-col gap-2 text-[18px] md:text-[20px]">
-                    <div className="storage-capacity-text text-[#FA8128]">
+                  <div className="available-right-item3 flex flex-col gap-2 text-[18px] md:text-[20px] text-black">
+                    <div className="storage-capacity-text  ">
                       From Apr 18, 2025 to Apr 18, 2025 - Closed
                     </div>
-                    <div className="storage-capacity-text text-[#FA8128]">
+                    <div className="storage-capacity-text  ">
                       From Jan 1, 2026 to Jan 1, 2026 - Closed
                     </div>
-                    <div className="storage-capacity-text text-[#FA8128]">
+                    <div className="storage-capacity-text ">
                       From Jan 26, 2026 to Jan 26, 2026 - Closed
                     </div>
                   </div>
@@ -623,7 +616,7 @@ const DashboardDetails = () => {
                   </div>
                 ) : (
                   <div>
-                    <div className="bank-yes-div flex flex-col gap-4 text-[#FA8128] font-bold">
+                    <div className="bank-yes-div flex flex-col gap-4 text-black font-bold">
                       <div className="bank-row-1 flex flex-col md:flex-row gap-2">
                         <div className="bank-row-1-detail md:w-1/2">
                           Account Holder Name
@@ -640,13 +633,7 @@ const DashboardDetails = () => {
                           placeholder="Lorem ipsum"
                         />
                       </div>
-                      <div className="bank-row-3 flex flex-col md:flex-row gap-2">
-                        <div className="bank-row-3-detail md:w-1/2">BSB</div>
-                        <input
-                          className="content-input border-2 border-[#63C5DA] rounded px-2 py-2 w-full text-[18px] md:text-[20px]"
-                          placeholder="Lorem ipsum"
-                        />
-                      </div>
+
                       <div className="bank-row-4 flex flex-col md:flex-row gap-2">
                         <div className="bank-row-4-detail md:w-1/2">
                           Account Number
@@ -718,7 +705,7 @@ const DashboardDetails = () => {
                 <div className="income-right-item1 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                   <div className="total">Total Earnings</div>
                   <div className="opening-hours-text text-[#63C5DA] text-[18px] md:text-[20px] flex">
-                    <div className="amount px-3 py-1 border border-[#63C5DA]">
+                    <div className="amount px-3 py-1 border border-[#63C5DA] text-black">
                       100000
                     </div>
                     <div className="currency px-5 py-1 bg-[#FA8128] text-white">
@@ -727,10 +714,10 @@ const DashboardDetails = () => {
                   </div>
                   <div className="relative">
                     <select
-                      className="appearance-none border-2 border-[#FA8128] rounded-lg px-2 pr-10 bg-white font-light"
+                      className="appearance-none border-2 border-[#FA8128] rounded-lg px-2 pr-10 bg-white font-light text-black"
                       defaultValue=""
                     >
-                      <option value="" disabled>
+                      <option value="" disabled className="">
                         Sort by
                       </option>
                       <option value="month">Month</option>
@@ -743,10 +730,10 @@ const DashboardDetails = () => {
                   </div>
                 </div>
 
-                <div className="flex justify-between font-light flex-wrap gap-6">
+                <div className="flex justify-between font-light flex-wrap gap-6 text-black">
                   <div>
-                    <div className="font-bold">Month</div>
-                    <hr className="border-b border-[#63C5DA] my-1" />
+                    <div className="font-bold text-[#FA8128]">Month</div>
+                    <hr className="border-b border-[#63C5DA] my-1 " />
                     <div>January</div>
                     <div>February</div>
                     <div>March</div>
@@ -755,7 +742,7 @@ const DashboardDetails = () => {
                     <div>June</div>
                   </div>
                   <div>
-                    <div className="font-bold">Earning</div>
+                    <div className="font-bold text-[#FA8128]">Earning</div>
                     <hr className="border-b border-[#63C5DA] my-1" />
                     <div>€10,000</div>
                     <div>€8,500</div>
@@ -764,7 +751,7 @@ const DashboardDetails = () => {
                     <div>€11,300</div>
                     <div>€13,700</div>
                   </div>
-                  <div className="text-[#63C5DA]">
+                  <div className="text-black">
                     <div className="font-bold text-[#FA8128]">Status</div>
                     <hr className="border-b border-[#63C5DA] my-1" />
                     <div>Paid</div>
