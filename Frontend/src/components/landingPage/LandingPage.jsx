@@ -13,7 +13,7 @@ import { HiArrowNarrowRight } from "react-icons/hi";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { useSelector , useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { GoogleApi } from "../../../utills";
 import axios from "axios";
 const LandingPage = () => {
@@ -169,8 +169,11 @@ const LandingPage = () => {
                   navigate("/");
                 }
               }}
-            > 
+            >
               {isLoggedIn ? "Logout" : "Login"}
+            </div>
+            <div className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 px-4 cursor-pointer bg-white" onClick={()=>(navigate("/onboarding"))} >
+              Partner
             </div>
             <div className="relative">
               <select className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 pr-10 bg-white">

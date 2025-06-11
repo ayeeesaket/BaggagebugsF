@@ -28,30 +28,30 @@
   background-size: 100% 100%;
   background-repeat: no-repeat;
   height: 600px;
-  width:600px;
+  width: 600px;
 }
-.suitcase{
+.suitcase {
   background-image: url("/Suitcase.svg"); /* Directly from the public folder */
   background-size: 100% 100%;
   background-repeat: no-repeat;
   width: 437px;
   height: 720px;
 }
-.luggage{
+.luggage {
   background-image: url("/luggage.svg"); /* Directly from the public folder */
   background-size: 100% 100%;
   background-repeat: no-repeat;
   width: 350px;
   height: 600px;
 }
-.map-image{
+.map-image {
   background-image: url("/MapImage.svg"); /* Directly from the public folder */
   background-size: 100% 100%;
   background-repeat: no-repeat;
   width: 1200px;
   height: 720px;
 }
-.luggage-onboarding{
+.luggage-onboarding {
   background-image: url("../assets/suitcasewithstickers.svg"); /* Directly from the public folder */
   background-size: 100% 100%;
   background-repeat: no-repeat;
@@ -65,4 +65,7 @@
   width: 366px;
   height: 246px;
 } */
- 
+.onboardingpage1 {
+  background-image: url("../public/Sector1.svg");
+  background-size: cover;
+}

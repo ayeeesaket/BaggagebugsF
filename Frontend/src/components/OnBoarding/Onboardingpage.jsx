@@ -15,6 +15,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useSelector } from "react-redux";
 const Onboardingpage = () => {
+  const navigate = useNavigate();
   const imgArr = [
     {
       img: "/Tower.svg",
@@ -113,140 +114,15 @@ const Onboardingpage = () => {
             </div>
           </div>
         </div>
-        <div className="section-1 flex justify-between">
-          <div className="section-1-left mt-[-2%] h-[600px] w-[850px]"></div>
-          <div className="section-1-right h-[600px] w-[800px] pt-15 pb-10 pr-15  flex-col justify-between text-right">
-            <div className="text-[#FA8128] text-[25px]   ">
-              Trusted by 200+ bagpackers
-            </div>
-            <div className=" ">
-              <div className="text-[#FA8128] text-[55px] font-bold mb-[-15px] ">
-                Keep your Luggage Safe
-              </div>
-              <div className="text-[#63C5DA] text-[55px] mb-[-15px] ">
-                Wherever You Go
-              </div>
-              <div className="text-[#FA8128] text-[30px] ">
-                Starting from 10€ an hour
-              </div>
-            </div>
-            <div className="flex flex-col items-end mt-10">
-              <div className="relative w-[500px]">
-                <input
-                  className="border-2 rounded-4xl p-2 w-full mb-2 text-[#63C5DA] font-extrabold shadow-md pr-12 h-12"
-                  placeholder="Barcelona"
-                  type="text"
-                  onChange={(e) => setQuery(e.target.value)}
-                  onKeyDown={(e) =>
-                    e.key === "Enter" &&
-                    navigate("/bookingpage", { state: { query, isLoggedIn } })
-                  }
-                />
-                <span className="absolute right-4 top-1/2 transform -translate-y-4 text-[#63C5DA]">
-                  <IoIosSearch size={24} />
-                </span>
-              </div>
-
-              <button
-                onClick={() => {
-                  navigate("/bookingpage", { state: { isLoggedIn, query } });
-                }}
-                className="pl-12 pr-12 py-2 text-white rounded-4xl bg-[#FA8128] shadow-md"
-              >
-                Search
-              </button>
-            </div>
-
-            <div className="mt-10 flex flex-col items-end">
-              <div className="flex items-center text-[#FA8128] text-[22px] gap-2 justify-end">
-                <TbArrowBack />
-                <span>Free Cancellation</span>
-              </div>
-
-              <div className="flex items-center text-[#FA8128] text-[22px] gap-2 justify-end">
-                <FaLock />
-                Luggage Protection €10,000
-              </div>
-
-              <div className="flex items-center text-[#FA8128] text-[22px] gap-2 justify-end">
-                <GiWorld />
-                10000+ spots
-              </div>
-            </div>
+        <div className="onboardingpage">
+          <div className="flex ml-16 onboardingpage1 w-full h-screen justify-center lg:justify-start">
+            <div
+              onClick={() => navigate("/")}
+              className="absolute bottom-36  w-80  right-24 text-white px-4 py-2 rounded-md cursor-pointer  transition"
+            ></div>
           </div>
         </div>
 
-        {/* section2 */}
-
-        <div className="section-2 flex  items-center mt-10  gap-48 ml-30 ">
-          <div className="section-2-left h-[500px] w-[500px] ml-10 pt-30 pb-8 pl-16 flex-col justify-between text-left border-4 rounded-[50%] border-[#FA8128]">
-            <div className="flex flex-col gap-1">
-              <div className="steps text-[20px] leading-tight">Step 1</div>
-              <div className="steps-content text-[#63C5DA] text-[35px] leading-none">
-                Book Luggage <span className="text-[#FA8128]">Storage</span>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-1 mt-6">
-              <div className="steps text-[20px] leading-tight">Step 2</div>
-              <div className="steps-content text-[#63C5DA] text-[35px] leading-none">
-                Drop Your <span className="text-[#FA8128]">Luggage</span>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-1 mt-6">
-              <div className="steps text-[20px] leading-tight">Step 3</div>
-              <div className="steps-content text-[#63C5DA] text-[35px] leading-none">
-                Enjoy Your <span className="text-[#FA8128]">Stay</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="luggage-man h-[500px] w-[20px] z-50 translate-x-[370px] translate-y-10 absolute"></div>
-
-          <div className="section-2-right h-[450px] w-[400px] flex flex-col justify-center items-end pr-5 leading-tight">
-            <div className="text-[#63C5DA] text-[50px] font-bold">
-              How does it
-            </div>
-            <div className="text-[#FA8128] text-[50px] font-bold">work?</div>
-          </div>
-        </div>
-
-        <div className="section-5 mt-50">
-          <div className="w-[75%] ml-[4%] mt-28 p-10 pr-20 border-2 border-[#63C5DA] border-l-0 ">
-            <div className="text-[50px] font-bold  leading-tight">
-              <div className="text-[#FA8128] ">
-                Why team up with Baggage Bugs?
-              </div>
-            </div>
-
-            <div className="text-[#FA8128]  text-[30px] leading-tight mt-8">
-              <div className="text-[#63C5DA]">Zero cost, zero commitment</div>
-              <div className="text-[80%]">
-                Store luggage on your terms, hassle-free!
-              </div>
-            </div>
-            <div className="text-[#FA8128]  text-[30px] leading-tight mt-8">
-              <div className="text-[#63C5DA]">
-                7 Day support - Got questions?
-              </div>
-              <div className="text-[80%]">We've got answers, anytime.</div>
-            </div>
-            <div className="text-[#FA8128]  text-[30px] leading-tight mt-8">
-              <div className="text-[#63C5DA]">
-                You store the bags, we handle the rest. Payments?
-              </div>
-              <div className="text-[80%]">Straight to your accounts.</div>
-            </div>
-            <div className="text-[#FA8128]  text-[30px] leading-tight mt-8">
-              <div className="text-[#63C5DA]">Free promo for your biz</div>
-              <div className="text-[80%]">
-                More exposure, more customers, more cash!
-              </div>
-            </div>
-          </div>
-          <div className="luggage-onboarding z-10 absolute translate-x-[1050px] -translate-y-[580px]"></div>
-        </div>
         <div className="section-4 mt-45 flex flex-col items-center">
           <div className="text-[#63C5DA] text-[45px] font-bold text-center">
             <span className="text-[#FA8128]">Reviews </span>

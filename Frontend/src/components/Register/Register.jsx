@@ -122,7 +122,7 @@ const Register = () => {
           </form>
 
           <div className="space-y-3 mt-6 pb-6">
-            <SocialButton icon={<GoogleIcon />} text="Continue with Google" />
+            <SocialButton icon={<GoogleIcon />} text="Continue with Google"/>
             <SocialButton
               icon={<FacebookIcon />}
               text="Continue with Facebook"

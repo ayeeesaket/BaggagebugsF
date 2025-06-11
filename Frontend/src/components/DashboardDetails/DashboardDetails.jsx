@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import "../../styles/DashboardDetails.css";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { AiOutlinePlusCircle } from "react-icons/ai";
@@ -130,6 +130,25 @@ const DashboardDetails = () => {
       console.error("Error while registering facility:", error);
     }
   };
+
+  const handleFacilityApi = async () => {
+    try {
+      const response = await axios.get(
+        "https://baggagebugs-81tp.onrender.com/api/v1/facility/",
+        {
+          withCredentials: true,
+        }
+      );
+      console.log("Facility Data:", response.data);
+    } catch (error) {
+      console.error("Error fetching facility data:", error);
+    }
+  };
+
+  useEffect(() => {
+    handleFacilityApi();
+  }, []);
+
 
   return (
     <>
