@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { ProductionApi, LocalApi } from "../../../utills";
 const Profile = () => {
   const navigate = useNavigate();
   const handleLogoClick = () => {
@@ -29,7 +30,7 @@ const Profile = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "https://baggagebugs-81tp.onrender.com/api/v1/user/addDetails",
+        `${ProductionApi}/user/addDetails`,
         { firstName, lastName, email, dateOfBirth, phoneNo },
         {
           withCredentials: true, // ✅ REQUIRED to send cookies
@@ -46,7 +47,7 @@ const Profile = () => {
   const handlePasswordApi = async (e) => {
     try {
       const response = await axios.post(
-        "https://baggagebugs-81tp.onrender.com/api/v1/user/changePassword",
+        `${ProductionApi}/user/changePassword`,
         {
           currentPassword: oldPassWord,
           newPassword: newPassWord,
@@ -68,7 +69,7 @@ const Profile = () => {
   const handleEmailToggleAPI = async () => {
     try {
       const response = await axios.post(
-        "https://baggagebugs-81tp.onrender.com/api/v1/user/toggleEmail",
+        `${ProductionApi}/user/toggleEmail`,
         {
           status: toggleEmail,
         }

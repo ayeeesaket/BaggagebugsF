@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import axios from "axios";
+import { ProductionApi, LocalApi } from "../../../utills";
 const SuperAdminUser = () => {
   const tableRows = [
     { col1: "Row 2 - A", col2: "Row 2 - B" },
@@ -13,7 +14,7 @@ const SuperAdminUser = () => {
   const handleGetUserData = async () => {
     try {
       const response = await axios.get(
-        "https://baggagebugs-81tp.onrender.com/api/v1/user/getUser"
+        `${ProductionApi}/user/getUser`
       );
       setUserData(response.data);
     } catch (error) {

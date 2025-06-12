@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
 import axios from "axios";
+import { ProductionApi, LocalApi } from "../../../utills";
 const containerStyle = {
   width: "100%",
   height: "100vh",
@@ -36,7 +37,7 @@ const Storage = () => {
   const handleDetails = async () => {
     try {
       const response = await axios.get(
-        "https://baggagebugs-81tp.onrender.com/api/v1/facility/",
+        `${ProductionApi}/facility/`,
         {
           withCredentials: true,
         }

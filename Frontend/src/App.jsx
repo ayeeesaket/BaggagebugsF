@@ -23,7 +23,7 @@ import SuperAdmin from "./components/SuperAdmin/SuperAdmin";
 import SuperAdminUser from "./components/SuperAdmin/SuperAdminUser";
 import UserOverview from "./components/User/UserOverview";
 import UserBookings from "./components/User/UserBookings";
- 
+import { ToastContainer } from "react-toastify";
 function App() {
   return (
     <>
@@ -31,13 +31,13 @@ function App() {
       {/* <LandingPage/>  */}
       {/* <Login /> */}
       {/* <Register/> */}
-  
- 
-      <Body/>    
-       {/* <Bookingpage/> */}
+
+      <Body />
+      <ToastContainer />
+      {/* <Bookingpage/> */}
       {/* <Body/> */}
       {/* <Onboardingpage/> */}
- 
+
       {/* <Partneroverview/> */}
       {/* <Profile/> */}
       {/* <SuperAdmin/> */}

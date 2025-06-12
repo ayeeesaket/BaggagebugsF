@@ -16,6 +16,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { useSelector, useDispatch } from "react-redux";
 import { GoogleApi } from "../../../utills";
 import axios from "axios";
+import { ProductionApi, LocalApi } from "../../../utills";
 const LandingPage = () => {
   // const location = useLocation();
   // const[isLoggedIn, setIsLoggedIn] = useState(false);
@@ -137,7 +138,7 @@ const LandingPage = () => {
   const handleLogoutClick = async () => {
     try {
       const response = await axios.post(
-        "https://baggagebugs-81tp.onrender.com/api/v1/user/logout",
+        `${ProductionApi}/user/logout`,
         {},
         {
           withCredentials: true,

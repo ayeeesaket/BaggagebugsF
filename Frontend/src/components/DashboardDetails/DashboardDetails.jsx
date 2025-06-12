@@ -4,6 +4,8 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
+import { ProductionApi, LocalApi } from "../../../utills";
 const DashboardDetails = () => {
   const navigate = useNavigate();
   const handleLogoClick = () => {
@@ -105,7 +107,7 @@ const DashboardDetails = () => {
   const handleDetailsAPI = async () => {
     try {
       const response = await axios.post(
-        "https://baggagebugs-81tp.onrender.com/api/v1/facility/register",
+        `${ProductionApi}/facility/register`,
         {
           name,
           email,
@@ -124,22 +126,32 @@ const DashboardDetails = () => {
         }
       );
       console.log("Registered Successfully:", response.data);
-      handleItemClick("Details");
+      if (response.status === 200) {
+        toast.success("Details added", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      }
       // Optional: Log form data if response status is 400
     } catch (error) {
       console.error("Error while registering facility:", error);
     }
   };
-
+  const [facilities, setFacilities] = useState([]);
   const handleFacilityApi = async () => {
     try {
       const response = await axios.get(
-        "https://baggagebugs-81tp.onrender.com/api/v1/facility/",
+        `${ProductionApi}/facility/`,
         {
           withCredentials: true,
         }
       );
-      console.log("Facility Data:", response.data);
+      console.log("Facility Data:", response.data.data);
+      setFacilities(response.data.data);
     } catch (error) {
       console.error("Error fetching facility data:", error);
     }
@@ -365,32 +377,32 @@ const DashboardDetails = () => {
                   <>
                     {prevDetails ? (
                       <div className="bottom-div w-full max-h-[65vh] px-4 md:px-10 overflow-auto">
-                        <div className="reviews-div border-2 border-[#63C5DA] p-5">
-                          <div className="reviews-top flex flex-col md:flex-row justify-between items-start md:items-center p-4 border-b border-gray-200   gap-2">
-                            <div className="name font-semibold text-lg">
-                              Facility 001
-                            </div>
-                            <div className="booking-id text-sm md:text-base">
-                              Facility : 1234
-                            </div>
-                          </div>
-                          <div className="flex justify-between">
-                            <div>
-                              <div className="luggage-name   font-medium text-lg">
-                                Luggage 001
+                        {facilities.map((facility) => (
+                          <div className="reviews-div border-2 border-[#63C5DA] p-5 mb-2">
+                            <div className="reviews-top flex flex-col md:flex-row justify-between items-start md:items-center p-4 border-b border-gray-200   gap-2">
+                              <div className="name font-semibold text-lg">
+                                 {facility.name}
                               </div>
-                              <div className="address   text-sm md:text-base">
-                                Queens Maritoon, Melbourne
+                              <div className="booking-id text-sm md:text-base">
+                                Facility : {facility._id}
                               </div>
                             </div>
+                            <div className="flex justify-between">
+                              <div>
+                                
+                                <div className="address   text-sm md:text-base">
+                                  {facility.address}
+                                </div>
+                              </div>
 
-                            <div className="reviews-bottom mt-4     items-start lg:items-center">
-                              <button className="bg-[#FA8128] text-white px-4 py-2 rounded-3xl self-start md:self-auto">
-                                Save
-                              </button>
+                              <div className="reviews-bottom mt-4     items-start lg:items-center">
+                                <button className="bg-[#FA8128] text-white px-4 py-2 rounded-3xl self-start md:self-auto">
+                                  Save
+                                </button>
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        ))}
                         <div
                           className="bank-acc p-3 border-[#63C5DA]   mt-10 ml-10 border-2 w-fit flex items-center gap-2 cursor-pointer"
                           onClick={() => isDetailsAdded(true)}

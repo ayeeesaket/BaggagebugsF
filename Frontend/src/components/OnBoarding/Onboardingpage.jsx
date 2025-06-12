@@ -1,41 +1,34 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
 import { useNavigate } from "react-router-dom";
 import "../../styles/LandingPage.css";
 import { TbArrowBack } from "react-icons/tb";
 import { FaLock } from "react-icons/fa";
-import { GiWorld } from "react-icons/gi";
-import { GiHamburgerMenu } from "react-icons/gi";
+import { GiWorld, GiHamburgerMenu } from "react-icons/gi";
 import { IoIosSearch } from "react-icons/io";
-import { BsArrowLeftCircle } from "react-icons/bs";
-import { BsArrowRightCircle } from "react-icons/bs";
+import { BsArrowLeftCircle, BsArrowRightCircle } from "react-icons/bs";
 import { HiArrowNarrowRight } from "react-icons/hi";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
+import { ProductionApi, LocalApi } from "../../../utills";
 const Onboardingpage = () => {
+  const [count, setCount] = useState(5);
+  const [earnings, setEarnings] = useState(15);
+
+  const increment = () => setCount((prev) => prev + 1);
+  const decrement = () => {
+    if (count > 0) setCount((prev) => prev - 1);
+  };
+  const handleCalculate = () => {
+    setEarnings(count * 3);
+  };
+
   const navigate = useNavigate();
-  const imgArr = [
-    {
-      img: "/Tower.svg",
-    },
-    {
-      img: "/Tower.svg",
-    },
-    {
-      img: "/Tower.svg",
-    },
-    {
-      img: "/Tower.svg",
-    },
-    {
-      img: "/Tower.svg",
-    },
-    {
-      img: "/Tower.svg",
-    },
-  ];
+  const imgArr = Array(6).fill({ img: "/Tower.svg" });
+
   const settings = {
     dots: false,
     infinite: true,
@@ -60,6 +53,7 @@ const Onboardingpage = () => {
     { name: "Jane Smith", review: "Highly Recommend!", img: "/person.svg" },
     { name: "Mark Johnson", review: "Very Satisfied!", img: "/person.svg" },
   ];
+
   const settings2 = {
     dots: false,
     infinite: true,
@@ -77,10 +71,33 @@ const Onboardingpage = () => {
       </div>
     ),
   };
+  const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
+  useEffect(() => {
+    console.log("logged in ? : ", isLoggedIn);
+  }, []);
+  const dispatch = useDispatch();
+  const handleLogoutApi = async () => {
+    try {
+      const response = await axios.post(
+        `${ProductionApi}/user/logout`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      console.log("logged out");
+      navigate("/");
+      dispatch({ type: "login/login" });
+    } catch (error) {
+      console.log("error : ", error);
+    }
+  };
+
   return (
     <>
       <div className="page p-2 pl-15 pr-15">
-        <div className="navbar flex p-2 pl-15 pr-15  m-4 justify-between text-2xl ">
+        {/* Navbar */}
+        <div className="navbar flex p-2 pl-15 pr-15 m-4 justify-between text-2xl">
           <div className="flex">
             <div className="logo-bag"></div>
             <div className="logo"></div>
@@ -102,206 +119,129 @@ const Onboardingpage = () => {
                 size={35}
                 color="#FA8128"
                 onClick={() => {
-                  if (isLoggedIn) {
-                    navigate("/useroverview");
-                  }
-                  if (isPartner && isLoggedIn) {
-                    navigate("/partneroverview");
-                  }
+                  if (isLoggedIn) navigate("/useroverview");
+                  if (isPartner && isLoggedIn) navigate("/partneroverview");
                 }}
                 className="cursor-pointer"
               />
             </div>
           </div>
         </div>
-        <div className="onboardingpage">
-          <div className="flex ml-16 onboardingpage1 w-full h-screen justify-center lg:justify-start">
-            <div
-              onClick={() => navigate("/")}
-              className="absolute bottom-36  w-80  right-24 text-white px-4 py-2 rounded-md cursor-pointer  transition"
-            ></div>
-          </div>
-        </div>
 
-        <div className="section-4 mt-45 flex flex-col items-center">
-          <div className="text-[#63C5DA] text-[45px] font-bold text-center">
-            <span className="text-[#FA8128]">Reviews </span>
-            from our Backpackers
-          </div>
+        {/* Hero Section */}
+        <div className="page1 ml-56 -mt-12 h-screen w-full flex items-center justify-center">
+          <div className="left1 -mr-20 w-[40%]"></div>
 
-          <Slider {...settings2} className="w-[80%]  mt-10  ">
-            {reviewsArr.map((review, index) => (
-              <div
-                key={index}
-                className="reviews h-[500px] w-[70%] p-5 flex justify-between items-center border-[#63C5DA] mt-5 mx-auto"
-              >
-                {/* Middle Content */}
-                <div className="flex flex-[70%] border-2 border-[#63C5DA] p-5 px-10 text-center items-center rounded-lg shadow-md box-border w-full">
-                  {/* Image Section */}
-                  <div className="reviews-left flex-[35%] flex justify-center items-center">
-                    <img
-                      src={review.img}
-                      alt="Person"
-                      className="h-[80%] w-auto object-cover shadow-[-8px_-8px_10px_#FA8128,-8px_8px_10px_#FA8128]"
-                    />
-                  </div>
-                  {/* Text Section */}
-                  <div className="reviews-right flex-[65%] text-left pl-5">
-                    <p className="text-2xl font-bold text-gray-700">
-                      {review.name}
-                    </p>
-                    <p className="text-lg text-gray-500 mt-2">
-                      {review.review}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Right Arrow */}
-              </div>
-            ))}
-          </Slider>
-        </div>
-
-        <div className="section-7 mt-25 mx-auto max-w-[90%]">
-          <div className="text-[#FA8128] text-[45px] font-bold text-center ">
-            Frequently <span className="text-[#63C5DA]">Asked Questions</span>
-          </div>
-
-          <div className="grid grid-cols-2 gap-6 mt-8 text-center">
-            <div className="p-4 border border-[#63C5DA] rounded-lg shadow-md bg-white">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg text-[#FA8128] font-semibold">
-                  What is Baggage Bugs storage?
-                </h3>
-                <HiArrowNarrowRight className="text-[#63C5DA] text-2xl ml-2" />
-              </div>
-            </div>
-
-            <div className="p-4 border border-[#63C5DA] rounded-lg shadow-md bg-white">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg text-[#FA8128] font-semibold">
-                  How to book luggage storage?
-                </h3>
-                <HiArrowNarrowRight className="text-[#63C5DA] text-2xl ml-2" />
-              </div>
-            </div>
-
-            <div className="p-4 border border-[#63C5DA] rounded-lg shadow-md bg-white">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg text-[#FA8128] font-semibold">
-                  How much does luggage cost?
-                </h3>
-                <HiArrowNarrowRight className="text-[#63C5DA] text-2xl ml-2" />
-              </div>
-            </div>
-
-            <div className="p-4 border border-[#63C5DA] rounded-lg shadow-md bg-white">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg text-[#FA8128] font-semibold">
-                  Cost of 2 days of luggage?
-                </h3>
-                <HiArrowNarrowRight className="text-[#63C5DA] text-2xl ml-2" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="section-9 mt-40 w-full pl-[7%]  pr-[4%]  flex h-[500px]">
-          <div className="section-9-left w-[50%]   flex flex-col gap-5">
-            <div className="leading-tight">
-              <div className="text-[#FA8128] text-[70px] font-bold ">About</div>
-              <div className="text-[#63C5DA] text-[70px] font-bold  ">
-                Baggage Bugs
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <img src="/Rating.svg" alt="Star" className="w-8 h-8" />
-              <img src="/Rating.svg" alt="Star" className="w-8 h-8" />
-              <img src="/Rating.svg" alt="Star" className="w-8 h-8" />
-              <img src="/Rating.svg" alt="Star" className="w-8 h-8" />
-              <img src="/Rating.svg" alt="Star" className="w-8 h-8" />
-            </div>
-            <div className="leading-tight">
-              <div className="text-[#63C5DA] text-[25px] ">
-                5 star ratings by <span className="text-[#FA8128] ">2345+</span>{" "}
-                verified{" "}
-              </div>
-              <div className="text-[#63C5DA] text-[25px] ">bag packers </div>
-            </div>
-            <div className="font-light text-[40px] flex gap-5">
-              <a
-                href="https://www.instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img
-                  src="/Instagram.svg"
-                  alt="Instagram"
-                  className="w-10 h-10"
-                />
-              </a>
-              <a
-                href="https://www.facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img src="/Facebook.svg" alt="Facebook" className="w-10 h-10" />
-              </a>
-              <a
-                href="https://www.linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img src="/LinkedIn.svg" alt="LinkedIn" className="w-10 h-10" />
-              </a>
-              <a
-                href="https://www.twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img src="/X.svg" alt="Twitter" className="w-10 h-10" />
-              </a>
-            </div>
-
-            <div className="">
-              <div className="text-[#FA8128] text-[25px]  ">Contact Us</div>
-              <div className="text-[#63C5DA] text-[25px]  ">
-                baggagebugs123@gmail.com
-              </div>
-              <div className="text-[#63C5DA] text-[25px]  ">
-                +88 8373746498{" "}
-              </div>
-            </div>
-          </div>
-          <div className="section-9-right w-[50%]  text-[32px] text-[#63C5DA] flex flex-col justify-between">
-            <div className="">
-              <span className="text-[#FA8128] font-bold">Baggage Bugs</span> is
-              a collaborative luggage storage network, partnering with trusted
-              shops worldwide to provide a secure and convenient solution for
-              travelers.
-            </div>
-            <div className="">
-              <span className="text-[#FA8128] font-bold">
-                Say goodbye to the hassle
-              </span>{" "}
-              of carrying heavy bags while exploring a new city.
-            </div>
-            <div className="">
-              Your luggage will always have a
-              <span className="text-[#FA8128] font-bold">safe place</span>,
-              allowing you to enjoy your journey to the fullest!
-            </div>
-            <div className="mt-10">
+          <div className="right1 h-[60%] flex flex-col items-center justify-center text-center px-4">
+            <h2 className="text-6xl mr-24 font-bold text-orange-400 mb-4">
+              Earn money effortlessly!
+            </h2>
+            <p className="text-3xl text-right ml-10 text-cyan-500 mb-6">
+              Life isn’t just about parcels
+              <br />
+              Why not boost your income by storing <br /> luggage?
+            </p>
+            <div className="w-full flex justify-end pr-44">
               <button
+                className="bg-[#FA8128] w-72 b-z-[1] text-white font-semibold px-6 py-2 rounded-full shadow-md hover:bg-[#FA8128] transition border-5 border-[#FFA480] cursor-pointer"
                 onClick={() => {
-                  setIsPartner(true);
-                  navigate("/partneroverview");
+                  isLoggedIn ? handleLogoutApi() : navigate("/");
+                  dispatch({ type: "partner/setIsPartner" });
                 }}
-                className="bg-[#FA8128] text-white px-3 py-2 rounded-lg shadow-md hover:bg-[#f77a20] transition cursor-pointer"
               >
-                Become a Partner
+                Become a partner
               </button>
             </div>
+          </div>
+        </div>
+
+        {/* Benefit Section */}
+        <div className="w-full flex flex-wrap justify-between items-start p-10 gap-10">
+          <h2 className="text-6xl overflow-y-hidden h-36 font-bold text-[#FA8128] mb-2">
+            Storing luggage with Baggage Bugs is a total <br />
+            <span className="text-cyan-500"> game-changer!</span>
+          </h2>
+
+          {/* Left Box */}
+          <div className="border-2 border-l-white border-cyan-300 p-6 w-full md:w-[50%]">
+            <div className="mt-8 space-y-6 text-left">
+              <div>
+                <p className="text-[#FA8128] font-semibold text-xl">
+                  No costs, just cash!
+                </p>
+                <p className="text-cyan-500 font-extralight">
+                  Keep 100% of the profits.
+                </p>
+              </div>
+              <div>
+                <p className="text-[#FA8128] font-semibold text-xl">
+                  Money straight to your account
+                </p>
+                <p className="text-cyan-500 font-extralight">
+                  Get paid every month hassle-free.
+                </p>
+              </div>
+              <div>
+                <p className="text-[#FA8128] font-semibold text-xl">
+                  Get noticed!
+                </p>
+                <p className="text-cyan-500 font-extralight">
+                  Let the world discover your business for free.
+                </p>
+              </div>
+              <div>
+                <p className="text-[#FA8128] font-semibold text-xl">
+                  More bags, more bucks!
+                </p>
+                <p className="text-cyan-500 font-extralight">
+                  Every customer is a potential buyer for you.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Box */}
+          <div className="flex flex-col items-center justify-center w-full md:w-[40%] text-center">
+            {/* Capacity Section */}
+            <div className="flex items-center border border-cyan-500 rounded overflow-hidden mb-6">
+              <div className="bg-white px-4 py-2 text-cyan-500 font-medium">
+                Your capacity
+              </div>
+              <div className="bg-[#FA8128] text-white px-3 py-2 flex items-center gap-2">
+                <div className="bg-[#FA8128] px-3 py-2 flex items-center gap-3">
+                  <span
+                    onClick={decrement}
+                    className="cursor-pointer select-none"
+                  >
+                    ↓
+                  </span>
+                  <span className="text-lg font-semibold">{count}</span>
+                  <span
+                    onClick={increment}
+                    className="cursor-pointer select-none"
+                  >
+                    ↑
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Earnings Section */}
+            <p className="text-cyan-500 text-2xl font-medium">Upto</p>
+            <p className="text-4xl font-bold text-[#FA8128] mb-1">
+              {earnings} EUR/month
+            </p>
+            <a href="#" className="text-cyan-500 text-sm underline mb-6">
+              How is this estimated?
+            </a>
+
+            {/* Calculate Button */}
+            <button
+              onClick={handleCalculate}
+              className="bg-[#FA8128] text-white font-semibold px-8 py-3 text-lg rounded-full shadow-md hover:bg-[#FA8128] transition border-5 border-[#FFA480]"
+            >
+              Calculate
+            </button>
           </div>
         </div>
       </div>

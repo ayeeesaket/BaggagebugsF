@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, use } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoIosSearch, IoIosArrowDown } from "react-icons/io";
 import { GiHamburgerMenu } from "react-icons/gi";
@@ -14,6 +14,7 @@ import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { GoogleApi } from "../../../utills";
+import { ProductionApi, LocalApi } from "../../../utills";
 
 const Bookingpage = () => {
   // bringing the name of the page from landingpage
@@ -98,7 +99,7 @@ const Bookingpage = () => {
         setCenter(location);
 
         const facilityRes = await axios.post(
-          "https://baggagebugs-81tp.onrender.com/api/v1/map/facilitiesBySearch",
+          `${ProductionApi}/map/facilitiesBySearch`,
           { userCoordinates: [location.lng, location.lat] },
           { withCredentials: true }
         );
@@ -125,10 +126,11 @@ const Bookingpage = () => {
         for (let i = 0; i < coordsArray.length; i++) {
           console.log("Coordinates:", coordsArray[i]);
           try {
+            console.log("idhar dekh bhai : ", location.lat, location.lng);
             const distance1 = await axios.post(
-              "https://baggagebugs-81tp.onrender.com/api/v1/map/facilitiesDistanceTime",
+              `${ProductionApi}/map/facilitiesDistanceTime`,
               {
-                userCoordinates: [center.lng, center.lat],
+                userCoordinates: [location.lng, location.lat],
                 facilityCoordinates: coordsArray[i], // coordsArray[i] is already an array
               },
               { withCredentials: true } // optional third argument for cookies/auth
@@ -175,19 +177,21 @@ const Bookingpage = () => {
       </div>
     ),
   };
-
+  const [facilityName, setfacilityName] = useState("");
   const handleBookNow = async (facilityId) => {
     dispatch({ type: "facilityId/setFacilityId", payload: facilityId });
     console.log("Selected Facility ID1:", facilityId);
     console.log(typeof facilityId);
     try {
       const response1 = await axios.get(
-        `https://baggagebugs-81tp.onrender.com/api/v1/facility/facilityById?id=${facilityId}`
+        `${ProductionApi}/facility/get?id=${facilityId}`,
+        { withCredentials: true }
       );
       setsfdata(response1.data);
       setfAddress(response1.data.data.address);
       setfTiming(response1.data.data.timing);
       console.log("Facility Details:", response1.data);
+      setfacilityName(response1.data.data.name);
       console.log("Facility Details Name:", response1.data.data.name);
     } catch (error) {
       console.log("Error fetching facility details:", error);
@@ -223,6 +227,29 @@ const Bookingpage = () => {
   //   }
   // };
 
+  const handleMakeBookingApi = async () => {
+    console.log("yaha se dekh ::::::::");
+    console.log("Booking facility with ID:", facilityId);
+    console.log("Booking facility with Name:", facilityName);
+    console.log("Drop-off Date:", dropOffDate);
+    console.log("Pick-up Date:", pickUpDate);
+    try {
+      const response = await axios.post(
+        `${ProductionApi}/booking/`,
+        {
+          area: facilityName,
+          dropIn: dropOffDate,
+          pickup: pickUpDate,
+          luggageType: "Bag",
+          facilityId: facilityId.facilityId,
+        },
+        { withCredentials: true }
+      );
+      console.log("Booking successful:", response.data);
+    } catch (error) {
+      console.error("Error making booking:", error);
+    }
+  };
   return (
     <div className="main h-screen w-full">
       {/* Navbar */}
@@ -279,7 +306,12 @@ const Bookingpage = () => {
               <div className="absolute z-10">
                 <Calendar
                   onChange={(d) => {
-                    updateDate(d);
+                    const normalizedDate = new Date(
+                      d.getFullYear(),
+                      d.getMonth(),
+                      d.getDate()
+                    );
+                    updateDate(normalizedDate);
                     toggleCal(false);
                   }}
                   value={date}
@@ -484,7 +516,10 @@ const Bookingpage = () => {
                       )
                     )}
                   </div>
-                  <button className="bg-[#FA8128] text-white px-5 py-2 rounded-3xl mt-2">
+                  <button
+                    className="bg-[#FA8128] text-white px-5 py-2 rounded-3xl mt-2"
+                    onClick={handleMakeBookingApi}
+                  >
                     Book Now
                   </button>
                 </div>

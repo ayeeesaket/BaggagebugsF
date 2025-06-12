@@ -5,12 +5,16 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import { ProductionApi, LocalApi } from "../../../utills";
 const GoogleIcon = () => <span className="googleimg"></span>;
 const FacebookIcon = () => <span className="fbimg"></span>;
 const StoreIcon = () => <span className="bimg"></span>;
 
-const SocialButton = ({ icon, text }) => (
-  <button className="flex items-center gap-10 p-3 w-full border border-[#28d3fa] bg-white max-w-xs rounded-lg text-black transition">
+const SocialButton = ({ icon, text, onClick }) => (
+  <button
+    className="flex items-center gap-10 p-3 w-full border border-[#28d3fa] bg-white max-w-xs rounded-lg text-black transition"
+    onClick={onClick}
+  >
     {icon} {text}
   </button>
 );
@@ -33,7 +37,7 @@ const Login = () => {
     setError("");
     try {
       const response = await axios.post(
-        "https://baggagebugs-81tp.onrender.com/api/v1/user/login",
+        `${ProductionApi}/user/login`, // Use the ProductionApi constant
         { email, password },
         {
           withCredentials: true, // ✅ REQUIRED to send cookies
@@ -51,6 +55,12 @@ const Login = () => {
       );
     }
   };
+
+  // const loginWithGoogle = () => {
+  //   console.log("laalalalalalalalala");
+  //   window.location.href =
+  //     "https://baggagebugs-1.onrender.com/api/v1/user/auth/google";
+  // };
 
   return (
     <div className="login-main flex h-screen w-full">
@@ -119,12 +129,25 @@ const Login = () => {
           </form>
 
           <div className="space-y-3 mt-6">
-            <SocialButton icon={<GoogleIcon />} text="Continue with Google" />
+            <SocialButton
+              icon={<GoogleIcon />}
+              text="Continue with Google"
+              onClick={() => {
+                console.log("laalalalalalalalala");
+                window.location.href =
+                  "https://baggagebugs-1.onrender.com/api/v1/user/auth/google";
+              }}
+            />
             <SocialButton
               icon={<FacebookIcon />}
               text="Continue with Facebook"
+              className="cursor-pointer"
             />
-            <SocialButton icon={<StoreIcon />} text="Store Baggage" />
+            <SocialButton
+              icon={<StoreIcon />}
+              text="Store Baggage"
+              className="cursor-pointer"
+            />
           </div>
         </div>
       </div>

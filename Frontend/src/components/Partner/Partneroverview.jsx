@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/Login.css";
 import axios from "axios";
+import { ProductionApi, LocalApi } from "../../../utills";
 const Partneroverview = () => {
   const navigate = useNavigate();
 
@@ -35,7 +36,7 @@ const Partneroverview = () => {
   const handleLogoutClick = async () => {
     try {
       const response = await axios.post(
-        "https://baggagebugs-81tp.onrender.com/api/v1/user/logout",
+        `${ProductionApi}/user/logout`,
         {},
         {
           withCredentials: true,

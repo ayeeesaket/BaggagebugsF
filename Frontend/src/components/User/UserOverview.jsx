@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "../../styles/Login.css";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
+import { ProductionApi, LocalApi } from "../../../utills";
 const UserOverview = () => {
   const navigate = useNavigate();
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
@@ -36,7 +37,7 @@ const UserOverview = () => {
   const handleLogoutClick = async () => {
     try {
       const response = await axios.post(
-        "https://baggagebugs-81tp.onrender.com/api/v1/user/logout",
+        `${ProductionApi}/user/logout`,
         {},
         {
           withCredentials: true,
