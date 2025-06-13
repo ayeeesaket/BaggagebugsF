@@ -129,7 +129,7 @@ const Login = () => {
               onClick={() => {
                 window.location.href =
                   `https://baggagebugs-81tp.onrender.com/api/v1/user/auth/google`;
-                dispatch({ type: "login/login" });
+               
               }}
               className="w-full"
             />
