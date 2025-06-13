@@ -19,6 +19,7 @@ import { GoogleApi } from "../../../utills";
 import axios from "axios";
 import { ProductionApi, LocalApi } from "../../../utills";
 import { useSearchParams } from "react-router-dom";
+import { Cookie } from "lucide-react";
 const LandingPage = () => {
   // const location = useLocation();
   // const[isLoggedIn, setIsLoggedIn] = useState(false);
@@ -36,6 +37,7 @@ const LandingPage = () => {
   const [query, setQuery] = useState("");
   const [searchParams] = useSearchParams();
    const token = searchParams.get("token") || "vingadium leviosa";
+   const role  = searchParams.get("role") || "vingadium leviosa";
    console.log(`token`, token);
 
   const imgArr = [
@@ -150,7 +152,9 @@ const LandingPage = () => {
     //   }
     // };
     // callPostLoginAPI();
-     Cookies.set("token", token, { expires: 7 });
+     Cookies.set("token", token, { expires: 1});
+     Cookies.set("role", role, { expires: 1 }); // Assuming role is 'user' for this example
+      dispatch({ type: "login/login" });
   }, []);
 
   const { isLoaded } = useJsApiLoader({
