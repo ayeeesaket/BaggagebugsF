@@ -30,6 +30,7 @@ const LandingPage = () => {
   // const navigate = useNavigate();
   // console.log("Is Logged In:", isLoggedIn);
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
+  const isReduxPartner = useSelector((state) => state.partner.isPartner);
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const imgArr = [
@@ -137,7 +138,7 @@ const LandingPage = () => {
         );
         console.log("User session verified:", res.data);
         navigate("/landingpage");
-        
+        dispatch({ type: "login/login" });
       } catch (err) {
         console.error("Session check failed:", err);
         navigate("/");
