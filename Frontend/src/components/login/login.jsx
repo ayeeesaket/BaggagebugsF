@@ -128,8 +128,8 @@ const Login = () => {
               text="Continue with Google"
               onClick={() => {
                 window.location.href =
-                  "https://baggagebugs-1.onrender.com/api/v1/user/auth/google";
-                  dispatch({ type: "login/login" });
+                  `${ProductionApi}/user/auth/google`;
+                dispatch({ type: "login/login" });
               }}
               className="w-full"
             />

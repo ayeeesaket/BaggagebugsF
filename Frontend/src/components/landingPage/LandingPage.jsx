@@ -131,7 +131,7 @@ const LandingPage = () => {
         const token = searchParams.get("token");
         const role = searchParams.get("role");
         const res = await axios.post(
-          "https://baggagebugs-1.onrender.com/api/v1/user/setCookies",
+          `${ProductionApi}/user/setCookies`,
           { token, role },
           { withCredentials: true }
         );
