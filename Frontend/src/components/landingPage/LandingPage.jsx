@@ -131,24 +131,25 @@ const LandingPage = () => {
         }
       );
     }
-    const callPostLoginAPI = async () => {
-      try {
-        const token = searchParams.get("token");
-        const role = searchParams.get("role");
-        const res = await axios.post(
-          `https://baggagebugs-81tp.onrender.com/api/v1/user/setCookies`,
-          { token, role },
-          { withCredentials: true }
-        );
-        console.log("User session verified:", res.data);
-        navigate("/landingpage");
-        dispatch({ type: "login/login" });
-      } catch (err) {
-        console.error("Session check failed:", err);
-        navigate("/");
-      }
-    };
-    callPostLoginAPI();
+    // const callPostLoginAPI = async () => {
+    //   try {
+    //     const token = searchParams.get("token");
+    //     const role = searchParams.get("role");
+    //     const res = await axios.post(
+    //       `https://baggagebugs-81tp.onrender.com/api/v1/user/setCookies`,
+    //       { token, role },
+    //       { withCredentials: true }
+    //     );
+    //     console.log("User session verified:", res.data);
+    //     navigate("/landingpage");
+    //     dispatch({ type: "login/login" });
+    //   } catch (err) {
+    //     console.error("Session check failed:", err);
+    //     navigate("/");
+    //   }
+    // };
+    // callPostLoginAPI();
+     Cookies.set("token", token, { expires: 7 });
   }, []);
 
   const { isLoaded } = useJsApiLoader({
