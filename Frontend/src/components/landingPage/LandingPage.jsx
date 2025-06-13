@@ -113,53 +113,39 @@ const LandingPage = () => {
     height: "400px",
   };
   const [searchParams] = useSearchParams();
-React.useEffect(() => {
-  // Handle geolocation
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setCenter({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        });
-      },
-      () => {
-        console.warn("Geolocation not allowed. Using default location.");
-      }
-    );
-  }
-
-  // Handle post-login session check
-  const callPostLoginAPI = async () => {
-    const token = searchParams.get("token");
-    const role = searchParams.get("role");
-
-    // Only call API if token and role are available
-    if (!token || !role) {
-      console.warn("Missing token or role in query params.");
-      navigate("/"); // Redirect to home/login
-      return;
-    }
-
-    try {
-      const res = await axios.post(
-        `https://baggagebugs-81tp.onrender.com/api/v1/user/setCookies`,
-        { token, role },
-        { withCredentials: true }
+  React.useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setCenter({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        () => {
+          console.warn("Geolocation not allowed. Using default location.");
+        }
       );
-      console.log("User session verified:", res.data);
-
-      dispatch({ type: "login/login" });
-      navigate("/landingpage"); // Navigate after login
-    } catch (err) {
-      console.error("Session check failed:", err);
-      // Redirect to login if API fails
     }
-  };
-
-  callPostLoginAPI();
-}, []);
-
+    const callPostLoginAPI = async () => {
+      try {
+        const token = searchParams.get("token");
+        const role = searchParams.get("role");
+        const res = await axios.post(
+          `https://baggagebugs-81tp.onrender.com/api/v1/user/setCookies`,
+          { token, role },
+          { withCredentials: true }
+        );
+        console.log("User session verified:", res.data);
+        navigate("/landingpage");
+        dispatch({ type: "login/login" });
+      } catch (err) {
+        console.error("Session check failed:", err);
+        navigate("/");
+      }
+    };
+    callPostLoginAPI();
+  }, []);
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
