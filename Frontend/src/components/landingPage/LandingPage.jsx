@@ -19,7 +19,7 @@ import { GoogleApi } from "../../../utills";
 import axios from "axios";
 import { ProductionApi, LocalApi } from "../../../utills";
 import { useSearchParams } from "react-router-dom";
-import { Cookie } from "lucide-react";
+import { useSelector, useDispatch } from "react-redux";
 const LandingPage = () => {
   // const location = useLocation();
   // const[isLoggedIn, setIsLoggedIn] = useState(false);
@@ -36,6 +36,7 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [searchParams] = useSearchParams();
+const dispatch = useDispatch();
 
 //   if (!isLoggedIn || !isReduxPartner) {
 //   token = searchParams.get("token");
