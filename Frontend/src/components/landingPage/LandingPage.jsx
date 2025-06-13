@@ -38,11 +38,30 @@ const LandingPage = () => {
   const [searchParams] = useSearchParams();
   let token;
   let role;
-  if (!isLoggedIn || !isReduxPartner) {
-  token = searchParams.get("token");
-  role  = searchParams.get("role");}
-   console.log(`token`, token);
+//   if (!isLoggedIn || !isReduxPartner) {
+//   token = searchParams.get("token");
+//   role  = searchParams.get("role");
+//   Cookies.set("token", token, { expires: 1});
+//   Cookies.set("role", role, { expires: 1 }); // Assuming role is 'user' for this example
+//   dispatch({ type: "login/login" });
+// }
 
+   console.log(`token`, token);
+useEffect(() => {
+  const token = searchParams.get("token");
+  const role = searchParams.get("role");
+
+  if (token && role) {
+    Cookies.set("token", token, { expires: 1 });
+    Cookies.set("role", role, { expires: 1 });
+
+    // Update Redux state based on role
+    dispatch({ type: "login/login" });
+    if (role === "partner") {
+      dispatch({ type: "partner/setIsPartner", payload: true });
+    }
+  }
+}, []);
   const imgArr = [
     {
       img: "/Tower.svg",
@@ -137,9 +156,7 @@ const LandingPage = () => {
         }
       );
     }
-     Cookies.set("token", token, { expires: 1});
-     Cookies.set("role", role, { expires: 1 }); // Assuming role is 'user' for this example
-      dispatch({ type: "login/login" });
+   
   }, []);
 
   const { isLoaded } = useJsApiLoader({
