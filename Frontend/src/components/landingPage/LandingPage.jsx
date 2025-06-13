@@ -38,7 +38,7 @@ const LandingPage = () => {
   const [searchParams] = useSearchParams();
   let token;
   let role;
-  if (isLoggedIn || isReduxPartner) {
+  if (!isLoggedIn || !isReduxPartner) {
   token = searchParams.get("token");
   role  = searchParams.get("role");}
    console.log(`token`, token);
