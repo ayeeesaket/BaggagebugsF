@@ -153,7 +153,7 @@ React.useEffect(() => {
       navigate("/landingpage"); // Navigate after login
     } catch (err) {
       console.error("Session check failed:", err);
-      navigate("/"); // Redirect to login if API fails
+      // Redirect to login if API fails
     }
   };
 
