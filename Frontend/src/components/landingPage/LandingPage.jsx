@@ -33,6 +33,7 @@ const LandingPage = () => {
   const isReduxPartner = useSelector((state) => state.partner.isPartner);
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
+  const [searchParams] = useSearchParams();
    const token = searchParams.get("token") || "vingadium leviosa";
    console.log(`token`, token);
 
@@ -115,7 +116,7 @@ const LandingPage = () => {
     width: "600px",
     height: "400px",
   };
-  const [searchParams] = useSearchParams();
+  
   React.useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
