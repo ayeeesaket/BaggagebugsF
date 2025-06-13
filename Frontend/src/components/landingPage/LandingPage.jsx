@@ -1,4 +1,4 @@
-import React, { useState ,useEffect} from "react";
+import React, { useState } from "react";
 import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
 import { useNavigate } from "react-router-dom";
 import "../../styles/LandingPage.css";
@@ -19,7 +19,7 @@ import { GoogleApi } from "../../../utills";
 import axios from "axios";
 import { ProductionApi, LocalApi } from "../../../utills";
 import { useSearchParams } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { Cookie } from "lucide-react";
 const LandingPage = () => {
   // const location = useLocation();
   // const[isLoggedIn, setIsLoggedIn] = useState(false);
@@ -36,33 +36,16 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [searchParams] = useSearchParams();
-  // const dispatch = useDispatch();
-
-//   if (!isLoggedIn || !isReduxPartner) {
-//   token = searchParams.get("token");
-//   role  = searchParams.get("role");
-//   Cookies.set("token", token, { expires: 1});
-//   Cookies.set("role", role, { expires: 1 }); // Assuming role is 'user' for this example
-//   dispatch({ type: "login/login" });
-// }
-
-  
-useEffect(() => {
-  if (!isLoggedIn) {
-    const token = searchParams.get("token");
-    const role = searchParams.get("role");
-    console.log(`token && role`, token, role);
-    if (token && role) {
-      Cookies.set("token", token, { expires: 1 });
-      Cookies.set("role", role, { expires: 1 });
-
-      dispatch({ type: "login/login" });
-      if (role === "partner") {
-        dispatch({ type: "partner/setIsPartner" });
-      }
-    }
-  }
-}, [isLoggedIn, dispatch, searchParams]);
+  let token;
+  let role;
+  if (!isLoggedIn || !isReduxPartner) {
+  token = searchParams.get("token");
+  role  = searchParams.get("role");
+  Cookies.set("token", token, { expires: 1});
+  Cookies.set("role", role, { expires: 1 }); // Assuming role is 'user' for this example
+  dispatch({ type: "login/login" });
+}
+   console.log(`token`, token);
 
   const imgArr = [
     {
