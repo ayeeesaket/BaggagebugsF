@@ -36,8 +36,11 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [searchParams] = useSearchParams();
-   const token = searchParams.get("token") || "vingadium leviosa";
-   const role  = searchParams.get("role") || "vingadium leviosa";
+  let token;
+  let role;
+  if (isLoggedIn || isReduxPartner) {
+  token = searchParams.get("token");
+  role  = searchParams.get("role");}
    console.log(`token`, token);
 
   const imgArr = [
@@ -134,24 +137,6 @@ const LandingPage = () => {
         }
       );
     }
-    // const callPostLoginAPI = async () => {
-    //   try {
-    //     const token = searchParams.get("token");
-    //     const role = searchParams.get("role");
-    //     const res = await axios.post(
-    //       `https://baggagebugs-81tp.onrender.com/api/v1/user/setCookies`,
-    //       { token, role },
-    //       { withCredentials: true }
-    //     );
-    //     console.log("User session verified:", res.data);
-    //     navigate("/landingpage");
-    //     dispatch({ type: "login/login" });
-    //   } catch (err) {
-    //     console.error("Session check failed:", err);
-    //     navigate("/");
-    //   }
-    // };
-    // callPostLoginAPI();
      Cookies.set("token", token, { expires: 1});
      Cookies.set("role", role, { expires: 1 }); // Assuming role is 'user' for this example
       dispatch({ type: "login/login" });
