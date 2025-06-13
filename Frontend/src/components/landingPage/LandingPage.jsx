@@ -17,6 +17,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { GoogleApi } from "../../../utills";
 import axios from "axios";
 import { ProductionApi, LocalApi } from "../../../utills";
+import { useSearchParams } from "react-router-dom";
 const LandingPage = () => {
   // const location = useLocation();
   // const[isLoggedIn, setIsLoggedIn] = useState(false);
@@ -67,6 +68,17 @@ const LandingPage = () => {
         <BsArrowRightCircle className="text-4xl text-[#63C5DA] cursor-pointer hover:text-[#47a7bf] transition-all duration-300" />
       </div>
     ),
+    responsive: [
+      {
+        breakpoint: 768, // tablet and below
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          dots: true,
+          arrows: true,
+        },
+      },
+    ],
   };
 
   const reviewsArr = [
@@ -99,7 +111,7 @@ const LandingPage = () => {
     width: "600px",
     height: "400px",
   };
-
+  const [searchParams] = useSearchParams();
   React.useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -114,6 +126,24 @@ const LandingPage = () => {
         }
       );
     }
+    const callPostLoginAPI = async () => {
+      try {
+        const token = searchParams.get("token");
+        const role = searchParams.get("role");
+        const res = await axios.post(
+          "https://baggagebugs-1.onrender.com/api/v1/user/setCookies",
+          { token, role },
+          { withCredentials: true }
+        );
+        console.log("User session verified:", res.data);
+        navigate("/landingpage");
+        
+      } catch (err) {
+        console.error("Session check failed:", err);
+        navigate("/");
+      }
+    };
+    callPostLoginAPI();
   }, []);
 
   const { isLoaded } = useJsApiLoader({
@@ -154,113 +184,189 @@ const LandingPage = () => {
   return (
     <>
       <div className="page p-2 pl-15 pr-15">
-        <div className="navbar flex p-2 pl-15 pr-15  m-4 justify-between text-2xl ">
-          <div className="flex">
-            <div className="logo-bag"></div>
-            <div className="logo"></div>
-          </div>
-          <div className="nav-links flex gap-15">
-            <div
-              className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 px-4 cursor-pointer bg-white"
-              onClick={() => {
-                if (isLoggedIn) {
-                  // Handle logout here (e.g., clear token, redirect)
-                  handleLogoutClick(); // assuming you have a logout function
-                } else {
-                  navigate("/");
-                }
-              }}
-            >
-              {isLoggedIn ? "Logout" : "Login"}
-            </div>
-            <div className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 px-4 cursor-pointer bg-white" onClick={()=>(navigate("/onboarding"))} >
-              Partner
-            </div>
-            <div className="relative">
-              <select className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 pr-10 bg-white">
-                <option value="en">English</option>
-                <option value="es">Spanish</option>
-                <option value="fr">French</option>
-                <option value="de">German</option>
-              </select>
-              <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                <img src="/Dropdown.svg" alt="" className="w-7 h-7" />
+        <div className="w-full">
+          {/* Mobile layout: visible on small screens only */}
+          <div className="md:hidden flex flex-col gap-4 p-4">
+            <div className="flex justify-between items-center">
+              <div className="flex">
+                <div className="logo-bag"></div>
+                <div className="logo"></div>
+              </div>
+              <div className="burger p-2">
+                <GiHamburgerMenu
+                  size={30}
+                  color="#FA8128"
+                  onClick={() => {
+                    if (isLoggedIn && !isPartner) {
+                      navigate("/useroverview");
+                    } else if (isPartner && isLoggedIn) {
+                      navigate("/partneroverview");
+                    }
+                  }}
+                  className="cursor-pointer"
+                />
               </div>
             </div>
-            <div className="burger p-2">
-              <GiHamburgerMenu
-                size={35}
-                color="#FA8128"
+            <div className="flex flex-col gap-3">
+              <div
+                className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 px-4 cursor-pointer bg-white text-center"
                 onClick={() => {
-                  if (isLoggedIn && !isPartner) {
-                    navigate("/useroverview");
-                  } else if (isPartner && isLoggedIn) {
-                    navigate("/partneroverview");
+                  if (isLoggedIn) {
+                    handleLogoutClick();
+                  } else {
+                    navigate("/");
                   }
                 }}
-                className="cursor-pointer"
-              />
+              >
+                {isLoggedIn ? "Logout" : "Login"}
+              </div>
+              <div
+                className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 px-4 cursor-pointer bg-white text-center"
+                onClick={() => navigate("/onboarding")}
+              >
+                Partner
+              </div>
+              <div className="relative w-full">
+                <select className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 pr-10 bg-white w-full">
+                  <option value="en">English</option>
+                  <option value="es">Spanish</option>
+                  <option value="fr">French</option>
+                  <option value="de">German</option>
+                </select>
+                <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                  <img src="/Dropdown.svg" alt="" className="w-7 h-7" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Original navbar visible only on medium and up */}
+          <div className="hidden md:block">
+            <div className="navbar flex p-2 pl-15 pr-15  m-4 justify-between text-2xl ">
+              {/* === Your original code stays untouched here === */}
+              <div className="flex">
+                <div className="logo-bag"></div>
+                <div className="logo"></div>
+              </div>
+              <div className="nav-links flex gap-15">
+                <div
+                  className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 px-4 cursor-pointer bg-white"
+                  onClick={() => {
+                    if (isLoggedIn) {
+                      handleLogoutClick();
+                    } else {
+                      navigate("/");
+                    }
+                  }}
+                >
+                  {isLoggedIn ? "Logout" : "Login"}
+                </div>
+                <div
+                  className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 px-4 cursor-pointer bg-white"
+                  onClick={() => navigate("/onboarding")}
+                >
+                  Partner
+                </div>
+                <div className="relative">
+                  <select className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 pr-10 bg-white">
+                    <option value="en">English</option>
+                    <option value="es">Spanish</option>
+                    <option value="fr">French</option>
+                    <option value="de">German</option>
+                  </select>
+                  <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                    <img src="/Dropdown.svg" alt="" className="w-7 h-7" />
+                  </div>
+                </div>
+                <div className="burger p-2">
+                  <GiHamburgerMenu
+                    size={35}
+                    color="#FA8128"
+                    onClick={() => {
+                      if (isLoggedIn && !isPartner) {
+                        navigate("/useroverview");
+                      } else if (isPartner && isLoggedIn) {
+                        navigate("/partneroverview");
+                      }
+                    }}
+                    className="cursor-pointer"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div className="section-1 flex justify-between">
-          <div className="section-1-left mt-[-2%] h-[600px] w-[850px]"></div>
-          <div className="section-1-right h-[600px] w-[800px] pt-15 pb-10 pr-15  flex-col justify-between text-right">
-            <div className="text-[#FA8128] text-[25px]   ">
-              Trusted by 200+ bagpackers
-            </div>
-            <div className=" ">
-              <div className="text-[#FA8128] text-[55px] font-bold mb-[-15px] ">
-                Keep your Luggage Safe
-              </div>
-              <div className="text-[#63C5DA] text-[55px] mb-[-15px] ">
-                Wherever You Go
-              </div>
-              <div className="text-[#FA8128] text-[30px] ">
-                Starting from 10€ an hour
+
+        <div className="w-full md:px-10 lg:px-20 py-10">
+          {/* Responsive wrapper for section-1 */}
+          <div className="section-1 flex flex-col md:flex-row justify-between items-center gap-10">
+            {/* Left Side: Hidden on small screens */}
+            <div className="hidden md:block w-full md:w-[850px]">
+              <div className="section-1-left mt-[-2%] h-[300px] md:h-[600px] w-full bg-cover bg-center">
+                {/* Add background image via CSS or inline style if needed */}
               </div>
             </div>
-            <div className="flex flex-col items-end mt-10">
-              <div className="relative w-[500px]">
-                <input
-                  className="border-2 rounded-4xl p-2 w-full mb-2 text-[#63C5DA] font-extrabold shadow-md pr-12 h-12"
-                  placeholder="Barcelona"
-                  type="text"
-                  onChange={(e) => setQuery(e.target.value)}
-                  onKeyDown={(e) =>
-                    e.key === "Enter" &&
-                    navigate("/bookingpage", { state: { query, isLoggedIn } })
-                  }
-                />
-                <span className="absolute right-4 top-1/2 transform -translate-y-4 text-[#63C5DA]">
-                  <IoIosSearch size={24} />
-                </span>
+
+            {/* Right Side */}
+            <div className="section-1-right h-auto md:h-[600px] w-full md:w-[800px] pt-10 md:pt-15 pb-10 pr-0 md:pr-15 flex flex-col justify-between text-right">
+              <div className="text-[#FA8128] text-[20px] md:text-[25px]">
+                Trusted by 200+ bagpackers
               </div>
 
-              <button
-                onClick={() => {
-                  navigate("/bookingpage", { state: { isLoggedIn, query } });
-                }}
-                className="pl-12 pr-12 py-2 text-white rounded-4xl bg-[#FA8128] shadow-md hover:bg-[#e4711f] "
-              >
-                Search
-              </button>
-            </div>
-
-            <div className="mt-10 flex flex-col items-end">
-              <div className="flex items-center text-[#FA8128] text-[22px] gap-2 justify-end">
-                <TbArrowBack />
-                <span>Free Cancellation</span>
+              <div className="mt-4">
+                <div className="text-[#FA8128] text-[35px] md:text-[55px] font-bold mb-[-10px] md:mb-[-15px]">
+                  Keep your Luggage Safe
+                </div>
+                <div className="text-[#63C5DA] text-[35px] md:text-[55px] mb-[-10px] md:mb-[-15px]">
+                  Wherever You Go
+                </div>
+                <div className="text-[#FA8128] text-[22px] md:text-[30px] mt-2">
+                  Starting from 10€ an hour
+                </div>
               </div>
 
-              <div className="flex items-center text-[#FA8128] text-[22px] gap-2 justify-end">
-                <FaLock />
-                Luggage Protection €10,000
+              <div className="flex flex-col items-end mt-6 md:mt-10">
+                <div className="relative w-full md:w-[500px]">
+                  <input
+                    className="border-2 rounded-4xl p-2 w-full mb-2 text-[#63C5DA] font-extrabold shadow-md pr-12 h-12"
+                    placeholder="Barcelona"
+                    type="text"
+                    onChange={(e) => setQuery(e.target.value)}
+                    onKeyDown={(e) =>
+                      e.key === "Enter" &&
+                      navigate("/bookingpage", { state: { query, isLoggedIn } })
+                    }
+                  />
+                  <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#63C5DA]">
+                    <IoIosSearch size={24} />
+                  </span>
+                </div>
+
+                <button
+                  onClick={() => {
+                    navigate("/bookingpage", { state: { isLoggedIn, query } });
+                  }}
+                  className="pl-12 pr-12 py-2 text-white rounded-4xl bg-[#FA8128] shadow-md hover:bg-[#e4711f]"
+                >
+                  Search
+                </button>
               </div>
 
-              <div className="flex items-center text-[#FA8128] text-[22px] gap-2 justify-end">
-                <GiWorld />
-                10000+ spots
+              <div className="mt-6 md:mt-10 flex flex-col items-end gap-2">
+                <div className="flex items-center text-[#FA8128] text-[18px] md:text-[22px] gap-2 justify-end">
+                  <TbArrowBack />
+                  <span>Free Cancellation</span>
+                </div>
+
+                <div className="flex items-center text-[#FA8128] text-[18px] md:text-[22px] gap-2 justify-end">
+                  <FaLock />
+                  Luggage Protection €10,000
+                </div>
+
+                <div className="flex items-center text-[#FA8128] text-[18px] md:text-[22px] gap-2 justify-end">
+                  <GiWorld />
+                  10000+ spots
+                </div>
               </div>
             </div>
           </div>
@@ -323,34 +429,37 @@ const LandingPage = () => {
             <div className="suitcase z-10 absolute translate-x-[176%] -translate-y-[80%]"></div>
           </div>
         </div>
-        <div className="section-4 mt-45 flex flex-col items-center">
-          <div className="text-[#63C5DA] text-[45px] font-bold text-center">
+        <div className="section-4 mt-45 flex flex-col items-center px-4 sm:px-8 md:px-16 lg:px-24 xl:px-40">
+          <div className="text-[#63C5DA] text-[30px] sm:text-[40px] md:text-[45px] font-bold text-center">
             <span className="text-[#FA8128]">Reviews </span>
             from our Backpackers
           </div>
 
-          <Slider {...settings2} className="w-[80%]  mt-10  ">
+          <Slider
+            {...settings2}
+            className="w-full sm:w-[90%] md:w-[80%] mt-6 sm:mt-8 md:mt-10"
+          >
             {reviewsArr.map((review, index) => (
               <div
                 key={index}
-                className="reviews h-[500px] w-[70%] p-5 flex justify-between items-center border-[#63C5DA] mt-5 mx-auto"
+                className="reviews h-auto sm:h-[450px] md:h-[500px] w-full sm:w-[90%] md:w-[70%] p-3 sm:p-5 flex flex-col sm:flex-row justify-center sm:justify-between items-center border-[#63C5DA] mt-4 sm:mt-5 mx-auto"
               >
                 {/* Middle Content */}
-                <div className="flex flex-[70%] border-2 border-[#63C5DA] p-5 px-10 text-center items-center rounded-lg shadow-md box-border w-full">
+                <div className="flex flex-col sm:flex-row flex-[100%] sm:flex-[70%] border-2 border-[#63C5DA] p-4 sm:p-5 px-6 sm:px-10 text-center sm:text-left items-center sm:items-start rounded-lg shadow-md box-border w-full">
                   {/* Image Section */}
-                  <div className="reviews-left flex-[35%] flex justify-center items-center">
+                  <div className="reviews-left flex-[100%] sm:flex-[35%] flex justify-center items-center mb-4 sm:mb-0">
                     <img
                       src={review.img}
                       alt="Person"
-                      className="h-[80%] w-auto object-cover shadow-[-8px_-8px_10px_#FA8128,-8px_8px_10px_#FA8128]"
+                      className="h-[180px] sm:h-[80%] w-auto object-cover shadow-[-8px_-8px_10px_#FA8128,-8px_8px_10px_#FA8128]"
                     />
                   </div>
                   {/* Text Section */}
-                  <div className="reviews-right flex-[65%] text-left pl-5">
-                    <p className="text-2xl font-bold text-gray-700">
+                  <div className="reviews-right flex-[100%] sm:flex-[65%] text-left pl-0 sm:pl-5">
+                    <p className="text-xl sm:text-2xl font-bold text-gray-700">
                       {review.name}
                     </p>
-                    <p className="text-lg text-gray-500 mt-2">
+                    <p className="text-base sm:text-lg text-gray-500 mt-2">
                       {review.review}
                     </p>
                   </div>
@@ -390,17 +499,17 @@ const LandingPage = () => {
           </div>
           <div className="luggage z-10 absolute translate-x-[1050px] -translate-y-[580px]"></div>
         </div>
-        <div className="section-6 mt-25 ml-[7%]">
-          <div className="text-[#FA8128] text-[45px] font-bold">
+        <div className="section-6 mt-25 ml-[7%] mr-[7%] md:ml-[7%] md:mr-[7%]">
+          <div className="text-[#FA8128] text-[25px] md:text-[45px] font-bold">
             Accessible Everywhere!
           </div>
-          <div className="text-[#63C5DA] text-[45px]">
+          <div className="text-[#63C5DA] text-[30px] md:text-[45px]">
             Safe and reliable luggage storage{" "}
             <span className="text-[#FA8128] font-medium">WORLDWIDE.</span>
           </div>
 
           {/* Set height and width for the map */}
-          <div className="mt-8 w-[90%] h-[500px] relative">
+          <div className="mt-8 w-full max-w-[90vw] h-[300px] md:h-[500px] relative">
             {isLoaded && (
               <GoogleMap
                 mapContainerStyle={{ width: "100%", height: "100%" }}
@@ -416,12 +525,12 @@ const LandingPage = () => {
           </div>
         </div>
 
-        <div className="section-7 mt-25 mx-auto max-w-[90%]">
+        <div className="section-7 mt-25 mx-auto max-w-[90%] sm:px-0">
           <div className="text-[#FA8128] text-[45px] font-bold text-center ">
             Frequently <span className="text-[#63C5DA]">Asked Questions</span>
           </div>
 
-          <div className="grid grid-cols-2 gap-6 mt-8 text-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-8 text-center">
             <div className="p-4 border border-[#63C5DA] rounded-lg shadow-md bg-white">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg text-[#FA8128] font-semibold">
@@ -459,116 +568,155 @@ const LandingPage = () => {
             </div>
           </div>
         </div>
-        <div className="section-8 mt-40 items-center flex justify-center gap-4">
-          <Slider {...settings} className="w-[80%] px-10">
+
+        <div className="section-8 mt-40 flex items-center justify-center gap-4 px-4">
+          <Slider {...settings} className="w-full md:w-[80%] px-4 md:px-10">
             {imgArr.map((d, index) => (
-              <div key={index} className="tower p-4 rounded-lg">
+              <div
+                key={index}
+                className="tower p-4 rounded-lg flex justify-center"
+              >
                 <img
                   src={d.img}
                   alt={`Tower ${index}`}
-                  className="w-[300px] h-[200px] rounded-lg"
+                  className="w-[300px] h-[200px] rounded-lg max-w-full"
+                  style={{ objectFit: "cover" }}
                 />
               </div>
             ))}
           </Slider>
         </div>
 
-        <div className="section-9 mt-40 w-full pl-[7%]  pr-[4%]  flex h-[500px]">
-          <div className="section-9-left w-[50%]   flex flex-col gap-5">
-            <div className="leading-tight">
-              <div className="text-[#FA8128] text-[70px] font-bold ">About</div>
-              <div className="text-[#63C5DA] text-[70px] font-bold  ">
-                Baggage Bugs
+        <div className="w-full md:px-[7%] lg:px-[7%] py-10">
+          <div className="section-9 mt-40 w-full flex flex-col md:flex-row h-auto md:h-[500px]">
+            {/* Left Section */}
+            <div className="section-9-left w-full md:w-1/2 flex flex-col gap-5 px-0 md:px-4">
+              <div className="leading-tight">
+                <div className="text-[#FA8128] text-[50px] md:text-[70px] font-bold">
+                  About
+                </div>
+                <div className="text-[#63C5DA] text-[50px] md:text-[70px] font-bold">
+                  Baggage Bugs
+                </div>
               </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <img src="/Rating.svg" alt="Star" className="w-8 h-8" />
-              <img src="/Rating.svg" alt="Star" className="w-8 h-8" />
-              <img src="/Rating.svg" alt="Star" className="w-8 h-8" />
-              <img src="/Rating.svg" alt="Star" className="w-8 h-8" />
-              <img src="/Rating.svg" alt="Star" className="w-8 h-8" />
-            </div>
-            <div className="leading-tight">
-              <div className="text-[#63C5DA] text-[25px] ">
-                5 star ratings by <span className="text-[#FA8128] ">2345+</span>{" "}
-                verified{" "}
-              </div>
-              <div className="text-[#63C5DA] text-[25px] ">bag packers </div>
-            </div>
-            <div className="font-light text-[40px] flex gap-5">
-              <a
-                href="https://www.instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <div className="flex items-center gap-2">
                 <img
-                  src="/Instagram.svg"
-                  alt="Instagram"
-                  className="w-10 h-10"
+                  src="/Rating.svg"
+                  alt="Star"
+                  className="w-6 h-6 md:w-8 md:h-8"
                 />
-              </a>
-              <a
-                href="https://www.facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img src="/Facebook.svg" alt="Facebook" className="w-10 h-10" />
-              </a>
-              <a
-                href="https://www.linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img src="/LinkedIn.svg" alt="LinkedIn" className="w-10 h-10" />
-              </a>
-              <a
-                href="https://www.twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img src="/X.svg" alt="Twitter" className="w-10 h-10" />
-              </a>
+                <img
+                  src="/Rating.svg"
+                  alt="Star"
+                  className="w-6 h-6 md:w-8 md:h-8"
+                />
+                <img
+                  src="/Rating.svg"
+                  alt="Star"
+                  className="w-6 h-6 md:w-8 md:h-8"
+                />
+                <img
+                  src="/Rating.svg"
+                  alt="Star"
+                  className="w-6 h-6 md:w-8 md:h-8"
+                />
+                <img
+                  src="/Rating.svg"
+                  alt="Star"
+                  className="w-6 h-6 md:w-8 md:h-8"
+                />
+              </div>
+              <div className="leading-tight text-[18px] md:text-[25px]">
+                <div className="text-[#63C5DA]">
+                  5 star ratings by{" "}
+                  <span className="text-[#FA8128]">2345+</span> verified
+                </div>
+                <div className="text-[#63C5DA]">bag packers</div>
+              </div>
+              <div className="font-light flex gap-4 md:gap-5 text-[24px] md:text-[40px]">
+                <a
+                  href="https://www.instagram.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img
+                    src="/Instagram.svg"
+                    alt="Instagram"
+                    className="w-8 h-8 md:w-10 md:h-10"
+                  />
+                </a>
+                <a
+                  href="https://www.facebook.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img
+                    src="/Facebook.svg"
+                    alt="Facebook"
+                    className="w-8 h-8 md:w-10 md:h-10"
+                  />
+                </a>
+                <a
+                  href="https://www.linkedin.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img
+                    src="/LinkedIn.svg"
+                    alt="LinkedIn"
+                    className="w-8 h-8 md:w-10 md:h-10"
+                  />
+                </a>
+                <a
+                  href="https://www.twitter.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img
+                    src="/X.svg"
+                    alt="Twitter"
+                    className="w-8 h-8 md:w-10 md:h-10"
+                  />
+                </a>
+              </div>
+              <div className="mt-4 text-[18px] md:text-[25px]">
+                <div className="text-[#FA8128]">Contact Us</div>
+                <div className="text-[#63C5DA]">baggagebugs123@gmail.com</div>
+                <div className="text-[#63C5DA]">+88 8373746498</div>
+              </div>
             </div>
 
-            <div className="">
-              <div className="text-[#FA8128] text-[25px]  ">Contact Us</div>
-              <div className="text-[#63C5DA] text-[25px]  ">
-                baggagebugs123@gmail.com
+            {/* Right Section */}
+            <div className="section-9-right w-full md:w-1/2 text-[20px] md:text-[32px] text-[#63C5DA] flex flex-col justify-between mt-10 md:mt-0 px-0 md:px-4">
+              <div>
+                <span className="text-[#FA8128] font-bold">Baggage Bugs</span>{" "}
+                is a collaborative luggage storage network, partnering with
+                trusted shops worldwide to provide a secure and convenient
+                solution for travelers.
               </div>
-              <div className="text-[#63C5DA] text-[25px]  ">
-                +88 8373746498{" "}
+              <div>
+                <span className="text-[#FA8128] font-bold">
+                  Say goodbye to the hassle
+                </span>{" "}
+                of carrying heavy bags while exploring a new city.
               </div>
-            </div>
-          </div>
-          <div className="section-9-right w-[50%]  text-[32px] text-[#63C5DA] flex flex-col justify-between">
-            <div className="">
-              <span className="text-[#FA8128] font-bold">Baggage Bugs</span> is
-              a collaborative luggage storage network, partnering with trusted
-              shops worldwide to provide a secure and convenient solution for
-              travelers.
-            </div>
-            <div className="">
-              <span className="text-[#FA8128] font-bold">
-                Say goodbye to the hassle
-              </span>{" "}
-              of carrying heavy bags while exploring a new city.
-            </div>
-            <div className="">
-              Your luggage will always have a
-              <span className="text-[#FA8128] font-bold">safe place</span>,
-              allowing you to enjoy your journey to the fullest!
-            </div>
-            <div className="mt-10">
-              <button
-                onClick={() => {
-                  setIsPartner(true);
-                  navigate("/partneroverview");
-                  console.log("Become a Partner clicked", isPartner);
-                }}
-                className="bg-[#FA8128] text-white px-3 py-2 rounded-lg shadow-md hover:bg-[#f77a20] transition cursor-pointer"
-              >
-                Become a Partner
-              </button>
+              <div>
+                Your luggage will always have a{" "}
+                <span className="text-[#FA8128] font-bold">safe place</span>,
+                allowing you to enjoy your journey to the fullest!
+              </div>
+              <div className="mt-10">
+                <button
+                  onClick={() => {
+                    setIsPartner(true);
+                    navigate("/partneroverview");
+                    console.log("Become a Partner clicked", isPartner);
+                  }}
+                  className="bg-[#FA8128] text-white px-3 py-2 rounded-lg shadow-md hover:bg-[#f77a20] transition cursor-pointer"
+                >
+                  Become a Partner
+                </button>
+              </div>
             </div>
           </div>
         </div>
