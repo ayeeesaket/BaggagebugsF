@@ -33,6 +33,9 @@ const LandingPage = () => {
   const isReduxPartner = useSelector((state) => state.partner.isPartner);
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
+   const token = searchParams.get("token") || "vingadium leviosa";
+   console.log(`token`, token);
+
   const imgArr = [
     {
       img: "/Tower.svg",
