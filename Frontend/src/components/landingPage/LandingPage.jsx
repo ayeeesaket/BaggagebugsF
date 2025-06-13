@@ -36,7 +36,7 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [searchParams] = useSearchParams();
-const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
 //   if (!isLoggedIn || !isReduxPartner) {
 //   token = searchParams.get("token");
