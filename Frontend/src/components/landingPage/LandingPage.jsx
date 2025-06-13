@@ -57,7 +57,7 @@ useEffect(() => {
 
       dispatch({ type: "login/login" });
       if (role === "partner") {
-        dispatch({ type: "partner/setIsPartner", payload: true });
+        dispatch({ type: "partner/setIsPartner" });
       }
     }
   }
