@@ -36,8 +36,7 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [searchParams] = useSearchParams();
-  let token;
-  let role;
+
 //   if (!isLoggedIn || !isReduxPartner) {
 //   token = searchParams.get("token");
 //   role  = searchParams.get("role");
@@ -46,22 +45,24 @@ const LandingPage = () => {
 //   dispatch({ type: "login/login" });
 // }
 
-   console.log(`token`, token);
+  
 useEffect(() => {
-  const token = searchParams.get("token");
-  const role = searchParams.get("role");
+  if (!isLoggedIn) {
+    const token = searchParams.get("token");
+    const role = searchParams.get("role");
+    console.log(`token && role`, token, role);
+    if (token && role) {
+      Cookies.set("token", token, { expires: 1 });
+      Cookies.set("role", role, { expires: 1 });
 
-  if (token && role) {
-    Cookies.set("token", token, { expires: 1 });
-    Cookies.set("role", role, { expires: 1 });
-
-    // Update Redux state based on role
-    dispatch({ type: "login/login" });
-    if (role === "partner") {
-      dispatch({ type: "partner/setIsPartner", payload: true });
+      dispatch({ type: "login/login" });
+      if (role === "partner") {
+        dispatch({ type: "partner/setIsPartner", payload: true });
+      }
     }
   }
-}, []);
+}, [isLoggedIn, dispatch, searchParams]);
+
   const imgArr = [
     {
       img: "/Tower.svg",
