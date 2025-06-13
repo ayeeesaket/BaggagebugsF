@@ -39,7 +39,7 @@ const Login = () => {
     setError("");
     try {
       const response = await axios.post(
-        `${ProductionApi}/user/login`,
+        `https://baggagebugs-81tp.onrender.com/api/v1/user/login`,
         { email, password },
         { withCredentials: true }
       );
@@ -128,7 +128,7 @@ const Login = () => {
               text="Continue with Google"
               onClick={() => {
                 window.location.href =
-                  `${ProductionApi}/user/auth/google`;
+                  `https://baggagebugs-81tp.onrender.com/api/v1/user/auth/google`;
                 dispatch({ type: "login/login" });
               }}
               className="w-full"
