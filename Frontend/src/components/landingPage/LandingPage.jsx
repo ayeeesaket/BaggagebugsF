@@ -1,4 +1,4 @@
-import React, { useState  } from "react";
+import React, { useState } from "react";
 import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
 import { useNavigate } from "react-router-dom";
 import "../../styles/LandingPage.css";
@@ -36,17 +36,9 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [searchParams] = useSearchParams();
-  const dispatch = useDispatch();
-  let token;
-  let role;
-  if (!isLoggedIn || !isReduxPartner) {
-    token = searchParams.get("token");
-    role = searchParams.get("role");
-    Cookies.set("token", token, { expires: 1 });
-    Cookies.set("role", role, { expires: 1 }); // Assuming role is 'user' for this example
-    dispatch({ type: "login/login" });
-  }
-  console.log(`token`, token);
+   const token = searchParams.get("token");
+   const role  = searchParams.get("role");
+   console.log(`token`, token);
 
   const imgArr = [
     {
@@ -142,7 +134,9 @@ const LandingPage = () => {
         }
       );
     }
-   
+     Cookies.set("token", token, { expires: 1});
+     Cookies.set("role", role, { expires: 1 }); // Assuming role is 'user' for this example
+      dispatch({ type: "login/login" });
   }, []);
 
   const { isLoaded } = useJsApiLoader({
@@ -163,7 +157,7 @@ const LandingPage = () => {
     setMap(null);
   }, []);
   const [isPartner, setIsPartner] = useState(false);
-  
+  const dispatch = useDispatch();
   const handleLogoutClick = async () => {
     try {
       const response = await axios.post(
