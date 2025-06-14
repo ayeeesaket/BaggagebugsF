@@ -31,7 +31,6 @@ const LandingPage = () => {
   // }, [location.state]);
   // const navigate = useNavigate();
   // console.log("Is Logged In:", isLoggedIn);
-
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
   const isReduxPartner = useSelector((state) => state.partner.isPartner);
   const navigate = useNavigate();
@@ -160,7 +159,7 @@ React.useEffect(() => {
       );
 
       console.log("User session verified:", res.data);
-      dispatch({ type: "login/login" });
+
       navigate("/landingpage");
     } catch (err) {
       console.error("Session check failed:", err);
@@ -171,14 +170,11 @@ React.useEffect(() => {
   callPostLoginAPI();
 }, []);
 
-React.useEffect(() => {
+const login =() => {
   if (isUser) {
     dispatch({ type: "login/login" });
-    console.log("====================================");
-    console.log("User is logged in, dispatching login action",isLoggedIn);
-    console.log("====================================");
-  }
-}, [isUser]); // ✅ Runs only when isUser becomes true
+  } 
+} // ✅ Runs only when isUser becomes true
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
