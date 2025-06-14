@@ -20,8 +20,8 @@ import axios from "axios";
 import { ProductionApi, LocalApi } from "../../../utills";
 import { useSearchParams } from "react-router-dom";
 import { Cookie } from "lucide-react";
-import { setTokenValue } from "../../redux/features/tokenSlice";
-import { setRoleValue } from "../../redux/features/roleSlice";
+import setTokenValue from "../redux/features/tokenSlice";
+import setRoleValue from "../redux/features/roleSlice";
 const LandingPage = () => {
   // const location = useLocation();
   // const[isLoggedIn, setIsLoggedIn] = useState(false);
