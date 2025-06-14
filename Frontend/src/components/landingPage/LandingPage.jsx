@@ -36,8 +36,10 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   // const [searchParams] = useSearchParams();
-    const token = Cookies.get("token");
-    const role = Cookies.get("role");
+  const token = Cookies.get("token");
+  dispatch(setTokenValue(token));
+  const role = Cookies.get("role");
+  dispatch(setRoleValue(role));
 
    console.log(`token`, token);
 
