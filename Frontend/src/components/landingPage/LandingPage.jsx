@@ -31,6 +31,7 @@ const LandingPage = () => {
   // }, [location.state]);
   // const navigate = useNavigate();
   // console.log("Is Logged In:", isLoggedIn);
+
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
   const isReduxPartner = useSelector((state) => state.partner.isPartner);
   const navigate = useNavigate();
@@ -159,7 +160,7 @@ React.useEffect(() => {
       );
 
       console.log("User session verified:", res.data);
-      setIsUser(true); // ✅ Triggers re-render
+      dispatch({ type: "login/login" });
       navigate("/landingpage");
     } catch (err) {
       console.error("Session check failed:", err);
