@@ -39,11 +39,13 @@ const LandingPage = () => {
   const [query, setQuery] = useState("");
   const dispatch = useDispatch();
   // const [searchParams] = useSearchParams();
-  const token = Cookies.get("token");
-  dispatch(setTokenValue(token));
-  const role = Cookies.get("role");
-  dispatch(setRoleValue(role));
+  useEffect(() => {
+    const token = Cookies.get("token");
+    const role = Cookies.get("role");
 
+    if (token) dispatch(setTokenValue(token));
+    if (role) dispatch(setRoleValue(role));
+  }, []);
    console.log(`token`, token);
 
   const imgArr = [
