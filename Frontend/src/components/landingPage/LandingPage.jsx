@@ -35,11 +35,9 @@ const LandingPage = () => {
   const isReduxPartner = useSelector((state) => state.partner.isPartner);
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
+  const dispatch = useDispatch();
   // const [searchParams] = useSearchParams();
-    const token = Cookies.get("token");
-    const role = Cookies.get("role");
-
-   console.log(`token`, token);
+   
 
   const imgArr = [
     {
@@ -199,7 +197,7 @@ React.useEffect(() => {
     setMap(null);
   }, []);
   const [isPartner, setIsPartner] = useState(false);
-  const dispatch = useDispatch();
+  
   const handleLogoutClick = async () => {
     try {
       const response = await axios.post(
