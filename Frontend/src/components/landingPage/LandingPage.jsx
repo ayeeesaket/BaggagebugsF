@@ -159,7 +159,7 @@ React.useEffect(() => {
       );
 
       console.log("User session verified:", res.data);
-      setIsUser(true);
+   dispatch({ type: "login/login" });
       navigate("/landingpage");
     } catch (err) {
       console.error("Session check failed:", err);
@@ -170,12 +170,7 @@ React.useEffect(() => {
   callPostLoginAPI();
 }, []);
 
-const login =() => {
-  if (isUser) {
-    dispatch({ type: "login/login" });
-    console.log("Login action dispatched", isLoggedIn);
-  } 
-} // ✅ Runs only when isUser becomes true
+// ✅ Runs only when isUser becomes true
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
