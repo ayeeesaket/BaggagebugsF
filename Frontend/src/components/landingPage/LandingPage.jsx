@@ -140,11 +140,13 @@ const LandingPage = () => {
     //  Cookies.set("role", role, { expires: 1 }); // Assuming role is 'user' for this example
     //   dispatch({ type: "login/login" });
   }, []);
-  let isUser = false;
+ const [isUser, setIsUser] = React.useState(false);
+
 React.useEffect(() => {
   const callPostLoginAPI = async () => {
     try {
-     
+      const token = Cookies.get("token");
+      const role = Cookies.get("role");
 
       if (!token || !role) {
         console.warn("Missing token or role");
@@ -159,22 +161,26 @@ React.useEffect(() => {
       );
 
       console.log("User session verified:", res.data);
-     isUser = true;
+      setIsUser(true); // ✅ Triggers re-render
       navigate("/landingpage");
     } catch (err) {
       console.error("Session check failed:", err);
       navigate("/");
     }
   };
+
   callPostLoginAPI();
 }, []);
- // ✅ Prevents repeated execution
-if(isUser == true){
-  dispatch({ type: "login/login" });
-  console.log('====================================');
-  console.log('User is logged in, dispatching login action',isLoggedIn);
-  console.log('====================================');
-}
+
+React.useEffect(() => {
+  if (isUser) {
+    dispatch({ type: "login/login" });
+    console.log("====================================");
+    console.log("User is logged in, dispatching login action");
+    console.log("====================================");
+  }
+}, [isUser]); // ✅ Runs only when isUser becomes true
+
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: GoogleApi, // Replace with your key
