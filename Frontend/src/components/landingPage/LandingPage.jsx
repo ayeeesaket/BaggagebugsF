@@ -159,7 +159,7 @@ React.useEffect(() => {
       );
 
       console.log("User session verified:", res.data);
-
+      setIsUser(true);
       navigate("/landingpage");
     } catch (err) {
       console.error("Session check failed:", err);
