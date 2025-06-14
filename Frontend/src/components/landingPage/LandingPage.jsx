@@ -173,6 +173,7 @@ React.useEffect(() => {
 const login =() => {
   if (isUser) {
     dispatch({ type: "login/login" });
+    console.log("Login action dispatched", isLoggedIn);
   } 
 } // ✅ Runs only when isUser becomes true
 
