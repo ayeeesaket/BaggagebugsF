@@ -134,11 +134,30 @@ const LandingPage = () => {
         }
       );
     }
-     Cookies.set("token", token, { expires: 1});
-     Cookies.set("role", role, { expires: 1 }); // Assuming role is 'user' for this example
-      dispatch({ type: "login/login" });
+    //  Cookies.set("token", token, { expires: 1});
+    //  Cookies.set("role", role, { expires: 1 }); // Assuming role is 'user' for this example
+    //   dispatch({ type: "login/login" });
   }, []);
-
+  React.useEffect(() => {
+    const callPostLoginAPI = async () => {
+      try {
+        const token = searchParams.get("token");
+        const role = searchParams.get("role");
+        const res = await axios.post(
+          `${ProductionApi}/user/setCookies`,
+          { token, role },
+          { withCredentials: true }
+        );
+        console.log("User session verified:", res.data);
+        navigate("/landingpage");
+        dispatch({ type: "login/login" });
+      } catch (err) {
+        console.error("Session check failed:", err);
+        navigate("/");
+      }
+    };
+    callPostLoginAPI();
+})
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: GoogleApi, // Replace with your key
