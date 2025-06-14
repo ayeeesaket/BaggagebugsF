@@ -50,6 +50,7 @@ const Bookingpage = () => {
 
   const handleLogoClick = () => {
     navigate("/landingpage");
+    dispatch({ type: "login/logout" });
   };
 
   const containerStyle = { width: "100%", height: "700px" };
