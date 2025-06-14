@@ -35,9 +35,10 @@ const LandingPage = () => {
   const isReduxPartner = useSelector((state) => state.partner.isPartner);
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
-  const [searchParams] = useSearchParams();
-   const token = searchParams.get("token");
-   const role  = searchParams.get("role");
+  // const [searchParams] = useSearchParams();
+    const token = Cookies.get("token");
+      const role = Cookies.get("role");
+
    console.log(`token`, token);
 
   const imgArr = [
@@ -95,6 +96,7 @@ const LandingPage = () => {
     { name: "Jane Smith", review: "Highly Recommend!", img: "/person.svg" },
     { name: "Mark Johnson", review: "Very Satisfied!", img: "/person.svg" },
   ];
+  
   const settings2 = {
     dots: false,
     infinite: true,
@@ -142,23 +144,31 @@ const LandingPage = () => {
 React.useEffect(() => {
   const callPostLoginAPI = async () => {
     try {
-      const token = Cookies.get("token", { expires: 1 });
-      const role = Cookies.get("role", { expires: 1 });
+     
+
+      if (!token || !role) {
+        console.warn("Missing token or role");
+        navigate("/");
+        return;
+      }
+
       const res = await axios.post(
         `${ProductionApi}/user/setCookies`,
         { token, role },
         { withCredentials: true }
       );
+
       console.log("User session verified:", res.data);
-      navigate("/landingpage");
       dispatch({ type: "login/login" });
+      navigate("/landingpage");
     } catch (err) {
       console.error("Session check failed:", err);
       navigate("/");
     }
   };
   callPostLoginAPI();
-}, []); // ✅ Prevents repeated execution
+}, []);
+ // ✅ Prevents repeated execution
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
