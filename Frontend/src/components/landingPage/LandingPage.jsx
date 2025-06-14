@@ -142,8 +142,8 @@ const LandingPage = () => {
 React.useEffect(() => {
   const callPostLoginAPI = async () => {
     try {
-      const token = Cookies.get("token");
-      const role = Cookies.get("role");
+      const token = Cookies.get("token", { expires: 1 });
+      const role = Cookies.get("role", { expires: 1 });
       const res = await axios.post(
         `${ProductionApi}/user/setCookies`,
         { token, role },
