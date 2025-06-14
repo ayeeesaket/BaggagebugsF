@@ -140,7 +140,7 @@ const LandingPage = () => {
     //  Cookies.set("role", role, { expires: 1 }); // Assuming role is 'user' for this example
     //   dispatch({ type: "login/login" });
   }, []);
-  
+  let isUser = false;
 React.useEffect(() => {
   const callPostLoginAPI = async () => {
     try {
@@ -159,7 +159,7 @@ React.useEffect(() => {
       );
 
       console.log("User session verified:", res.data);
-      // dispatch({ type: "login/login" });
+     isUser = true;
       navigate("/landingpage");
     } catch (err) {
       console.error("Session check failed:", err);
@@ -169,7 +169,9 @@ React.useEffect(() => {
   callPostLoginAPI();
 }, []);
  // ✅ Prevents repeated execution
-
+if(isUser == true){
+  dispatch({ type: "login/login" });
+}
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: GoogleApi, // Replace with your key
