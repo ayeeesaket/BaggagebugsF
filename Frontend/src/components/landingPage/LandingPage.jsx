@@ -171,6 +171,9 @@ React.useEffect(() => {
  // ✅ Prevents repeated execution
 if(isUser == true){
   dispatch({ type: "login/login" });
+  console.log('====================================');
+  console.log('User is logged in, dispatching login action',isLoggedIn);
+  console.log('====================================');
 }
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
