@@ -46,7 +46,7 @@ const LandingPage = () => {
     if (token) dispatch(setTokenValue(token));
     if (role) dispatch(setRoleValue(role));
   }, []);
-   console.log(`token`, token);
+  
 
   const imgArr = [
     {
