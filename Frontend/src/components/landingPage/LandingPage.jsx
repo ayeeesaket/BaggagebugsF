@@ -138,26 +138,28 @@ const LandingPage = () => {
     //  Cookies.set("role", role, { expires: 1 }); // Assuming role is 'user' for this example
     //   dispatch({ type: "login/login" });
   }, []);
-  React.useEffect(() => {
-    const callPostLoginAPI = async () => {
-      try {
-        const token = Cookies.get("token");
-        const role = Cookies.get("role");
-        const res = await axios.post(
-          `${ProductionApi}/user/setCookies`,
-          { token, role },
-          { withCredentials: true }
-        );
-        console.log("User session verified:", res.data);
-        navigate("/landingpage");
-        dispatch({ type: "login/login" });
-      } catch (err) {
-        console.error("Session check failed:", err);
-        navigate("/");
-      }
-    };
-    callPostLoginAPI();
-})
+  
+React.useEffect(() => {
+  const callPostLoginAPI = async () => {
+    try {
+      const token = Cookies.get("token");
+      const role = Cookies.get("role");
+      const res = await axios.post(
+        `${ProductionApi}/user/setCookies`,
+        { token, role },
+        { withCredentials: true }
+      );
+      console.log("User session verified:", res.data);
+      navigate("/landingpage");
+      dispatch({ type: "login/login" });
+    } catch (err) {
+      console.error("Session check failed:", err);
+      navigate("/");
+    }
+  };
+  callPostLoginAPI();
+}, []); // ✅ Prevents repeated execution
+
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: GoogleApi, // Replace with your key
