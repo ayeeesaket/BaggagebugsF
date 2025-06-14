@@ -35,6 +35,7 @@ const LandingPage = () => {
   const isReduxPartner = useSelector((state) => state.partner.isPartner);
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
+  const dispatch = useDispatch();
   // const [searchParams] = useSearchParams();
   const token = Cookies.get("token");
   dispatch(setTokenValue(token));
@@ -142,11 +143,13 @@ const LandingPage = () => {
     //  Cookies.set("role", role, { expires: 1 }); // Assuming role is 'user' for this example
     //   dispatch({ type: "login/login" });
   }, []);
-  
+ const [isUser, setIsUser] = React.useState(false);
+
 React.useEffect(() => {
   const callPostLoginAPI = async () => {
     try {
-     
+      const token = Cookies.get("token");
+      const role = Cookies.get("role");
 
       if (!token || !role) {
         console.warn("Missing token or role");
@@ -161,16 +164,18 @@ React.useEffect(() => {
       );
 
       console.log("User session verified:", res.data);
-      dispatch({ type: "login/login" });
+   dispatch({ type: "login/login" });
       navigate("/landingpage");
     } catch (err) {
       console.error("Session check failed:", err);
       navigate("/");
     }
   };
+
   callPostLoginAPI();
 }, []);
- // ✅ Prevents repeated execution
+
+// ✅ Runs only when isUser becomes true
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
@@ -190,7 +195,7 @@ React.useEffect(() => {
     setMap(null);
   }, []);
   const [isPartner, setIsPartner] = useState(false);
-  const dispatch = useDispatch();
+  
   const handleLogoutClick = async () => {
     try {
       const response = await axios.post(
