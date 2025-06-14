@@ -127,24 +127,24 @@ const LandingPage = () => {
         }
       );
     }
-    const callPostLoginAPI = async () => {
-      try {
-        const token = searchParams.get("token");
-        const role = searchParams.get("role");
-        const res = await axios.post(
-          `${ProductionApi}/user/setCookies`,
-          { token, role },
-          { withCredentials: true }
-        );
-        console.log("User session verified:", res.data);
-        navigate("/landingpage");
-        dispatch({ type: "login/login" });
-      } catch (err) {
-        console.error("Session check failed:", err);
-        navigate("/");
-      }
-    };
-    callPostLoginAPI();
+    // const callPostLoginAPI = async () => {
+    //   try {
+    //     const token = searchParams.get("token");
+    //     const role = searchParams.get("role");
+    //     const res = await axios.post(
+    //       `${ProductionApi}/user/setCookies`,
+    //       { token, role },
+    //       { withCredentials: true }
+    //     );
+    //     console.log("User session verified:", res.data);
+    //     navigate("/landingpage");
+    //     dispatch({ type: "login/login" });
+    //   } catch (err) {
+    //     console.error("Session check failed:", err);
+    //     navigate("/");
+    //   }
+    // };
+    // callPostLoginAPI();
   }, []);
 
   const { isLoaded } = useJsApiLoader({
@@ -184,7 +184,7 @@ const LandingPage = () => {
   };
   return (
     <>
-      <div className="page p-2 pl-15 pr-15">
+      <div className="page p-2 md:pl-15 md:pr-15 px-3">
         <div className="w-full">
           {/* Mobile layout: visible on small screens only */}
           <div className="md:hidden flex flex-col gap-4 p-4">
@@ -375,61 +375,88 @@ const LandingPage = () => {
 
         {/* section2 */}
 
-        <div className="section-2 flex  items-center mt-10  gap-48 ml-30 ">
-          <div className="section-2-left h-[500px] w-[500px] ml-10 pt-30 pb-8 pl-16 flex-col justify-between text-left border-4 rounded-[50%] border-[#FA8128]">
-            <div className="flex flex-col gap-1">
-              <div className="steps text-[20px] leading-tight">Step 1</div>
-              <div className="steps-content text-[#63C5DA] text-[35px] leading-none">
+        <div className="section-2 flex flex-col-reverse md:flex-row items-center mt-10 gap-10 md:gap-48 ml-4 md:ml-30 relative">
+          {/* Text block (How does it work?) - repositioned above on mobile */}
+          <div className="section-2-right mb-6 md:mb-0 h-auto md:h-[450px] w-full md:w-[400px] flex flex-col justify-center items-center md:items-end pr-0 md:pr-5 leading-tight">
+            <div className="text-[#63C5DA] text-[30px] md:text-[50px] font-bold text-center md:text-right">
+              How does it
+            </div>
+            <div className="text-[#FA8128] text-[30px] md:text-[50px] font-bold text-center md:text-right">
+              work?
+            </div>
+          </div>
+
+          {/* Step circle */}
+          <div
+            className="
+    section-2-left 
+    h-[400px] md:h-[500px] 
+    w-full md:w-[500px] 
+    ml-0 md:ml-10 
+    pt-6 md:pt-30 
+    pb-6 md:pb-8 
+    px-4 md:px-16 
+    flex flex-col justify-center md:justify-between 
+    text-left 
+    border-4 rounded-full border-[#FA8128]
+  "
+          >
+            <div className="flex flex-col gap-1 mb-3 md:mb-0">
+              <div className="steps text-[16px] md:text-[20px] leading-tight">
+                Step 1
+              </div>
+              <div className="steps-content text-[#63C5DA] text-[22px] md:text-[35px] leading-[1.2] md:leading-normal">
                 Book Luggage <span className="text-[#FA8128]">Storage</span>
               </div>
             </div>
 
-            <div className="flex flex-col gap-1 mt-6">
-              <div className="steps text-[20px] leading-tight">Step 2</div>
-              <div className="steps-content text-[#63C5DA] text-[35px] leading-none">
+            <div className="flex flex-col gap-1 mb-3 md:mb-0">
+              <div className="steps text-[16px] md:text-[20px] leading-tight">
+                Step 2
+              </div>
+              <div className="steps-content text-[#63C5DA] text-[22px] md:text-[35px] leading-[1.2] md:leading-normal">
                 Drop Your <span className="text-[#FA8128]">Luggage</span>
               </div>
             </div>
 
-            <div className="flex flex-col gap-1 mt-6">
-              <div className="steps text-[20px] leading-tight">Step 3</div>
-              <div className="steps-content text-[#63C5DA] text-[35px] leading-none">
+            <div className="flex flex-col gap-1">
+              <div className="steps text-[16px] md:text-[20px] leading-tight">
+                Step 3
+              </div>
+              <div className="steps-content text-[#63C5DA] text-[22px] md:text-[35px] leading-[1.2] md:leading-normal">
                 Enjoy Your <span className="text-[#FA8128]">Stay</span>
               </div>
             </div>
           </div>
 
-          <div className="luggage-man h-[500px] w-[20px] z-50 translate-x-[370px] translate-y-10 absolute"></div>
-
-          <div className="section-2-right h-[450px] w-[400px] flex flex-col justify-center items-end pr-5 leading-tight">
-            <div className="text-[#63C5DA] text-[50px] font-bold">
-              How does it
-            </div>
-            <div className="text-[#FA8128] text-[50px] font-bold">work?</div>
-          </div>
+          {/* Luggage-man image - hidden on mobile */}
+          <div className="luggage-man h-[400px] md:h-[500px] w-[20px] z-50 translate-x-[370px] translate-y-10 absolute hidden md:block"></div>
         </div>
 
         <div className="section-3 mt-40">
-          <div className="text-[#63C5DA] text-[45px] font-bold text-center">
+          <div className="text-[#63C5DA] text-[30px] md:text-[45px] font-bold text-center">
             We have your back for the{" "}
-            <span className="text-[#FA8128] ml-7">Luggage</span>
+            <span className="text-[#FA8128] ml-3 md:ml-7">Luggage</span>
           </div>
           <div className="relative">
-            <div className="w-[50%] ml-[4%] mt-28 p-10 pr-20 border-2 border-[#63C5DA] border-l-0 ">
-              <div className="text-[50px] font-bold text-end leading-tight">
+            <div className="w-[90%] md:w-[50%] mx-auto md:ml-[4%] mt-10 md:mt-28 p-5 md:p-10 md:pr-20 border-2 border-[#63C5DA] md:border-l-0">
+              <div className="text-[32px] md:text-[50px] font-bold text-end leading-tight">
                 <div className="text-[#FA8128]">Services starting</div>
                 <div className="text-[#FA8128]">from just</div>
                 <div className="text-[#63C5DA]">€4.5</div>
               </div>
 
-              <div className="text-[#FA8128] text-end text-[22px] leading-tight mt-5">
-                <div className="">Available 24/7</div>
-                <div className="">Cheaper and Safe</div>
+              <div className="text-[#FA8128] text-end text-[18px] md:text-[22px] leading-tight mt-4 md:mt-5">
+                <div>Available 24/7</div>
+                <div>Cheaper and Safe</div>
               </div>
             </div>
-            <div className="suitcase z-10 absolute translate-x-[176%] -translate-y-[80%]"></div>
+
+            {/* ✅ Hidden on mobile only */}
+            <div className="suitcase z-10 absolute translate-x-[176%] -translate-y-[80%] hidden md:block"></div>
           </div>
         </div>
+
         <div className="section-4 mt-45 flex flex-col items-center px-4 sm:px-8 md:px-16 lg:px-24 xl:px-40">
           <div className="text-[#63C5DA] text-[30px] sm:text-[40px] md:text-[45px] font-bold text-center">
             <span className="text-[#FA8128]">Reviews </span>
@@ -472,9 +499,9 @@ const LandingPage = () => {
           </Slider>
         </div>
 
-        <div className="section-5 mt-50">
-          <div className="w-[75%] ml-[4%] mt-28 p-10 pr-20 border-2 border-[#63C5DA] border-l-0 ">
-            <div className="text-[50px] font-bold  leading-tight">
+        <div className="section-5 mt-12 relative">
+          <div className="w-[90%] md:w-[75%] mx-auto md:ml-[4%] mt-10 md:mt-28 p-5 md:p-10 md:pr-20 border-2 border-[#63C5DA] md:border-l-0">
+            <div className="text-[32px] md:text-[50px] font-bold leading-tight">
               <div className="text-[#FA8128]">
                 No more worries about your luggage!
               </div>
@@ -483,23 +510,27 @@ const LandingPage = () => {
               </div>
             </div>
 
-            <div className="text-[#FA8128]  text-[30px] leading-tight mt-15">
-              <div className="">Comprehensive Protection</div>
+            <div className="text-[#FA8128] text-[20px] md:text-[30px] leading-tight mt-6 md:mt-15">
+              <div>Comprehensive Protection</div>
               <div className="text-[#63C5DA]">
                 Your luggage is safeguarded with coverage up to €10,000 for
                 damage, loss, or theft.
               </div>
             </div>
-            <div className="text-[#FA8128]  text-[30px] leading-tight mt-10">
-              <div className="">Reliable storage partners</div>
+
+            <div className="text-[#FA8128] text-[20px] md:text-[30px] leading-tight mt-6 md:mt-10">
+              <div>Reliable storage partners</div>
               <div className="text-[#63C5DA]">
                 Our verified partners ensure secure handling through ID checks
                 and reservation confirmations
               </div>
             </div>
           </div>
-          <div className="luggage z-10 absolute translate-x-[1050px] -translate-y-[580px]"></div>
+
+          {/* This keeps the bag image exactly positioned for large screens */}
+          <div className="luggage z-10 md:absolute md:translate-x-[1050px] md:-translate-y-[580px] mt-10 md:mt-0 mx-auto md:mx-0 hidden md:block"></div>
         </div>
+
         <div className="section-6 mt-25 ml-[7%] mr-[7%] md:ml-[7%] md:mr-[7%]">
           <div className="text-[#FA8128] text-[25px] md:text-[45px] font-bold">
             Accessible Everywhere!
