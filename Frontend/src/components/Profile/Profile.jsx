@@ -27,10 +27,11 @@ const Profile = () => {
   const [phoneNo, setPhoneNo] = useState("");
 
   const handleApi = async (e) => {
+   
     e.preventDefault();
     try {
       const response = await axios.post(
-        `${ProductionApi}/user/addDetails`,
+        `https://baggagebugs-81tp.onrender.com/api/v1/user/addDetails`,
         { firstName, lastName, email, dateOfBirth, phoneNo },
         {
           withCredentials: true, // ✅ REQUIRED to send cookies

@@ -11,6 +11,7 @@ import { BsArrowLeftCircle } from "react-icons/bs";
 import { BsArrowRightCircle } from "react-icons/bs";
 import { HiArrowNarrowRight } from "react-icons/hi";
 import Slider from "react-slick";
+import Cookies from "js-cookie";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useSelector, useDispatch } from "react-redux";
@@ -18,6 +19,7 @@ import { GoogleApi } from "../../../utills";
 import axios from "axios";
 import { ProductionApi, LocalApi } from "../../../utills";
 import { useSearchParams } from "react-router-dom";
+import { Cookie } from "lucide-react";
 const LandingPage = () => {
   // const location = useLocation();
   // const[isLoggedIn, setIsLoggedIn] = useState(false);
@@ -33,6 +35,11 @@ const LandingPage = () => {
   const isReduxPartner = useSelector((state) => state.partner.isPartner);
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
+  const [searchParams] = useSearchParams();
+   const token = searchParams.get("token");
+   const role  = searchParams.get("role");
+   console.log(`token`, token);
+
   const imgArr = [
     {
       img: "/Tower.svg",
@@ -112,7 +119,7 @@ const LandingPage = () => {
     width: "600px",
     height: "400px",
   };
-  const [searchParams] = useSearchParams();
+  
   React.useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -127,24 +134,9 @@ const LandingPage = () => {
         }
       );
     }
-    // const callPostLoginAPI = async () => {
-    //   try {
-    //     const token = searchParams.get("token");
-    //     const role = searchParams.get("role");
-    //     const res = await axios.post(
-    //       `${ProductionApi}/user/setCookies`,
-    //       { token, role },
-    //       { withCredentials: true }
-    //     );
-    //     console.log("User session verified:", res.data);
-    //     navigate("/landingpage");
-    //     dispatch({ type: "login/login" });
-    //   } catch (err) {
-    //     console.error("Session check failed:", err);
-    //     navigate("/");
-    //   }
-    // };
-    // callPostLoginAPI();
+     Cookies.set("token", token, { expires: 1});
+     Cookies.set("role", role, { expires: 1 }); // Assuming role is 'user' for this example
+      dispatch({ type: "login/login" });
   }, []);
 
   const { isLoaded } = useJsApiLoader({
