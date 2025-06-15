@@ -44,6 +44,7 @@ const LandingPage = () => {
     const token = new URLSearchParams(window.location.search).get("token");
     if (token && !localStorage.getItem("token")) {
     localStorage.setItem("token", token);
+    dispatch({ type: "login/login" });
     dispatch({
       type: "token/setTokenValue",
       payload: token,
@@ -52,9 +53,7 @@ const LandingPage = () => {
   });
   useEffect(() => {
     const fetchUserData = async () => {
-     
-    if(token)   dispatch({ type: "login/login" });
-      console.log("Token being used:", token);
+    
 
       // try {
       //      const response = await axios.get('https://baggagebugs-1.onrender.com/api/v1/user/getUser', {
