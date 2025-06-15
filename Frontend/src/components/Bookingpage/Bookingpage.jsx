@@ -53,7 +53,12 @@ const Bookingpage = () => {
   //  dispatch({ type: "login/logout" });
   };
 
-  const containerStyle = { width: "100%", height: "700px" };
+  const containerStyle = {
+    width: "100%",
+    height: window.innerWidth < 768 ? "250px" : window.innerWidth < 1024 ? "400px" : "700px",
+    maxWidth: "100vw",
+    maxHeight: "80vh",
+  };
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
@@ -165,16 +170,34 @@ const Bookingpage = () => {
     dots: false,
     infinite: true,
     speed: 500,
-    slidesToShow: 3,
+    slidesToShow: window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 3,
     slidesToScroll: 1,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+        }
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          arrows: false,
+          dots: true
+        }
+      }
+    ],
     prevArrow: (
-      <div className="absolute -left-8 top-1/2 transform -translate-y-1/2 z-10 cursor-pointer">
-        <BsArrowLeftCircle className="text-[#63C5DA] text-4xl" />
+      <div className="absolute -left-4 md:-left-8 top-1/2 transform -translate-y-1/2 z-10 cursor-pointer">
+        <BsArrowLeftCircle className="text-[#63C5DA] text-2xl md:text-4xl" />
       </div>
     ),
     nextArrow: (
-      <div className="absolute -right-8 top-1/2 transform -translate-y-1/2 z-10 cursor-pointer">
-        <BsArrowRightCircle className="text-[#63C5DA] text-4xl" />
+      <div className="absolute -right-4 md:-right-8 top-1/2 transform -translate-y-1/2 z-10 cursor-pointer">
+        <BsArrowRightCircle className="text-[#63C5DA] text-2xl md:text-4xl" />
       </div>
     ),
   };
@@ -198,35 +221,8 @@ const Bookingpage = () => {
       console.log("Error fetching facility details:", error);
     }
   };
-  // console.log("Facility ID through redux:", sfdata);
-  // const handleBookNow = async (facilityId) => {
-  //   try {
-  //     console.log("Booking facility with ID:", facilityId);
-
-  //     const response = await axios.get(
-  //       "https://baggagebugs-81tp.onrender.com/api/v1/facility/facilityById",
-  //       {
-  //         params: {
-  //           id: "682072396eadb9cf4dc06054",  // ✅ Passed correctly
-  //         },
-  //         withCredentials: true,
-  //       }
-  //     );
-
-  //     console.log("Facility Details:", response.data);
-  //   } catch (error) {
-  //     console.error("Error fetching facility details:", error);
-
-  //     if (error.config) {
-  //       console.error("Request config:", error.config); // Shows what Axios tried to send
-  //     }
-
-  //     if (error.response) {
-  //       console.error("Response status:", error.response.status);
-  //       console.error("Response data:", error.response.data);
-  //     }
-  //   }
-  // };
+ 
+ 
 
   const handleMakeBookingApi = async () => {
     console.log("yaha se dekh ::::::::");
@@ -252,209 +248,216 @@ const Bookingpage = () => {
     }
   };
   return (
-    <div className="main h-screen w-full">
+    <div className="main min-h-screen w-full">
       {/* Navbar */}
-      <div className="navbar flex p-2 pl-16 m-4 justify-between text-2xl">
-        <div className="flex cursor-pointer" onClick={handleLogoClick}>
-          <div className="logo-bag" />
-          <div className="logo" />
-        </div>
-
-        {/* Destination Search */}
-        <div className="relative m-2 w-[300px]">
-          <input
-            className="border-2 rounded-4xl border-[#63C5DA] p-2 w-full text-[#FA8128] shadow-md pr-12 h-12"
-            placeholder="Destination"
-            type="text"
-            value={destination}
-            onChange={(e) => setDestination(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSearchDestination()}
-          />
-          <span
-            className="absolute right-4 top-1/2 transform -translate-y-4 text-[#63C5DA] cursor-pointer"
-            onClick={handleSearchDestination}
-          >
-            <IoIosSearch size={24} />
-          </span>
-        </div>
-
-        {/* Date Pickers */}
-        {[
-          [
-            "Drop-off",
-            dropOffDate,
-            showDropOffCalendar,
-            setShowDropOffCalendar,
-            setDropOffDate,
-          ],
-          [
-            "Pick-up",
-            pickUpDate,
-            showPickUpCalendar,
-            setShowPickUpCalendar,
-            setPickUpDate,
-          ],
-        ].map(([label, date, showCal, toggleCal, updateDate]) => (
-          <div className="relative" key={label}>
-            <input
-              className="border-2 mt-2 rounded-4xl border-[#63C5DA] p-2 text-[#FA8128] shadow-md pr-12 h-12"
-              placeholder={label}
-              readOnly
-              value={formatDate(date)}
-              onClick={() => toggleCal(!showCal)}
-            />
-            {showCal && (
-              <div className="absolute z-10">
-                <Calendar
-                  onChange={(d) => {
-                    const normalizedDate = new Date(
-                      d.getFullYear(),
-                      d.getMonth(),
-                      d.getDate()
-                    );
-                    updateDate(normalizedDate);
-                    toggleCal(false);
-                  }}
-                  value={date}
-                />
-              </div>
-            )}
+      <div className="navbar flex flex-col lg:flex-row p-2 lg:p-4 lg:pl-16 m-2 lg:m-4 gap-2 lg:gap-4 justify-between text-lg lg:text-2xl">
+        {/* Top row for mobile - Logo and hamburger */}
+        <div className="flex justify-between items-center lg:contents">
+          <div className="flex cursor-pointer" onClick={handleLogoClick}>
+            <div className="logo-bag" />
+            <div className="logo" />
           </div>
-        ))}
-
-        {/* Bag Count */}
-        <div className="box mt-2 flex h-[50px] w-[200px] items-center justify-center text-white">
-          <button onClick={() => setNumberofBag((n) => Math.max(n - 1, 0))}>
-            -
-          </button>
-          <span className="mx-3">{numberofbag}</span>
-          <button onClick={() => setNumberofBag((n) => n + 1)}>+</button>
-        </div>
-
-        {/* Language Dropdown */}
-        <div className="relative mt-2">
-          {/* <div
-            className="flex items-center cursor-pointer"
-            onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
-          >
-            <IoIosArrowDown
-              size={15}
+          
+          <div className="lg:hidden">
+            <GiHamburgerMenu
+              size={32}
               color="#FA8128"
-              className="w-15 h-12 mr-5 rounded-2xl border border-[#FA8128]"
+              onClick={() => {
+                if (isLoggedIn) {
+                  navigate("/useroverview");
+                }
+              }}
             />
-          </div> */}
-          {/* {showLanguageDropdown && (
-            <div className="absolute right-0 mt-2 w-[150px] bg-white border border-[#63C5DA] rounded-lg shadow-md">
-              <ul className="text-[#FA8128]">
-                {["English", "Spanish", "French", "German"].map((lang) => (
-                  <li
-                    key={lang}
-                    className="p-2 hover:bg-[#FA8128] hover:text-white cursor-pointer"
-                    onClick={() => console.log(`${lang} selected`)}
-                  >
-                    {lang}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )} */}
+          </div>
         </div>
 
-        <div className="relative mt-3">
-          <GiHamburgerMenu
-            size={40}
-            color="#FA8128"
-            onClick={() => {
-              if (isLoggedIn) {
-                navigate("/useroverview");
-              }
-            }}
-          />
+        {/* Search and controls - stack on mobile */}
+        <div className="flex flex-col sm:flex-row gap-2 lg:gap-4 flex-1 lg:flex-none">
+          {/* Destination Search */}
+          <div className="relative w-full sm:w-[200px] lg:w-[300px]">
+            <input
+              className="border-2 rounded-4xl border-[#63C5DA] p-2 w-full text-[#FA8128] shadow-md pr-12 h-10 lg:h-12 text-sm lg:text-base"
+              placeholder="Destination"
+              type="text"
+              value={destination}
+              onChange={(e) => setDestination(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearchDestination()}
+            />
+            <span
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#63C5DA] cursor-pointer"
+              onClick={handleSearchDestination}
+            >
+              <IoIosSearch size={20} />
+            </span>
+          </div>
+
+          {/* Date Pickers Row */}
+          <div className="flex gap-2 flex-1">
+            {[
+              [
+                "Drop-off",
+                dropOffDate,
+                showDropOffCalendar,
+                setShowDropOffCalendar,
+                setDropOffDate,
+              ],
+              [
+                "Pick-up",
+                pickUpDate,
+                showPickUpCalendar,
+                setShowPickUpCalendar,
+                setPickUpDate,
+              ],
+            ].map(([label, date, showCal, toggleCal, updateDate]) => (
+              <div className="relative flex-1" key={label}>
+                <input
+                  className="border-2 rounded-4xl border-[#63C5DA] p-2 w-full text-[#FA8128] shadow-md h-10 lg:h-12 text-sm lg:text-base"
+                  placeholder={label}
+                  readOnly
+                  value={formatDate(date)}
+                  onClick={() => toggleCal(!showCal)}
+                />
+                {showCal && (
+                  <div className="absolute z-20 mt-1 left-0 right-0">
+                    <Calendar
+                      onChange={(d) => {
+                        const normalizedDate = new Date(
+                          d.getFullYear(),
+                          d.getMonth(),
+                          d.getDate()
+                        );
+                        updateDate(normalizedDate);
+                        toggleCal(false);
+                      }}
+                      value={date}
+                      className="text-sm"
+                    />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Bag counter and hamburger for desktop */}
+        <div className="flex items-center gap-2 lg:gap-4">
+          {/* Bag Count */}
+          <div className="box flex h-10 lg:h-12 w-[120px] lg:w-[200px] items-center justify-center text-white text-sm lg:text-base">
+            <button 
+              onClick={() => setNumberofBag((n) => Math.max(n - 1, 0))}
+              className="px-2 lg:px-3"
+            >
+              -
+            </button>
+            <span className="mx-2 lg:mx-3">{numberofbag}</span>
+            <button 
+              onClick={() => setNumberofBag((n) => n + 1)}
+              className="px-2 lg:px-3"
+            >
+              +
+            </button>
+          </div>
+
+          {/* Desktop Hamburger */}
+          <div className="hidden lg:block">
+            <GiHamburgerMenu
+              size={40}
+              color="#FA8128"
+              onClick={() => {
+                if (isLoggedIn) {
+                  navigate("/useroverview");
+                }
+              }}
+            />
+          </div>
         </div>
       </div>
 
       {/* Google Map and Facility Cards */}
       {isLoaded && (
-        <GoogleMap
-          mapContainerStyle={containerStyle}
-          center={center}
-          zoom={10}
-          onLoad={onLoad}
-          onUnmount={onUnmount}
-        >
-          {/* Multiple Markers */}
-          {markerPositions.map((pos, idx) => (
-            <Marker
-              key={idx}
-              position={pos}
-              onClick={() => {
-                setClicked(true);
-                // You can also add logic here to fetch or display facility details
-                handleBookNow(facilities[idx]._id); // if you want marker click to behave like "Book Now"
-              }}
-            />
-          ))}
+        <div className="relative">
+          <GoogleMap
+            mapContainerStyle={containerStyle}
+            center={center}
+            zoom={10}
+            onLoad={onLoad}
+            onUnmount={onUnmount}
+          >
+            {/* Multiple Markers */}
+            {markerPositions.map((pos, idx) => (
+              <Marker
+                key={idx}
+                position={pos}
+                onClick={() => {
+                  setClicked(true);
+                 
+                  handleBookNow(facilities[idx]._id); 
+                }}
+              />
+            ))}
+          </GoogleMap>
 
+          {/* Facility Cards Overlay */}
           {!clicked ? (
-            <div className="w-full flex justify-center mt-2">
-              <Slider {...sliderSettings} className="w-[85%] mt-96 max-w-7xl">
-                {facilities.map((item, index) => (
-                  <div
-                    key={index}
-                    className="p-4 flex justify-center items-center"
-                  >
-                    <div className="flex flex-row border-2 border-[#63C5DA] rounded-xl shadow-lg p-4 w-full max-h-[350px] overflow-hidden bg-white">
-                      <div className="w-[35%]">
-                        <img
-                          src="/BookingPhoto.svg"
-                          alt="Storage"
-                          className="h-48 w-72 object-cover rounded-lg shadow-md"
-                        />
-                      </div>
-                      <div className="w-[60%] flex flex-col justify-between items-start pl-4">
-                        <div>
-                          <div className="text-[#FA8128] text-xl font-semibold">
-                            {item?.name || "Storage Facility"}
-                          </div>
-                          <div className="text-[#FA8128] text-sm font-light">
-                            {item?.address || "Unknown address"}
-                          </div>
-                          <div className="flex items-center mt-1">
-                            {[...Array(item.rating)].map((_, i) => (
-                              <img
-                                key={i}
-                                src="/Rating.svg"
-                                alt="Star"
-                                className="w-5 h-5"
-                              />
-                            ))}
-                          </div>
+            <div className="absolute bottom-4 left-0 right-0 flex justify-center px-2 lg:px-4">
+              <div className="w-full max-w-7xl">
+                <Slider {...sliderSettings} className="facility-slider">
+                  {facilities.map((item, index) => (
+                    <div
+                      key={index}
+                      className="p-2 lg:p-4"
+                    >
+                      <div className="flex flex-col sm:flex-row border-2 border-[#63C5DA] rounded-xl shadow-lg p-3 lg:p-4 bg-white h-auto sm:h-[300px] lg:h-[350px]">
+                        <div className="w-full sm:w-[35%] mb-3 sm:mb-0">
+                          <img
+                            src="/BookingPhoto.svg"
+                            alt="Storage"
+                            className="h-32 sm:h-48 w-full object-cover rounded-lg shadow-md"
+                          />
                         </div>
-                        <div className="text-sm">
-                          <div className="text-green-700">{item.timing}</div>
-                          <div className="text-[#63C5DA]"></div>
+                        <div className="w-full sm:w-[60%] flex flex-col justify-between sm:pl-4">
+                          <div>
+                            <div className="text-[#FA8128] text-lg lg:text-xl font-semibold">
+                              {item?.name || "Storage Facility"}
+                            </div>
+                            <div className="text-[#FA8128] text-sm font-light">
+                              {item?.address || "Unknown address"}
+                            </div>
+                            <div className="flex items-center mt-1">
+                              {[...Array(item.rating)].map((_, i) => (
+                                <img
+                                  key={i}
+                                  src="/Rating.svg"
+                                  alt="Star"
+                                  className="w-4 h-4 lg:w-5 lg:h-5"
+                                />
+                              ))}
+                            </div>
+                          </div>
+                          <div className="text-sm mt-2">
+                            <div className="text-green-700">{item.timing}</div>
+                          </div>
+                          <button
+                            className="bg-[#FA8128] text-white px-4 py-2 rounded-3xl mt-3 self-start text-sm lg:text-base"
+                            onClick={async () => {
+                              await handleBookNow(item._id);
+                              setClicked(true);
+                            }} 
+                          >
+                            Book Now
+                          </button>
                         </div>
-                        <button
-                          className="bg-[#FA8128] text-white px-3 py-2 rounded-3xl"
-                          onClick={async () => {
-                            await handleBookNow(item._id);
-                            setClicked(true);
-                          }} // Pass facility ID here
-                          // Pass facility ID here
-                        >
-                          Book Now
-                        </button>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </Slider>
+                  ))}
+                </Slider>
+              </div>
             </div>
           ) : (
-            <div className="absolute flex mt-20 justify-center items-center ml-42 h-[80%] bg-gray-50 bg-opacity-80 backdrop-blur-sm">
-              <div className="border-2 border-[#63C5DA] p-4 overflow-hidden shadow-lg bg-white transition-all hover:shadow-xl flex flex-col gap-y-4 divide-y divide-gray-300 max-w-md w-full">
+            <div className="absolute inset-0 flex justify-center items-center p-4 bg-gray-50 bg-opacity-80 backdrop-blur-sm">
+              <div className="border-2 border-[#63C5DA] p-4 lg:p-6 shadow-lg bg-white transition-all hover:shadow-xl flex flex-col gap-y-4 divide-y divide-gray-300 max-w-sm lg:max-w-md w-full max-h-[90vh] overflow-y-auto">
                 {/* Image */}
-                <div className="w-full h-48 bg-gray-100 rounded overflow-hidden">
+                <div className="w-full h-32 sm:h-48 bg-gray-100 rounded overflow-hidden">
                   <img
                     src="/BookingPhoto.svg"
                     alt="Storage"
@@ -464,7 +467,7 @@ const Bookingpage = () => {
 
                 {/* Details */}
                 <div className="pt-2">
-                  <div className="text-[#FA8128] text-xl font-semibold"></div>
+                  <div className="text-[#FA8128] text-lg lg:text-xl font-semibold">{facilityName}</div>
                   <div className="text-[#FA8128] text-sm font-light">
                     {fAddress || "Queens street, Melbourn"}
                   </div>
@@ -474,7 +477,7 @@ const Bookingpage = () => {
                         key={i}
                         src="/Rating.svg"
                         alt="Star"
-                        className="w-5 h-5"
+                        className="w-4 h-4 lg:w-5 lg:h-5"
                       />
                     ))}
                   </div>
@@ -493,7 +496,7 @@ const Bookingpage = () => {
                   {["Wifi", "Restroom", "CCtv"].map((facility) => (
                     <button
                       key={facility}
-                      className="border-2 border-[#63C5DA] rounded px-3 py-1 text-[#FA8128] text-sm"
+                      className="border-2 border-[#63C5DA] rounded px-2 lg:px-3 py-1 text-[#FA8128] text-xs lg:text-sm"
                     >
                       {facility}
                     </button>
@@ -502,15 +505,15 @@ const Bookingpage = () => {
 
                 {/* Pricing */}
                 <div className="pt-2 text-center">
-                  <p className="text-[#FA8128] text-lg font-medium">
+                  <p className="text-[#FA8128] text-base lg:text-lg font-medium">
                     At 2.5 EUR per bag/day
                   </p>
-                  <div className="flex gap-2 justify-center my-2 flex-wrap">
+                  <div className="grid grid-cols-2 gap-2 justify-center my-2">
                     {["6:30 PM", "8:30 PM", "9:30 PM", "10:00 PM"].map(
                       (time) => (
                         <button
                           key={time}
-                          className="border-2 border-[#63C5DA] rounded px-3 py-1 text-[#FA8128] text-sm"
+                          className="border-2 border-[#63C5DA] rounded px-2 lg:px-3 py-1 text-[#FA8128] text-xs lg:text-sm"
                         >
                           {time}
                         </button>
@@ -518,7 +521,7 @@ const Bookingpage = () => {
                     )}
                   </div>
                   <button
-                    className="bg-[#FA8128] text-white px-5 py-2 rounded-3xl mt-2"
+                    className="bg-[#FA8128] text-white px-5 py-2 rounded-3xl mt-2 w-full sm:w-auto"
                     onClick={handleMakeBookingApi}
                   >
                     Book Now
@@ -527,7 +530,7 @@ const Bookingpage = () => {
               </div>
             </div>
           )}
-        </GoogleMap>
+        </div>
       )}
     </div>
   );

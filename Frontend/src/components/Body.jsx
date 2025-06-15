@@ -25,7 +25,7 @@ const Body = () => {
     { path: "/useroverview", element: <UserOverview /> },
     { path: "/profile", element: <Profile /> },
     { path: "/reviews", element: <Reviews /> },
-    { path: "reservation", element: <Reservation /> },
+    { path: "/reservation", element: <Reservation /> },
     { path: "/userbookings", element: <UserBookings /> },
     { path: "/onboarding", element: <Onboardingpage /> },
   ]);
