@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 const UserBookings = () => {
   const [isbooking, setIsBooking] = useState(false);
   const navigate = useNavigate();

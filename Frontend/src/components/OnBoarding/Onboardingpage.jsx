@@ -14,6 +14,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { ProductionApi, LocalApi } from "../../../utills";
+import { useSelector } from "react-redux";
 const Onboardingpage = () => {
   const [count, setCount] = useState(5);
   const [earnings, setEarnings] = useState(15);
