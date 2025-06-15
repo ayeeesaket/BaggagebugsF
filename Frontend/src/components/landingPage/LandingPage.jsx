@@ -46,6 +46,7 @@ const LandingPage = () => {
       dispatch({
         type: "token/setTokenValue",
         payload: token,
+        type: "login/login" 
       });
     }
     console.log("Token saved to localStorage:", token);
