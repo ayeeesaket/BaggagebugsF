@@ -40,14 +40,7 @@ const LandingPage = () => {
   const [query, setQuery] = useState("");
   const dispatch = useDispatch();
   // const [searchParams] = useSearchParams();
-  useEffect(() => {
-    const token = Cookies.get("token");
-    const role = Cookies.get("role");
-
-    if (token) dispatch(setTokenValue(token));
-    if (role) dispatch(setRoleValue(role));
-  }, []);
-  
+ 
 
   const imgArr = [
     {
@@ -148,7 +141,7 @@ const LandingPage = () => {
     //  Cookies.set("role", role, { expires: 1 }); // Assuming role is 'user' for this example
     //   dispatch({ type: "login/login" });
   }, []);
- const [isUser, setIsUser] = React.useState(false);
+
 
 
 
