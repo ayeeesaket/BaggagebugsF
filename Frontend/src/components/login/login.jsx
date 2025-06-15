@@ -131,7 +131,7 @@ const Login = () => {
               icon={<GoogleIcon />}
               text="Continue with Google"
               onClick={() => {
-                window.location.href = `https://baggagebugs-1.onrender.com/api/v1/user/auth/google`;
+                window.location.href = `${ProductionApi}/user/auth/google`;
               }}
               className="w-full"
             />
