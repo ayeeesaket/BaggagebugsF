@@ -1,7 +1,7 @@
 import React from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 const Reservation = () => {
   const navigate = useNavigate();
   const handleLogoClick = () => navigate("/landingpage");
