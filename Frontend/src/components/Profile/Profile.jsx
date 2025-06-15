@@ -5,7 +5,7 @@ import { AiOutlinePlusCircle } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ProductionApi, LocalApi } from "../../../utills";
-import { useSelector } from "react-redux";
+
 const Profile = () => {
   const navigate = useNavigate();
   const handleLogoClick = () => {
