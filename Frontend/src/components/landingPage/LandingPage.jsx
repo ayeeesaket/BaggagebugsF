@@ -44,7 +44,7 @@ const LandingPage = () => {
     const token = new URLSearchParams(window.location.search).get("token");
     if (token && !localStorage.getItem("token")) {
     localStorage.setItem("token", token);
-    dispatch({ type: "login/login" });
+   
     dispatch({
       type: "token/setTokenValue",
       payload: token,
