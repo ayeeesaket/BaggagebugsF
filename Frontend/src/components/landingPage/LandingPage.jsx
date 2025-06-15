@@ -46,7 +46,7 @@ const LandingPage = () => {
       dispatch({
         type: "token/setTokenValue",
         payload: token,
-        type: "login/login" 
+
       });
     }
     console.log("Token saved to localStorage:", token);
@@ -54,7 +54,7 @@ const LandingPage = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       const token = localStorage.getItem("token");
-
+   dispatch({ type: "login/login" });
       console.log("Token being used:", token);
 
       // try {
