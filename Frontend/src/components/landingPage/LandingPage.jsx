@@ -1,4 +1,4 @@
-import React, { useState  , useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
 import { useNavigate } from "react-router-dom";
 import "../../styles/LandingPage.css";
@@ -43,11 +43,19 @@ const LandingPage = () => {
     const token = Cookies.get("token");
     const role = Cookies.get("role");
 
-    if (token) dispatch(setTokenValue(token));
-    if (role) dispatch(setRoleValue(role));
+    if (token)
+      dispatch({
+        type: "token/setTokenValue",
+        payload: token,
+      });
+    if (role)
+      dispatch({
+        type: "role/setRoleValue",
+        payload: role,
+      });
   }, []);
-  
-
+  const token = useSelector((state) => state.token.tokenValue);
+  const role = useSelector((state) => state.role.roleValue);
   const imgArr = [
     {
       img: "/Tower.svg",
@@ -103,7 +111,7 @@ const LandingPage = () => {
     { name: "Jane Smith", review: "Highly Recommend!", img: "/person.svg" },
     { name: "Mark Johnson", review: "Very Satisfied!", img: "/person.svg" },
   ];
-  
+
   const settings2 = {
     dots: false,
     infinite: true,
@@ -128,7 +136,7 @@ const LandingPage = () => {
     width: "600px",
     height: "400px",
   };
-  
+
   React.useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -147,39 +155,39 @@ const LandingPage = () => {
     //  Cookies.set("role", role, { expires: 1 }); // Assuming role is 'user' for this example
     //   dispatch({ type: "login/login" });
   }, []);
- const [isUser, setIsUser] = React.useState(false);
+  const [isUser, setIsUser] = React.useState(false);
 
-React.useEffect(() => {
-  const callPostLoginAPI = async () => {
-    try {
-      const token = Cookies.get("token");
-      const role = Cookies.get("role");
+  React.useEffect(() => {
+    const callPostLoginAPI = async () => {
+      try {
+        const token = Cookies.get("token");
+        const role = Cookies.get("role");
 
-      if (!token || !role) {
-        console.warn("Missing token or role");
+        if (!token || !role) {
+          console.warn("Missing token or role");
+          navigate("/");
+          return;
+        }
+
+        const res = await axios.post(
+          `${ProductionApi}/user/setCookies`,
+          { token, role },
+          { withCredentials: true }
+        );
+
+        console.log("User session verified:", res.data);
+        dispatch({ type: "login/login" });
+        navigate("/landingpage");
+      } catch (err) {
+        console.error("Session check failed:", err);
         navigate("/");
-        return;
       }
+    };
 
-      const res = await axios.post(
-        `${ProductionApi}/user/setCookies`,
-        { token, role },
-        { withCredentials: true }
-      );
+    callPostLoginAPI();
+  }, []);
 
-      console.log("User session verified:", res.data);
-   dispatch({ type: "login/login" });
-      navigate("/landingpage");
-    } catch (err) {
-      console.error("Session check failed:", err);
-      navigate("/");
-    }
-  };
-
-  callPostLoginAPI();
-}, []);
-
-// ✅ Runs only when isUser becomes true
+  // ✅ Runs only when isUser becomes true
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
@@ -199,7 +207,7 @@ React.useEffect(() => {
     setMap(null);
   }, []);
   const [isPartner, setIsPartner] = useState(false);
-  
+
   const handleLogoutClick = async () => {
     try {
       const response = await axios.post(
