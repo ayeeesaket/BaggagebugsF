@@ -41,12 +41,13 @@ const LandingPage = () => {
   // const [searchParams] = useSearchParams();
   useEffect(() => {
     const token = new URLSearchParams(window.location.search).get("token");
-    if (token) {localStorage.setItem("token", token);
-    dispatch({
-      type: "token/setTokenValue",
-      payload: token,
-    });
-    dispatch({ type: "login/login" });}
+    if (token) {
+      localStorage.setItem("token", token);
+      dispatch({
+        type: "token/setTokenValue",
+        payload: token,
+      });
+    }
     console.log("Token saved to localStorage:", token);
   });
   useEffect(() => {
@@ -76,10 +77,10 @@ const LandingPage = () => {
   // useEffect(() => {
 
   //   if (token)
-      // dispatch({
-      //   type: "token/setTokenValue",
-      //   payload: token,
-      // });
+  // dispatch({
+  //   type: "token/setTokenValue",
+  //   payload: token,
+  // });
   //   if (role)
   //     dispatch({
   //       type: "role/setRoleValue",

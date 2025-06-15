@@ -132,6 +132,7 @@ const Login = () => {
               text="Continue with Google"
               onClick={() => {
                 window.location.href = `${ProductionApi}/user/auth/google`;
+                dispatch({ type: "login/login" });
               }}
               className="w-full"
             />
