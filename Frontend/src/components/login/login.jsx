@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import { ProductionApi , LocalApi } from "../../../utills";
+import { ProductionApi, LocalApi } from "../../../utills";
 
 const GoogleIcon = () => <span className="googleimg"></span>;
 const FacebookIcon = () => <span className="fbimg"></span>;
@@ -33,33 +33,30 @@ const Login = () => {
   useEffect(() => {
     console.log("Redux isLoggedIn changed:", isLoggedIn);
   }, [isLoggedIn]);
-   
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
     try {
       const response = await axios.post(
-        `https://baggagebugs-1.onrender.com/api/v1/user/login`,
+        `${ProductionApi}/user/login`,
         { email, password },
         { withCredentials: true }
       );
 
-      if (response.data.success) {
-        const { token, role } = response.data;
+      dispatch({ type: "login/login" });
 
-        // dispatch to redux
-        dispatch({ type: "login/login", payload: { token, role } });
-
-        // Navigate after successful login
-        navigate(`/landingpage?token=${token}&role=${role}`);
-        console.log(response.data);
-      }
+      const { token, role } = response.data;
+      navigate(`/landingpage?token=${token}&role=${role}`);
+      console.log(response.data);
     } catch (err) {
-      setError(
-        err.response?.data?.message || "An error occurred during login."
-      );
+      console.log(err);
+      if (err.response && err.response.data) {
+        setError(err.response.data.message || "Login failed");
+      } else {
+        setError("An error occurred. Please try again.");
+      }
     }
-    
   };
 
   return (
@@ -134,9 +131,7 @@ const Login = () => {
               icon={<GoogleIcon />}
               text="Continue with Google"
               onClick={() => {
-                window.location.href =
-                  `https://baggagebugs-1.onrender.com/api/v1/user/auth/google`;
-               
+                window.location.href = `https://baggagebugs-1.onrender.com/api/v1/user/auth/google`;
               }}
               className="w-full"
             />

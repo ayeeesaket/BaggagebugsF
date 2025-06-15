@@ -25,7 +25,9 @@ const Profile = () => {
   const [email, setEmail] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [phoneNo, setPhoneNo] = useState("");
-
+  const [token, setToken] = useState(
+    useSelector((state) => state.token.tokenValue)
+  );
   const handleApi = async (e) => {
    
     e.preventDefault();
@@ -35,6 +37,11 @@ const Profile = () => {
         { firstName, lastName, email, dateOfBirth, phoneNo },
         {
           withCredentials: true, // ✅ REQUIRED to send cookies
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         }
       );
       console.log("Data Added", response.data);
@@ -56,6 +63,11 @@ const Profile = () => {
         },
         {
           withCredentials: true, // ✅ REQUIRED to send cookies
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         }
       );
       console.log("Data Added", response.data);
@@ -73,6 +85,11 @@ const Profile = () => {
         `${ProductionApi}/user/toggleEmail`,
         {
           status: toggleEmail,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         }
       );
       console.log("Toggle Email added", response.data);

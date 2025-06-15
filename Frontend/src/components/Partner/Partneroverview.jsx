@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "../../styles/Login.css";
 import axios from "axios";
 import { ProductionApi, LocalApi } from "../../../utills";
-
+import { useSelector } from "react-redux";
 const Partneroverview = () => {
   const navigate = useNavigate();
 
@@ -33,7 +33,10 @@ const Partneroverview = () => {
   const handleReviewsClick = () => {
     navigate("/reviews");
   };
-  const handleAssistanceClick = () => {};
+  const handleAssistanceClick = () => { };
+  const [token, setToken] = useState(
+      useSelector((state) => state.token.tokenValue)
+    );
   const handleLogoutClick = async () => {
     try {
       const response = await axios.post(
@@ -41,6 +44,11 @@ const Partneroverview = () => {
         {},
         {
           withCredentials: true,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         }
       );
       console.log("logged out");

@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { ProductionApi, LocalApi } from "../../../utills";
+import { useSelector } from "react-redux";
 const DashboardDetails = () => {
   const navigate = useNavigate();
   const handleLogoClick = () => {
@@ -67,7 +68,9 @@ const DashboardDetails = () => {
     setIsBankClicked(false);
   };
   const [activeButtons, setActiveButtons] = useState("");
-
+  const [token, setToken] = useState(
+    useSelector((state) => state.token.tokenValue)
+  );
   const handleClick = (button) => {
     setActiveButtons((prev) => {
       if (prev.includes(button)) {
@@ -123,6 +126,11 @@ const DashboardDetails = () => {
         },
         {
           withCredentials: true,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         }
       );
       console.log("Registered Successfully:", response.data);
@@ -148,6 +156,11 @@ const DashboardDetails = () => {
         `${ProductionApi}/facility/`,
         {
           withCredentials: true,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         }
       );
       console.log("Facility Data:", response.data.data);
@@ -159,6 +172,7 @@ const DashboardDetails = () => {
 
   useEffect(() => {
     handleFacilityApi();
+    console.log("Token in DashboardDetails:", token);
   }, []);
 
 

@@ -76,6 +76,9 @@ const Onboardingpage = () => {
     console.log("logged in ? : ", isLoggedIn);
   }, []);
   const dispatch = useDispatch();
+  const [token, setToken] = useState(
+      useSelector((state) => state.token.tokenValue)
+    );
   const handleLogoutApi = async () => {
     try {
       const response = await axios.post(
@@ -83,6 +86,11 @@ const Onboardingpage = () => {
         {},
         {
           withCredentials: true,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         }
       );
       console.log("logged out");

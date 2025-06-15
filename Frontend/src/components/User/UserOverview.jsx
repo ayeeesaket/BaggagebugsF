@@ -34,7 +34,10 @@ const UserOverview = () => {
   const handleBookingsClick = () => {
     navigate("/userbookings");
   };
-  const handleAssistanceClick = () => {};
+  const handleAssistanceClick = () => { };
+  const [token, setToken] = useState(
+      useSelector((state) => state.token.tokenValue)
+    );
   const handleLogoutClick = async () => {
     try {
       const response = await axios.post(
@@ -42,6 +45,11 @@ const UserOverview = () => {
         {},
         {
           withCredentials: true,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         }
       );
       console.log("logged out");

@@ -25,16 +25,26 @@ const Register = () => {
   const handletoLogin = () => navigate("/");
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
   const dispatch = useDispatch();
-
+  const [token, setToken] = useState(
+    useSelector((state) => state.token.tokenValue)
+  );
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${LocalApi}/user/register`, {
-        firstName,
-        lastName,
-        email,
-        password,
-      });
+      const response = await axios.post(
+        `${ProductionApi}/user/register`,
+        {
+          firstName,
+          lastName,
+          email,
+          password,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       console.log("hello");
       navigate("/landingpage");
       dispatch({ type: "login/login" });

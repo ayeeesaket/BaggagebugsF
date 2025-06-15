@@ -119,7 +119,11 @@ const Bookingpage = () => {
         const facilityRes = await axios.post(
           `${ProductionApi}/map/facilitiesBySearch`,
           { userCoordinates: [location.lng, location.lat] },
-          { withCredentials: true }
+            { withCredentials: true }, {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            }
         );
 
         const fetchedFacilities = facilityRes.data.message;
@@ -151,7 +155,12 @@ const Bookingpage = () => {
                 userCoordinates: [location.lng, location.lat],
                 facilityCoordinates: coordsArray[i], // coordsArray[i] is already an array
               },
-              { withCredentials: true } // optional third argument for cookies/auth
+              { withCredentials: true },// optional third argument for cookies/auth
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`
+                }
+              }
             );
             const distanceData = distance1.data;
             setDistance1(distanceData);
@@ -222,7 +231,12 @@ const Bookingpage = () => {
     try {
       const response1 = await axios.get(
         `${ProductionApi}/facility/get?id=${facilityId}`,
-        { withCredentials: true }
+        { withCredentials: true },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
       );
       setsfdata(response1.data);
       setfAddress(response1.data.data.address);
@@ -251,7 +265,12 @@ const Bookingpage = () => {
           luggageType: "Bag",
           facilityId: facilityId.facilityId,
         },
-        { withCredentials: true }
+        { withCredentials: true },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
       );
       console.log("Booking successful:", response.data);
     } catch (error) {

@@ -41,7 +41,7 @@ const LandingPage = () => {
   // const [searchParams] = useSearchParams();
   useEffect(() => {
     const token = new URLSearchParams(window.location.search).get("token");
-    localStorage.setItem("token", token);
+    if (token) localStorage.setItem("token", token);
     dispatch({
       type: "token/setTokenValue",
       payload: token,
