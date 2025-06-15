@@ -1,3 +1,4 @@
+
 import React, { useState  , useEffect} from "react";
 import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
 import { useNavigate } from "react-router-dom";
@@ -149,35 +150,7 @@ const LandingPage = () => {
   }, []);
  const [isUser, setIsUser] = React.useState(false);
 
-React.useEffect(() => {
-  const callPostLoginAPI = async () => {
-    try {
-      const token = Cookies.get("token");
-      const role = Cookies.get("role");
 
-      if (!token || !role) {
-        console.warn("Missing token or role");
-        navigate("/");
-        return;
-      }
-
-      const res = await axios.post(
-        `${ProductionApi}/user/setCookies`,
-        { token, role },
-        { withCredentials: true }
-      );
-
-      console.log("User session verified:", res.data);
-   dispatch({ type: "login/login" });
-      navigate("/landingpage");
-    } catch (err) {
-      console.error("Session check failed:", err);
-      navigate("/");
-    }
-  };
-
-  callPostLoginAPI();
-}, []);
 
 // ✅ Runs only when isUser becomes true
 
