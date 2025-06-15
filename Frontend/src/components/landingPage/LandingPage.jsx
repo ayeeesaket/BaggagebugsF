@@ -40,15 +40,18 @@ const LandingPage = () => {
   const dispatch = useDispatch();
   // const [searchParams] = useSearchParams();
   useEffect(() => {
-    const token = new URLSearchParams(window.location.search).get('token');
-    localStorage.setItem('token', token);
+    const token = new URLSearchParams(window.location.search).get("token");
+    localStorage.setItem("token", token);
+    dispatch({
+      type: "token/setTokenValue",
+      payload: token,
+    });
     console.log("Token saved to localStorage:", token);
   });
-    useEffect(() => {
+  useEffect(() => {
     const fetchUserData = async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
 
-     
       console.log("Token being used:", token);
 
       // try {
@@ -63,27 +66,26 @@ const LandingPage = () => {
       // } catch (error) {
       //   console.error('Failed to fetch user:', error);
 
-      // } 
+      // }
     };
 
     fetchUserData();
   }, [navigate]);
 
-
   // useEffect(() => {
-    
+
   //   if (token)
-  //     dispatch({
-  //       type: "token/setTokenValue",
-  //       payload: token,
-  //     });
+      // dispatch({
+      //   type: "token/setTokenValue",
+      //   payload: token,
+      // });
   //   if (role)
   //     dispatch({
   //       type: "role/setRoleValue",
   //       payload: role,
   //     });
   // }, []);
-  // const token = useSelector((state) => state.token.tokenValue);
+  const token = useSelector((state) => state.token.tokenValue);
   // const role = useSelector((state) => state.role.roleValue);
   const imgArr = [
     {
@@ -240,7 +242,7 @@ const LandingPage = () => {
   const handleLogoutClick = async () => {
     try {
       const response = await axios.post(
-        `${ProductionApi}/user/logout`,
+        `${LocalApi}/user/logout`,
         {},
         {
           withCredentials: true,

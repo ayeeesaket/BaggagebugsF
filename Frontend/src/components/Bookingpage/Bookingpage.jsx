@@ -23,6 +23,8 @@ const Bookingpage = () => {
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
   useEffect(() => {
     console.log("Query from previous page:", query);
+    // const token = useSelector((state) => state.token.tokenValue);
+    // console.log("Token from Redux::::::::::::::::::", token);
   }, [query]);
   // State variables
   const [sfdata, setsfdata] = useState([]);
@@ -43,6 +45,9 @@ const Bookingpage = () => {
   const [clicked, setClicked] = useState(false);
   const [facilities, setFacilities] = useState([]);
   const facilityId = useSelector((state) => state.facilityId);
+  const [token, setToken] = useState(
+    useSelector((state) => state.token.tokenValue)
+  );
   const dispatch = useDispatch();
   //  New state for selected facility ID
 
@@ -50,12 +55,17 @@ const Bookingpage = () => {
 
   const handleLogoClick = () => {
     navigate("/landingpage");
-  //  dispatch({ type: "login/logout" });
+    //  dispatch({ type: "login/logout" });
   };
 
   const containerStyle = {
     width: "100%",
-    height: window.innerWidth < 768 ? "250px" : window.innerWidth < 1024 ? "400px" : "700px",
+    height:
+      window.innerWidth < 768
+        ? "250px"
+        : window.innerWidth < 1024
+        ? "400px"
+        : "700px",
     maxWidth: "100vw",
     maxHeight: "80vh",
   };
@@ -72,7 +82,9 @@ const Bookingpage = () => {
       const bounds = new window.google.maps.LatLngBounds(center);
       mapInstance.fitBounds(bounds);
       setMap(mapInstance);
+      console.log("token in Bookingpage:", token);
     },
+    
     [center]
   );
 
@@ -170,7 +182,8 @@ const Bookingpage = () => {
     dots: false,
     infinite: true,
     speed: 500,
-    slidesToShow: window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 3,
+    slidesToShow:
+      window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 3,
     slidesToScroll: 1,
     responsive: [
       {
@@ -178,7 +191,7 @@ const Bookingpage = () => {
         settings: {
           slidesToShow: 2,
           slidesToScroll: 1,
-        }
+        },
       },
       {
         breakpoint: 768,
@@ -186,9 +199,9 @@ const Bookingpage = () => {
           slidesToShow: 1,
           slidesToScroll: 1,
           arrows: false,
-          dots: true
-        }
-      }
+          dots: true,
+        },
+      },
     ],
     prevArrow: (
       <div className="absolute -left-4 md:-left-8 top-1/2 transform -translate-y-1/2 z-10 cursor-pointer">
@@ -221,8 +234,6 @@ const Bookingpage = () => {
       console.log("Error fetching facility details:", error);
     }
   };
- 
- 
 
   const handleMakeBookingApi = async () => {
     console.log("yaha se dekh ::::::::");
@@ -257,7 +268,7 @@ const Bookingpage = () => {
             <div className="logo-bag" />
             <div className="logo" />
           </div>
-          
+
           <div className="lg:hidden">
             <GiHamburgerMenu
               size={32}
@@ -343,14 +354,14 @@ const Bookingpage = () => {
         <div className="flex items-center gap-2 lg:gap-4">
           {/* Bag Count */}
           <div className="box flex h-10 lg:h-12 w-[120px] lg:w-[200px] items-center justify-center text-white text-sm lg:text-base">
-            <button 
+            <button
               onClick={() => setNumberofBag((n) => Math.max(n - 1, 0))}
               className="px-2 lg:px-3"
             >
               -
             </button>
             <span className="mx-2 lg:mx-3">{numberofbag}</span>
-            <button 
+            <button
               onClick={() => setNumberofBag((n) => n + 1)}
               className="px-2 lg:px-3"
             >
@@ -390,8 +401,8 @@ const Bookingpage = () => {
                 position={pos}
                 onClick={() => {
                   setClicked(true);
-                 
-                  handleBookNow(facilities[idx]._id); 
+
+                  handleBookNow(facilities[idx]._id);
                 }}
               />
             ))}
@@ -403,10 +414,7 @@ const Bookingpage = () => {
               <div className="w-full max-w-7xl">
                 <Slider {...sliderSettings} className="facility-slider">
                   {facilities.map((item, index) => (
-                    <div
-                      key={index}
-                      className="p-2 lg:p-4"
-                    >
+                    <div key={index} className="p-2 lg:p-4">
                       <div className="flex flex-col sm:flex-row border-2 border-[#63C5DA] rounded-xl shadow-lg p-3 lg:p-4 bg-white h-auto sm:h-[300px] lg:h-[350px]">
                         <div className="w-full sm:w-[35%] mb-3 sm:mb-0">
                           <img
@@ -442,7 +450,7 @@ const Bookingpage = () => {
                             onClick={async () => {
                               await handleBookNow(item._id);
                               setClicked(true);
-                            }} 
+                            }}
                           >
                             Book Now
                           </button>
@@ -467,7 +475,9 @@ const Bookingpage = () => {
 
                 {/* Details */}
                 <div className="pt-2">
-                  <div className="text-[#FA8128] text-lg lg:text-xl font-semibold">{facilityName}</div>
+                  <div className="text-[#FA8128] text-lg lg:text-xl font-semibold">
+                    {facilityName}
+                  </div>
                   <div className="text-[#FA8128] text-sm font-light">
                     {fAddress || "Queens street, Melbourn"}
                   </div>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import { ProductionApi } from "../../../utills";
+import { ProductionApi , LocalApi } from "../../../utills";
 
 const GoogleIcon = () => <span className="googleimg"></span>;
 const FacebookIcon = () => <span className="fbimg"></span>;
@@ -43,16 +43,23 @@ const Login = () => {
         { email, password },
         { withCredentials: true }
       );
+
       if (response.data.success) {
-        dispatch({ type: "login/login" });
-        navigate("/landingpage");
+        const { token, role } = response.data;
+
+        // dispatch to redux
+        dispatch({ type: "login/login", payload: { token, role } });
+
+        // Navigate after successful login
+        navigate(`/landingpage?token=${token}&role=${role}`);
+        console.log(response.data);
       }
-      console.log(response.data);
     } catch (err) {
       setError(
         err.response?.data?.message || "An error occurred during login."
       );
     }
+    
   };
 
   return (

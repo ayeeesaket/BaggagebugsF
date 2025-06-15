@@ -29,7 +29,7 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${ProductionApi}/user/register`, {
+      const response = await axios.post(`${LocalApi}/user/register`, {
         firstName,
         lastName,
         email,
