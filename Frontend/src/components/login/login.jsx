@@ -33,13 +33,13 @@ const Login = () => {
   useEffect(() => {
     console.log("Redux isLoggedIn changed:", isLoggedIn);
   }, [isLoggedIn]);
-
+   
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
     try {
       const response = await axios.post(
-        `https://baggagebugs-81tp.onrender.com/api/v1/user/login`,
+        `https://baggagebugs-1.onrender.com/api/v1/user/login`,
         { email, password },
         { withCredentials: true }
       );
@@ -128,7 +128,7 @@ const Login = () => {
               text="Continue with Google"
               onClick={() => {
                 window.location.href =
-                  `https://baggagebugs-81tp.onrender.com/api/v1/user/auth/google`;
+                  `https://baggagebugs-1.onrender.com/api/v1/user/auth/google`;
                
               }}
               className="w-full"

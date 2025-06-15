@@ -40,22 +40,51 @@ const LandingPage = () => {
   const dispatch = useDispatch();
   // const [searchParams] = useSearchParams();
   useEffect(() => {
-    const token = Cookies.get("token");
-    const role = Cookies.get("role");
+    const token = new URLSearchParams(window.location.search).get('token');
+    localStorage.setItem('token', token);
+    console.log("Token saved to localStorage:", token);
+  });
+    useEffect(() => {
+    const fetchUserData = async () => {
+      const token = localStorage.getItem('token');
 
-    if (token)
-      dispatch({
-        type: "token/setTokenValue",
-        payload: token,
-      });
-    if (role)
-      dispatch({
-        type: "role/setRoleValue",
-        payload: role,
-      });
-  }, []);
-  const token = useSelector((state) => state.token.tokenValue);
-  const role = useSelector((state) => state.role.roleValue);
+     
+      console.log("Token being used:", token);
+
+      // try {
+      //      const response = await axios.get('https://baggagebugs-1.onrender.com/api/v1/user/getUser', {
+      //     headers: {
+      //       Authorization: `Bearer ${token}`,
+      //     },
+      //     withCredentials: true,
+      //   });
+
+      //   console.log("User data fetched:", response.data);
+      // } catch (error) {
+      //   console.error('Failed to fetch user:', error);
+
+      // } 
+    };
+
+    fetchUserData();
+  }, [navigate]);
+
+
+  // useEffect(() => {
+    
+  //   if (token)
+  //     dispatch({
+  //       type: "token/setTokenValue",
+  //       payload: token,
+  //     });
+  //   if (role)
+  //     dispatch({
+  //       type: "role/setRoleValue",
+  //       payload: role,
+  //     });
+  // }, []);
+  // const token = useSelector((state) => state.token.tokenValue);
+  // const role = useSelector((state) => state.role.roleValue);
   const imgArr = [
     {
       img: "/Tower.svg",
@@ -157,35 +186,35 @@ const LandingPage = () => {
   }, []);
   const [isUser, setIsUser] = React.useState(false);
 
-  React.useEffect(() => {
-    const callPostLoginAPI = async () => {
-      try {
-        const token = Cookies.get("token");
-        const role = Cookies.get("role");
+  // React.useEffect(() => {
+  //   const callPostLoginAPI = async () => {
+  //     try {
+  //       const token = Cookies.get("token");
+  //       const role = Cookies.get("role");
 
-        if (!token || !role) {
-          console.warn("Missing token or role");
-          navigate("/");
-          return;
-        }
+  //       if (!token || !role) {
+  //         console.warn("Missing token or role");
+  //         navigate("/");
+  //         return;
+  //       }
 
-        const res = await axios.post(
-          `${ProductionApi}/user/setCookies`,
-          { token, role },
-          { withCredentials: true }
-        );
+  //       const res = await axios.post(
+  //         `${ProductionApi}/user/setCookies`,
+  //         { token, role },
+  //         { withCredentials: true }
+  //       );
 
-        console.log("User session verified:", res.data);
-        dispatch({ type: "login/login" });
-        navigate("/landingpage");
-      } catch (err) {
-        console.error("Session check failed:", err);
-        navigate("/");
-      }
-    };
+  //       console.log("User session verified:", res.data);
+  //       dispatch({ type: "login/login" });
+  //       navigate("/landingpage");
+  //     } catch (err) {
+  //       console.error("Session check failed:", err);
+  //       navigate("/");
+  //     }
+  //   };
 
-    callPostLoginAPI();
-  }, []);
+  //   callPostLoginAPI();
+  // }, []);
 
   // ✅ Runs only when isUser becomes true
 
