@@ -41,11 +41,12 @@ const LandingPage = () => {
   // const [searchParams] = useSearchParams();
   useEffect(() => {
     const token = new URLSearchParams(window.location.search).get("token");
-    if (token) localStorage.setItem("token", token);
+    if (token) {localStorage.setItem("token", token);
     dispatch({
       type: "token/setTokenValue",
       payload: token,
     });
+    dispatch({ type: "login/login" });}
     console.log("Token saved to localStorage:", token);
   });
   useEffect(() => {
