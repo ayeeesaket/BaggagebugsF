@@ -55,7 +55,7 @@ const LandingPage = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       const token = localStorage.getItem("token");
-   dispatch({ type: "login/login" });
+    if(token)   dispatch({ type: "login/login" });
       console.log("Token being used:", token);
 
       // try {
