@@ -94,7 +94,8 @@ const Onboardingpage = () => {
       );
       console.log("logged out");
       navigate("/");
-      dispatch({ type: "login/login" });
+      dispatch({ type: "login/login", payload: false }); // Set login state to false
+      localStorage.removeItem("token");
     } catch (error) {
       console.log("error : ", error);
     }

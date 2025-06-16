@@ -51,7 +51,7 @@ const Partneroverview = () => {
         }
       );
       console.log("logged out");
-      dispatchEvent({ type: "login/login", payload: false }); // Set login state to false
+      dispatch({ type: "login/login", payload: false }); // Set login state to false
       localStorage.removeItem("token");
       navigate("/");
     } catch (error) {
