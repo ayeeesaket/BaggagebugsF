@@ -15,7 +15,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { GoogleApi } from "../../../utills";
 import { ProductionApi, LocalApi } from "../../../utills";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const Bookingpage = () => {
   // bringing the name of the page from landingpage
   const location = useLocation();
@@ -281,7 +282,7 @@ const handleBookNow = async (facilityId) => {
         }
       );
       console.log("Booking successful:", response.data);
-      alert("Booking Successfull")
+    toast.success("Booking successful!");
     } catch (error) {
       console.error("Error making booking:", error);
     }

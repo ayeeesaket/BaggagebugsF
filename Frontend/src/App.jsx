@@ -33,7 +33,7 @@ function App() {
       {/* <Register/> */}
 
       <Body />
-      <ToastContainer />
+         <ToastContainer position="top-right" autoClose={2000} />
       {/* <Bookingpage/> */}
       {/* <Body/> */}
       {/* <Onboardingpage/> */}
