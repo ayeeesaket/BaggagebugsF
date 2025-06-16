@@ -77,17 +77,13 @@ const Onboardingpage = () => {
     console.log("logged in ? : ", isLoggedIn);
   }, []);
   const dispatch = useDispatch();
-  const [token, setToken] = useState(
-      useSelector((state) => state.token.tokenValue)
-    );
+   const [token, setToken] = useState(() => localStorage.getItem("token"));
+ 
   const handleLogoutApi = async () => {
     try {
       const response = await axios.post(
         `${ProductionApi}/user/logout`,
-        {},
-        {
-          withCredentials: true,
-        },
+        
         {
           headers: {
             Authorization: `Bearer ${token}`

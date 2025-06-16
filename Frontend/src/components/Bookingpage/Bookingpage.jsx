@@ -121,7 +121,7 @@ const Bookingpage = () => {
         const facilityRes = await axios.post(
           `${ProductionApi}/map/facilitiesBySearch`,
           { userCoordinates: [location.lng, location.lat] },
-          { withCredentials: true },
+          
           {
             headers: {
               Authorization: `Bearer ${token}`,

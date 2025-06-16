@@ -1,4 +1,4 @@
-import React, { useState , useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "../../styles/DashboardDetails.css";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { AiOutlinePlusCircle } from "react-icons/ai";
@@ -68,9 +68,7 @@ const DashboardDetails = () => {
     setIsBankClicked(false);
   };
   const [activeButtons, setActiveButtons] = useState("");
-  const [token, setToken] = useState(
-    useSelector((state) => state.token.tokenValue)
-  );
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
   const handleClick = (button) => {
     setActiveButtons((prev) => {
       if (prev.includes(button)) {
@@ -124,13 +122,11 @@ const DashboardDetails = () => {
           type,
           timing,
         },
-        {
-          withCredentials: true,
-        },
+
         {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       console.log("Registered Successfully:", response.data);
@@ -154,13 +150,11 @@ const DashboardDetails = () => {
     try {
       const response = await axios.get(
         `${ProductionApi}/facility/`,
-        {
-          withCredentials: true,
-        },
+
         {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       console.log("Facility Data:", response.data.data);
@@ -174,7 +168,6 @@ const DashboardDetails = () => {
     handleFacilityApi();
     console.log("Token in DashboardDetails:", token);
   }, []);
-
 
   return (
     <>
@@ -395,7 +388,7 @@ const DashboardDetails = () => {
                           <div className="reviews-div border-2 border-[#63C5DA] p-5 mb-2">
                             <div className="reviews-top flex flex-col md:flex-row justify-between items-start md:items-center p-4 border-b border-gray-200   gap-2">
                               <div className="name font-semibold text-lg">
-                                 {facility.name}
+                                {facility.name}
                               </div>
                               <div className="booking-id text-sm md:text-base">
                                 Facility : {facility._id}
@@ -403,7 +396,6 @@ const DashboardDetails = () => {
                             </div>
                             <div className="flex justify-between">
                               <div>
-                                
                                 <div className="address   text-sm md:text-base">
                                   {facility.address}
                                 </div>

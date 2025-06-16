@@ -25,9 +25,8 @@ const Register = () => {
   const handletoLogin = () => navigate("/");
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
   const dispatch = useDispatch();
-  const [token, setToken] = useState(
-    useSelector((state) => state.token.tokenValue)
-  );
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
+
   const handleRegister = async (e) => {
     e.preventDefault();
     try {

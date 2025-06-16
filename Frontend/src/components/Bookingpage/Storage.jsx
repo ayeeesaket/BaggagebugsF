@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
 import axios from "axios";
-import { ProductionApi, LocalApi } from "../../../utills";
+import { ProductionApi, LocalApi, GoogleApi } from "../../../utills";
 const containerStyle = {
   width: "100%",
   height: "100vh",
@@ -21,7 +21,7 @@ const Storage = () => {
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: "AIzaSyAEOzozYCsDelJTwhv-pOJtxNk69SPgEzo", // Replace with your real key
+    googleMapsApiKey: GoogleApi, // Replace with your real key
   });
 
   const onLoad = useCallback((mapInstance) => {
@@ -36,12 +36,7 @@ const Storage = () => {
 
   const handleDetails = async () => {
     try {
-      const response = await axios.get(
-        `${ProductionApi}/facility/`,
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get(`${ProductionApi}/facility/`);
       console.log("details : ", response.data);
     } catch (error) {
       console.log("error : ", error);

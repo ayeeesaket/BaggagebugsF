@@ -1,6 +1,6 @@
 import React from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { useState  } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
@@ -31,26 +31,24 @@ const Profile = () => {
   const [email, setEmail] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [phoneNo, setPhoneNo] = useState("");
-   const storedToken = localStorage.getItem("token");
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
+
   const handleApi = async (e) => {
-   console.log("your token which is stored",storedToken);
-   
+    console.log("your token which is stored", storedToken);
+
     e.preventDefault();
     try {
-
       const response = await axios.post(
         `${ProductionApi}/user/addDetails`,
         { firstName, lastName, email, dateOfBirth, phoneNo },
-        {
-          withCredentials: true, // ✅ REQUIRED to send cookies
-        },
+
         {
           headers: {
-            Authorization: `Bearer ${storedToken}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
-       toast.success("Profile data saved!"); 
+      toast.success("Profile data saved!");
       console.log("Data Added", response.data);
     } catch (error) {
       console.log("Error", error);
@@ -68,16 +66,14 @@ const Profile = () => {
           newPassword: newPassWord,
           confirmPassword: confirmPassWord,
         },
-        {
-          withCredentials: true, // ✅ REQUIRED to send cookies
-        },
+
         {
           headers: {
-            Authorization: `Bearer ${storedToken}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
-      
+
       console.log("Data Added", response.data);
     } catch (error) {
       console.log("error", error);
@@ -96,8 +92,8 @@ const Profile = () => {
         },
         {
           headers: {
-            Authorization: `Bearer ${storedToken}`
-          }
+            Authorization: `Bearer ${storedToken}`,
+          },
         }
       );
       console.log("Toggle Email added", response.data);
