@@ -233,12 +233,15 @@ const handleBookNow = async (facilityId) => {
   console.log(token);
   
   try {
-    const token1 =localStorage.getItem("token")
+   
     const response1 = await axios.get(
       `${ProductionApi}/facility/get?id=${facilityId}`,
       {
-        withCredentials: true,
-       
+        
+        headers: {
+          Authorization: `Bearer ${token1}`,
+         
+        }
       }
     );
     setsfdata(response1.data);
