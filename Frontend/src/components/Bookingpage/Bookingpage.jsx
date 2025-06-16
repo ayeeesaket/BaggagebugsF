@@ -45,9 +45,9 @@ const Bookingpage = () => {
   const [clicked, setClicked] = useState(false);
   const [facilities, setFacilities] = useState([]);
   const facilityId = useSelector((state) => state.facilityId);
-  const [token, setToken] = useState(
-    useSelector((state) => state.token.tokenValue)
-  );
+ const [token, setToken] = useState(() => localStorage.getItem("token"));
+
+ 
   const dispatch = useDispatch();
   //  New state for selected facility ID
 
@@ -229,7 +229,7 @@ const Bookingpage = () => {
     dispatch({ type: "facilityId/setFacilityId", payload: facilityId });
     console.log("Selected Facility ID1:", facilityId);
     console.log(typeof facilityId);
-    console.log(token);
+    // console.log(token);
     
     try {
       const response1 = await axios.get(

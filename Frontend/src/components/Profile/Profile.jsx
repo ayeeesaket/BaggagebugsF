@@ -73,7 +73,7 @@ const Profile = () => {
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${storedToken}`
           }
         }
       );
@@ -96,7 +96,7 @@ const Profile = () => {
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${storedToken}`
           }
         }
       );
