@@ -31,34 +31,33 @@ const LandingPage = () => {
   const dispatch = useDispatch();
   // const [searchParams] = useSearchParams();
   useEffect(() => {
-  const urlToken = new URLSearchParams(window.location.search).get("token");
-  const storedToken = localStorage.getItem("token");
+    const urlToken = new URLSearchParams(window.location.search).get("token");
+    const storedToken = localStorage.getItem("token");
 
-  if (urlToken && !storedToken) {
-    // Case 1: Token from URL on first login
-    localStorage.setItem("token", urlToken);
-    dispatch({ type: "token/setTokenValue", payload: urlToken });
-   
-    console.log("Token from URL saved and user logged in.");
-  } else if (storedToken) {
-    // Case 2: Returning user with token already in localStorage
-    // dispatch({ type: "token/setTokenValue", payload: storedToken });
-    // dispatch({ type: "login/login" }); 
-    dispatch({ type: "login/login" });
-    console.log("Token from localStorage found, user logged in.");
-  }
-}, [dispatch]);
+    if (urlToken && !storedToken) {
+      // Case 1: Token from URL on first login
+      localStorage.setItem("token", urlToken);
+      dispatch({ type: "token/setTokenValue", payload: urlToken });
+
+      console.log("Token from URL saved and user logged in.");
+    } else if (storedToken) {
+      // Case 2: Returning user with token already in localStorage
+      // dispatch({ type: "token/setTokenValue", payload: storedToken });
+      // dispatch({ type: "login/login" });
+      dispatch({ type: "login/login" });
+      console.log("Token from localStorage found, user logged in.");
+    }
+  }, [dispatch]);
   // useEffect(()=>{
   //  const token1 = localStorage.getItem("token");
-  
-   
+
   //  if(token1) {
-    
+
   //   console.log("Token found, logout dispatched.");}
   // },[])
-   
+
   const token = useSelector((state) => state.token.tokenValue);
-  
+
   const imgArr = [
     {
       img: "/Tower.svg",
@@ -344,10 +343,13 @@ const LandingPage = () => {
                     placeholder="Barcelona"
                     type="text"
                     onChange={(e) => setQuery(e.target.value)}
-                    onKeyDown={(e) =>
-                      e.key === "Enter" &&
-                      navigate("/bookingpage", { state: { query, isLoggedIn } })
-                    }
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && isLoggedIn) {
+                        navigate("/bookingpage", {
+                          state: { query, isLoggedIn },
+                        });
+                      }
+                    }}
                   />
                   <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#63C5DA]">
                     <IoIosSearch size={24} />
