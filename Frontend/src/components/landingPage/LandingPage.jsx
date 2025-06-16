@@ -42,6 +42,8 @@ const LandingPage = () => {
   });
   useEffect(()=>{
    const token1 = localStorage.getItem("token");
+   console.log(token1);
+   
    if(token1) dispatch({type:"login/logout"})
   })
    
