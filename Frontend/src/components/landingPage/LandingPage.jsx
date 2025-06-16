@@ -179,13 +179,14 @@ const LandingPage = () => {
   const handleLogoutClick = async () => {
     try {
       const response = await axios.post(`${ProductionApi}/user/logout`,
+        {},
         {
           withCredentials: true,
-        },{
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       console.log("logged out");
       navigate("/");
       dispatch({ type: "login/login", payload: false }); // Set login state to false
