@@ -8,9 +8,11 @@ import axios from "axios";
 import { ProductionApi, LocalApi } from "../../../utills";
 
 const Profile = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleLogoClick = () => {
     navigate("/landingpage");
+    dispatch({ type: "login/login" });
   };
   const menuItems = [
     "My Profile",
