@@ -41,7 +41,9 @@ const Partneroverview = () => {
     try {
       const response = await axios.post(
         `${ProductionApi}/user/logout`,
-
+        {
+          withcredentials: true,
+        },
         {
           headers: {
             Authorization: `Bearer ${token}`,
