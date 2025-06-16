@@ -66,9 +66,7 @@ const Profile = () => {
           newPassword: newPassWord,
           confirmPassword: confirmPassWord,
         },
-        {
-          withCredentials: true,
-        },
+
         {
           headers: {
             Authorization: `Bearer ${token}`,
