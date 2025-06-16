@@ -31,23 +31,30 @@ const LandingPage = () => {
   const dispatch = useDispatch();
   // const [searchParams] = useSearchParams();
   useEffect(() => {
-    const token = new URLSearchParams(window.location.search).get("token");
-    if (token && !localStorage.getItem("token")) {
-    localStorage.setItem("token", token);
-    dispatch({
-      type: "token/setTokenValue",
-      payload: token,
-    })
-    console.log("Token saved to localStorage:", token);}
-  },[]);
-  useEffect(()=>{
-   const token1 = localStorage.getItem("token");
+  const urlToken = new URLSearchParams(window.location.search).get("token");
+  const storedToken = localStorage.getItem("token");
+
+  if (urlToken && !storedToken) {
+    // Case 1: Token from URL on first login
+    localStorage.setItem("token", urlToken);
+    dispatch({ type: "token/setTokenValue", payload: urlToken });
+    dispatch({ type: "login/login" });
+    console.log("Token from URL saved and user logged in.");
+  } else if (storedToken) {
+    // Case 2: Returning user with token already in localStorage
+    dispatch({ type: "token/setTokenValue", payload: storedToken });
+    dispatch({ type: "login/login" });
+    console.log("Token from localStorage found, user logged in.");
+  }
+}, [dispatch]);
+  // useEffect(()=>{
+  //  const token1 = localStorage.getItem("token");
   
    
-   if(token1) {
-     isLoggedIn=true;
-    console.log("Token found, logout dispatched.");}
-  },[])
+  //  if(token1) {
+    
+  //   console.log("Token found, logout dispatched.");}
+  // },[])
    
   const token = useSelector((state) => state.token.tokenValue);
   
