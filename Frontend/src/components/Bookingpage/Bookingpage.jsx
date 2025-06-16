@@ -246,18 +246,18 @@ const Bookingpage = () => {
       console.log("Facility Details:", response1.data);
       setfacilityName(response1.data.data.name);
       console.log("Facility Details Name:", response1.data.data.name);
+      console.log("above token",token);
+      
     } catch (error) {
       console.log("Error fetching facility details:", error);
     }
-  };
-
-  const handleMakeBookingApi = async () => {
+  };  const handleMakeBookingApi = async () => {
     console.log("yaha se dekh ::::::::");
     console.log("Booking facility with ID:", facilityId);
     console.log("Booking facility with Name:", facilityName);
     console.log("Drop-off Date:", dropOffDate);
     console.log("Pick-up Date:", pickUpDate);
-    console.log(token);
+    console.log("token data :",token);
     
     try {
       const response = await axios.post(
