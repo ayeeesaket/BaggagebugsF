@@ -281,6 +281,7 @@ const handleBookNow = async (facilityId) => {
         }
       );
       console.log("Booking successful:", response.data);
+      alert("Booking Successfull")
     } catch (error) {
       console.error("Error making booking:", error);
     }
