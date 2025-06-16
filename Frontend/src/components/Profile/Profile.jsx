@@ -35,9 +35,11 @@ const Profile = () => {
     useSelector((state) => state.token.tokenValue)
   );
   const handleApi = async (e) => {
+   console.log(token);
    
     e.preventDefault();
     try {
+
       const response = await axios.post(
         `https://baggagebugs-81tp.onrender.com/api/v1/user/addDetails`,
         { firstName, lastName, email, dateOfBirth, phoneNo },
