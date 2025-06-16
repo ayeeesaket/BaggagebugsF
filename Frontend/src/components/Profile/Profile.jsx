@@ -50,6 +50,7 @@ const Profile = () => {
           }
         }
       );
+       toast.success("Profile data saved!"); 
       console.log("Data Added", response.data);
     } catch (error) {
       console.log("Error", error);
@@ -76,7 +77,7 @@ const Profile = () => {
           }
         }
       );
-       toast.success("Profile data saved!"); 
+      
       console.log("Data Added", response.data);
     } catch (error) {
       console.log("error", error);
