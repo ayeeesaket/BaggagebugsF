@@ -239,7 +239,7 @@ const handleBookNow = async (facilityId) => {
       {
         
         headers: {
-          Authorization: `Bearer ${token1}`,
+          Authorization: `Bearer ${token}`,
          
         }
       }
