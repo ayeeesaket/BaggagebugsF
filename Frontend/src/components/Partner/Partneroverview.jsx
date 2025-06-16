@@ -36,13 +36,13 @@ const Partneroverview = () => {
   };
   const handleAssistanceClick = () => {};
   const [token, setToken] = useState(() => localStorage.getItem("token"));
-
+const dispatch = useDispatch();
   const handleLogoutClick = async () => {
     try {
       const response = await axios.post(
         `${ProductionApi}/user/logout`,
         {
-          withcredentials: true,
+          withCredentials: true,
         },
         {
           headers: {

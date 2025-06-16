@@ -43,14 +43,13 @@ const UserOverview = () => {
     try {
       const response = await axios.post(
         `${ProductionApi}/user/logout`,
-        {},
         {
           withCredentials: true,
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       console.log("logged out");
