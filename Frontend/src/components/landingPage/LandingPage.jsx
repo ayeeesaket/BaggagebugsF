@@ -24,16 +24,6 @@ import setTokenValue from "../redux/features/tokenSlice";
 import setRoleValue from "../redux/features/roleSlice";
 
 const LandingPage = () => {
-  // const location = useLocation();
-  // const[isLoggedIn, setIsLoggedIn] = useState(false);
-  // const isLoggedIn1 = location.state?.isLoggedIn;
-  // React.useEffect(() => {
-  //   if (location.state?.isLoggedIn) {
-  //     setIsLoggedIn(true);
-  //   }
-  // }, [location.state]);
-  // const navigate = useNavigate();
-  // console.log("Is Logged In:", isLoggedIn);
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
   const isReduxPartner = useSelector((state) => state.partner.isPartner);
   const navigate = useNavigate();
@@ -44,50 +34,19 @@ const LandingPage = () => {
     const token = new URLSearchParams(window.location.search).get("token");
     if (token && !localStorage.getItem("token")) {
     localStorage.setItem("token", token);
-   dispatch({ type: "login/login" })
     dispatch({
       type: "token/setTokenValue",
       payload: token,
     })
     console.log("Token saved to localStorage:", token);}
-  },[dispatch]);
-  useEffect(() => {
-    const fetchUserData = async () => {
-    
-
-      // try {
-      //      const response = await axios.get('https://baggagebugs-1.onrender.com/api/v1/user/getUser', {
-      //     headers: {
-      //       Authorization: `Bearer ${token}`,
-      //     },
-      //     withCredentials: true,
-      //   });
-
-      //   console.log("User data fetched:", response.data);
-      // } catch (error) {
-      //   console.error('Failed to fetch user:', error);
-
-      // }
-    };
-
-    fetchUserData();
-  }, [navigate]);
-
-  // useEffect(() => {
-
-  //   if (token)
-  // dispatch({
-  //   type: "token/setTokenValue",
-  //   payload: token,
-  // });
-  //   if (role)
-  //     dispatch({
-  //       type: "role/setRoleValue",
-  //       payload: role,
-  //     });
-  // }, []);
+  });
+  useEffect(()=>{
+   const token1 = localStorage.getItem("token");
+   if(token1) dispatch({type:"login/logout"})
+  })
+   
   const token = useSelector((state) => state.token.tokenValue);
-  // const role = useSelector((state) => state.role.roleValue);
+  
   const imgArr = [
     {
       img: "/Tower.svg",
@@ -187,43 +146,9 @@ const LandingPage = () => {
     //  Cookies.set("role", role, { expires: 1 }); // Assuming role is 'user' for this example
     //   dispatch({ type: "login/login" });
   }, []);
-  const [isUser, setIsUser] = React.useState(false);
-
-  // React.useEffect(() => {
-  //   const callPostLoginAPI = async () => {
-  //     try {
-  //       const token = Cookies.get("token");
-  //       const role = Cookies.get("role");
-
-  //       if (!token || !role) {
-  //         console.warn("Missing token or role");
-  //         navigate("/");
-  //         return;
-  //       }
-
-  //       const res = await axios.post(
-  //         `${ProductionApi}/user/setCookies`,
-  //         { token, role },
-  //         { withCredentials: true }
-  //       );
-
-  //       console.log("User session verified:", res.data);
-  //       dispatch({ type: "login/login" });
-  //       navigate("/landingpage");
-  //     } catch (err) {
-  //       console.error("Session check failed:", err);
-  //       navigate("/");
-  //     }
-  //   };
-
-  //   callPostLoginAPI();
-  // }, []);
-
-  // ✅ Runs only when isUser becomes true
-
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: GoogleApi, // Replace with your key
+    googleMapsApiKey: GoogleApi,
   });
 
   const onLoad = React.useCallback(
@@ -243,7 +168,7 @@ const LandingPage = () => {
   const handleLogoutClick = async () => {
     try {
       const response = await axios.post(
-        `${LocalApi}/user/logout`,
+        `${ProductionApi}/user/logout`,
         {},
         {
           withCredentials: true,
