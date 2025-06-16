@@ -44,8 +44,8 @@ const LandingPage = () => {
    const token1 = localStorage.getItem("token");
   
    
-   if(token1&& !localStorage.getItem("token")) {
-      dispatch({ type: "login/login" })
+   if(token1) {
+     isLoggedIn=true;
     console.log("Token found, logout dispatched.");}
   },[])
    
