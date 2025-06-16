@@ -34,7 +34,7 @@ const Profile = () => {
   const [token, setToken] = useState(() => localStorage.getItem("token"));
 
   const handleApi = async (e) => {
-    console.log("your token which is stored", storedToken);
+    console.log("your token which is stored", token);
 
     e.preventDefault();
     try {
