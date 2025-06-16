@@ -31,11 +31,9 @@ const Profile = () => {
   const [email, setEmail] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [phoneNo, setPhoneNo] = useState("");
-  const [token, setToken] = useState(
-    useSelector((state) => state.token.tokenValue)
-  );
+   const storedToken = localStorage.getItem("token");
   const handleApi = async (e) => {
-   console.log(token);
+   console.log("your token which is stored",storedToken);
    
     e.preventDefault();
     try {
@@ -48,7 +46,7 @@ const Profile = () => {
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${storedToken}`
           }
         }
       );
