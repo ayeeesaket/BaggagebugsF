@@ -162,6 +162,7 @@ const Bookingpage = () => {
                 }
               }
             );
+            
             const distanceData = distance1.data;
             setDistance1(distanceData);
             setfDuration(distance1.data.message.duration);
@@ -237,6 +238,7 @@ const Bookingpage = () => {
             Authorization: `Bearer ${token}`
           }
         }
+        
       );
       setsfdata(response1.data);
       setfAddress(response1.data.data.address);
