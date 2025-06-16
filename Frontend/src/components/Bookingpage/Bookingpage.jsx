@@ -255,6 +255,8 @@ const Bookingpage = () => {
     console.log("Booking facility with Name:", facilityName);
     console.log("Drop-off Date:", dropOffDate);
     console.log("Pick-up Date:", pickUpDate);
+    console.log(token);
+    
     try {
       const response = await axios.post(
         `${ProductionApi}/booking/`,
