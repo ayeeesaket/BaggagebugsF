@@ -66,7 +66,9 @@ const Profile = () => {
           newPassword: newPassWord,
           confirmPassword: confirmPassWord,
         },
-
+        {
+          withCredentials: true,
+        },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -92,7 +94,7 @@ const Profile = () => {
         },
         {
           headers: {
-            Authorization: `Bearer ${storedToken}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
