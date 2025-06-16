@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ProductionApi, LocalApi } from "../../../utills";
 import { useDispatch } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const Profile = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -74,6 +76,7 @@ const Profile = () => {
           }
         }
       );
+       toast.success("Profile data saved!"); 
       console.log("Data Added", response.data);
     } catch (error) {
       console.log("error", error);
