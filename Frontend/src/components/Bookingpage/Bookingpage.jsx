@@ -238,7 +238,6 @@ const handleBookNow = async (facilityId) => {
       `${ProductionApi}/facility/get?id=${facilityId}`,
       {
         withCredentials: true,
-        headers: {
        
       }
     );
