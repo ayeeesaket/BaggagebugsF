@@ -44,7 +44,7 @@ const LandingPage = () => {
     // Case 2: Returning user with token already in localStorage
     // dispatch({ type: "token/setTokenValue", payload: storedToken });
     // dispatch({ type: "login/login" }); 
-    // dispatch({ type: "login/login" });
+    dispatch({ type: "login/login" });
     console.log("Token from localStorage found, user logged in.");
   }
 }, [dispatch]);
