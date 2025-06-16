@@ -56,7 +56,7 @@ const Bookingpage = () => {
 
   const handleLogoClick = () => {
     navigate("/landingpage");
-    //  dispatch({ type: "login/logout" });
+     dispatch({ type: "login/login" });
   };
 
   const containerStyle = {
