@@ -225,36 +225,35 @@ const Bookingpage = () => {
     ),
   };
   const [facilityName, setfacilityName] = useState("");
-  const handleBookNow = async (facilityId) => {
-    dispatch({ type: "facilityId/setFacilityId", payload: facilityId });
-    console.log("Selected Facility ID1:", facilityId);
-    console.log(typeof facilityId);
-    console.log(token);
-    
-    try {
-      const response1 = await axios.get(
-        `${ProductionApi}/facility/get?id=${facilityId}`,
-        {},
-        { withCredentials: true },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+  // ✅ CORRECT: GET request - Single config object as second parameter
+const handleBookNow = async (facilityId) => {
+  dispatch({ type: "facilityId/setFacilityId", payload: facilityId });
+  console.log("Selected Facility ID1:", facilityId);
+  console.log(typeof facilityId);
+  console.log(token);
+  
+  try {
+    const response1 = await axios.get(
+      `${ProductionApi}/facility/get?id=${facilityId}`,
+      {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`
         }
-        
-      );
-      setsfdata(response1.data);
-      setfAddress(response1.data.data.address);
-      setfTiming(response1.data.data.timing);
-      console.log("Facility Details:", response1.data);
-      setfacilityName(response1.data.data.name);
-      console.log("Facility Details Name:", response1.data.data.name);
-      console.log("above token",token);
-      
-    } catch (error) {
-      console.log("Error fetching facility details:", error);
-    }
-  };  const handleMakeBookingApi = async () => {
+      }
+    );
+    setsfdata(response1.data);
+    setfAddress(response1.data.data.address);
+    setfTiming(response1.data.data.timing);
+    console.log("Facility Details:", response1.data);
+    setfacilityName(response1.data.data.name);
+    console.log("Facility Details Name:", response1.data.data.name);
+    console.log("above token", token);
+    
+  } catch (error) {
+    console.log("Error fetching facility details:", error);
+  }
+}; const handleMakeBookingApi = async () => {
     console.log("yaha se dekh ::::::::");
     console.log("Booking facility with ID:", facilityId);
     console.log("Booking facility with Name:", facilityName);
