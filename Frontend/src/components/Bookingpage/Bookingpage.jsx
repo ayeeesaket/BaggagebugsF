@@ -239,9 +239,7 @@ const handleBookNow = async (facilityId) => {
       {
         withCredentials: true,
         headers: {
-          Authorization: `Bearer ${token1}`,
-          'Content-Type': 'application/json'
-        }
+       
       }
     );
     setsfdata(response1.data);
