@@ -229,7 +229,7 @@ const Bookingpage = () => {
     dispatch({ type: "facilityId/setFacilityId", payload: facilityId });
     console.log("Selected Facility ID1:", facilityId);
     console.log(typeof facilityId);
-    // console.log(token);
+    console.log(token);
     
     try {
       const response1 = await axios.get(
