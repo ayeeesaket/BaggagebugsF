@@ -273,7 +273,7 @@ const handleBookNow = async (facilityId) => {
           luggageType: "Bag",
           facilityId: facilityId.facilityId,
         },
-        { withCredentials: true },
+       
         {
           headers: {
             Authorization: `Bearer ${token}`
