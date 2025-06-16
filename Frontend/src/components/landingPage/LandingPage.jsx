@@ -43,8 +43,8 @@ const LandingPage = () => {
     } else if (storedToken) {
       // Case 2: Returning user with token already in localStorage
       // dispatch({ type: "token/setTokenValue", payload: storedToken });
-      // dispatch({ type: "login/login" });
-      dispatch({ type: "login/login" });
+
+      dispatch({ type: "login/login", payload: true }); // Set login state to true
       console.log("Token from localStorage found, user logged in.");
     }
   }, [dispatch]);
@@ -155,7 +155,7 @@ const LandingPage = () => {
     }
     //  Cookies.set("token", token, { expires: 1});
     //  Cookies.set("role", role, { expires: 1 }); // Assuming role is 'user' for this example
-    //   dispatch({ type: "login/login" });
+ 
   }, []);
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
@@ -188,7 +188,8 @@ const LandingPage = () => {
       });
       console.log("logged out");
       navigate("/");
-      dispatch({ type: "login/login" });
+      dispatch({ type: "login/login", payload: false }); // Set login state to false
+      localStorage.removeItem("token");
     } catch (error) {
       console.log(error);
     }

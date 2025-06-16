@@ -55,7 +55,7 @@ const UserOverview = () => {
       );
       console.log("logged out");
       navigate("/");
-      dispatch({ type: "login/login" });
+      dispatch({ type: "login/login", payload: false });
     } catch (error) {
       console.log(error);
     }

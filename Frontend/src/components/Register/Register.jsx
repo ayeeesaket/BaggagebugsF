@@ -46,7 +46,7 @@ const Register = () => {
       );
       console.log("hello");
       navigate("/landingpage");
-      dispatch({ type: "login/login" });
+      dispatch({ type: "login/login", payload: true }); // Set login state to true
     } catch (error) {
       console.log(error);
     }

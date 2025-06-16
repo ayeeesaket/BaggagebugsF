@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "../../styles/Login.css";
 import axios from "axios";
 import { ProductionApi, LocalApi } from "../../../utills";
-import { useSelector } from "react-redux";
+import { useSelector ,useDispatch} from "react-redux";
 import { useState } from "react";
 const Partneroverview = () => {
   const navigate = useNavigate();
@@ -51,6 +51,8 @@ const Partneroverview = () => {
         }
       );
       console.log("logged out");
+      dispatchEvent({ type: "login/login", payload: false }); // Set login state to false
+      localStorage.removeItem("token");
       navigate("/");
     } catch (error) {
       console.log(error);

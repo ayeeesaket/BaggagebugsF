@@ -44,7 +44,7 @@ const Login = () => {
         { withCredentials: true }
       );
 
-      dispatch({ type: "login/login" });
+      dispatch({ type: "login/login" , payload: true }); // Set login state to true
 
       const { token, role } = response.data;
       navigate(`/landingpage?token=${token}&role=${role}`);
