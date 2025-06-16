@@ -234,6 +234,7 @@ const Bookingpage = () => {
     try {
       const response1 = await axios.get(
         `${ProductionApi}/facility/get?id=${facilityId}`,
+        {},
         { withCredentials: true },
         {
           headers: {
