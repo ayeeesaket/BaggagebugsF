@@ -45,7 +45,7 @@ const LandingPage = () => {
   
    
    if(token1) {  dispatch({ type: "login/login" });
-    console.log("Token found, logout dispatched.");}
+   }
   })
    
   const token = useSelector((state) => state.token.tokenValue);
