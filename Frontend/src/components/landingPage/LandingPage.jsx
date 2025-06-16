@@ -178,7 +178,10 @@ const LandingPage = () => {
 
   const handleLogoutClick = async () => {
     try {
-      const response = await axios.post(`${ProductionApi}/user/logout`, {
+      const response = await axios.post(`${ProductionApi}/user/logout`,
+        {
+          withCredentials: true,
+        },{
         headers: {
           Authorization: `Bearer ${token}`,
         },
