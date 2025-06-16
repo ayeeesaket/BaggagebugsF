@@ -233,14 +233,14 @@ const handleBookNow = async (facilityId) => {
   console.log(token);
   
   try {
+    const token1 =localStorage.getItem("token")
     const response1 = await axios.get(
       `${ProductionApi}/facility/get?id=${facilityId}`,
       {
         withCredentials: true,
         headers: {
-         'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
+          Authorization: `Bearer ${token1}`,
+          'Content-Type': 'application/json'
         }
       }
     );
