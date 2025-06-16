@@ -83,7 +83,9 @@ const Onboardingpage = () => {
     try {
       const response = await axios.post(
         `${ProductionApi}/user/logout`,
-        
+        {
+          withCredentials: true,
+        },
         {
           headers: {
             Authorization: `Bearer ${token}`
