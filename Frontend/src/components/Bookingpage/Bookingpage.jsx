@@ -9,6 +9,7 @@ import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
 import { BsArrowLeftCircle, BsArrowRightCircle } from "react-icons/bs";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
+import { useRef, useEffect } from "react";
 import "slick-carousel/slick/slick-theme.css";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
@@ -272,22 +273,21 @@ const Bookingpage = () => {
   
 
 
+const cashfreeRef = useRef(null);
 
-
-let cashfree = null;
 
 useEffect(() => {
-  const initializeCashfree = async () => {
+  const initCashfree = async () => {
     try {
-      cashfree = await load({ mode: "production" }); // or "production"
+      const sdk = await load({ mode: "sandbox" }); // or "production"
+      cashfreeRef.current = sdk;
       console.log("✅ Cashfree SDK loaded");
     } catch (e) {
-      console.error("❌ Failed to load Cashfree SDK", e);
+      console.error("❌ SDK Load Failed:", e);
     }
   };
 
-  initializeCashfree();
-}, []);
+  initCashfree();}, []);
 
 
 
@@ -347,23 +347,29 @@ const getSessionId = async () => {
     console.log("Pick-up Date:", pickUpDate);
     console.log("token data :", token);
  try {
+    const sessionId = await getSessionId();
 
-      let sessionId = await getSessionId()
-      let checkoutOptions = {
-        paymentSessionId : sessionId,
-        redirectTarget:"_modal",
-      }
-
-      cashfree.checkout(checkoutOptions).then((res) => {
-        console.log("payment initialized")
-
-        verifyPayment(orderId)
-      })
-
-
-    } catch (error) {
-      console.log(error)
+    if (!cashfreeRef.current) {
+      toast.error("Cashfree SDK not ready");
+      return;
     }
+
+    if (!sessionId) {
+      toast.error("Invalid payment session ID");
+      return;
+    }
+
+    await cashfreeRef.current.checkout({
+      paymentSessionId: sessionId,
+      redirectTarget: "_modal",
+    });
+
+    await verifyPayment();
+
+  } catch (err) {
+    console.error("❌ Booking error:", err);
+  }
+
 
     try {
       const response = await axios.post(
