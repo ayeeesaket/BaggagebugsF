@@ -51,6 +51,7 @@ const Bookingpage = () => {
   const facilityId = useSelector((state) => state.facilityId);
   const [token, setToken] = useState(() => localStorage.getItem("token"));
   const [orderId, setOrderId] = useState("");
+  const [sessionId,setSesionId] = useState(""); 
   // const [orderId, setOrderId] = useState("")
   const dispatch = useDispatch();
   //  New state for selected facility ID
