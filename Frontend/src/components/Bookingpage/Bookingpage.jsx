@@ -379,7 +379,7 @@ console.log(res.data);
     const sessionId = await getSessionId();
 
     const cashfree = await load({
-      mode: "sandbox", // or "production" based on your environment
+      mode: "production", // or "production" based on your environment
     });
 
     const checkoutOptions = {
