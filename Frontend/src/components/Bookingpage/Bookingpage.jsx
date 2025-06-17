@@ -18,7 +18,7 @@ import { ProductionApi, LocalApi } from "../../../utills";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { load } from "@cashfreepayments/cashfree-js";
-
+import { v4 as uuidv4 } from 'uuid';
 const Bookingpage = () => {
   // bringing the name of the page from landingpage
   const location = useLocation();
@@ -50,7 +50,7 @@ const Bookingpage = () => {
   const [facilities, setFacilities] = useState([]);
   const facilityId = useSelector((state) => state.facilityId);
   const [token, setToken] = useState(() => localStorage.getItem("token"));
-  const [orderId, setOrderId] = useState("");
+  const [orderId, setOrderId] = useState(uuidv4());
   // const [orderId, setOrderId] = useState("")
   const dispatch = useDispatch();
   //  New state for selected facility ID
@@ -233,13 +233,7 @@ const Bookingpage = () => {
   };
   const [facilityName, setfacilityName] = useState("");
   // ✅ CORRECT: GET request - Single config object as second parameter
-  useEffect(() => {
-    async function createOrderId() {
-      const id = await generateOrderId();
-      setOrderId(id);
-    }
-    createOrderId();
-  }, []);
+ 
   const handleBookNow = async (facilityId) => {
     dispatch({ type: "facilityId/setFacilityId", payload: facilityId });
     console.log("Selected Facility ID1:", facilityId);
@@ -266,50 +260,35 @@ const Bookingpage = () => {
       console.log("Error fetching facility details:", error);
     }
   };
-  const getSesseionId = async () =>{
-   try {
-     let res = await axios.post(`${ProductionApi}/payment/create`,{
-      orderId: orderId,
-      orderAmount: 100,
-      customerEmail: email,
-      customerPhone: phoneNo,
-      customerName: name
-     },{
-      headers:{
-        Authorization:`Bearer ${token}`
-      }
-     })
-     console.log("hellosesionId",res.data);
-     
-   } catch (error) {
-    console.log(error);
-   }
-  }
-  async function generateOrderId() {
-  if (!window.crypto || !window.crypto.subtle) {
-    throw new Error("Web Crypto API not supported in this browser.");
-  }
 
-  const array = new Uint8Array(16);
-  window.crypto.getRandomValues(array);
-  const uniqueId = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
-
-  const encoder = new TextEncoder();
-  const data = encoder.encode(uniqueId);
-
-  const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  return hashHex.substr(0, 12);
-}
-  // setOrderId(generateOrderId());
   const name = useSelector((state) => state.details.name);
   const phoneNo = useSelector((state) => state.details.phoneNo);
   const email = useSelector((state) => state.details.email);
   console.log("name in booking page:", name);
   console.log("phoneNo in booking page:", phoneNo);
   console.log("email in booking page:", email);
-  const getSessionId = async () => {
+
+
+  
+
+
+
+
+  let cashfree;
+
+  let insitialzeSDK = async function () {
+
+    cashfree = await load({
+      mode: "sandbox",
+    })
+  }
+
+  insitialzeSDK()
+
+
+
+
+const getSessionId = async () => {
     console.log("orderId in getSessionId:", orderId);
     try {
       let res = await axios.post(
@@ -342,23 +321,19 @@ const Bookingpage = () => {
 
   const verifyPayment = async () => {
     try {
-      let res = await axios.get(
-        `${ProductionApi}/payment/verify?orderId=${orderId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-console.log(res.data);
+      
+      let res = await axios.post("${ProductionApi}/payment/verify?orderId=${orderId}")
 
-      if (res && res.data) {
-        alert("payment verified");
+      if(res && res.data){
+        alert("payment verified")
       }
+
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
-  };
+  }
+
+
   const handleMakeBookingApi = async () => {
 
     console.log("yaha se dekh ::::::::");
@@ -368,31 +343,24 @@ console.log(res.data);
     console.log("Pick-up Date:", pickUpDate);
     console.log("token data :", token);
  try {
-    const sessionId = await getSessionId();
-    console.log(sessionId);
-    
-    const cashfree = await load({
-      mode: "production", // or "production" based on your environment
-    });
 
-    const checkoutOptions = {
-      paymentSessionId: sessionId,
-      redirectTarget: "_modal", // "_blank" or "_self" if not using modal
-    };
-try {
-  const result = await cashfree.checkout(checkoutOptions);
-  console.log("Result:", result);
-} catch (err) {
-  console.error("Cashfree checkout failed:", err);
-}
-    cashfree.checkout(checkoutOptions).then((res) => {
-      console.log("payment initialized");
-      verifyPayment(orderId);
-    });
+      let sessionId = await getSessionId()
+      let checkoutOptions = {
+        paymentSessionId : sessionId,
+        redirectTarget:"_modal",
+      }
 
-  } catch (error) {
-    console.log("Error during payment initialization:", error);
-  }
+      cashfree.checkout(checkoutOptions).then((res) => {
+        console.log("payment initialized")
+
+        verifyPayment(orderId)
+      })
+
+
+    } catch (error) {
+      console.log(error)
+    }
+
     try {
       const response = await axios.post(
         `${ProductionApi}/booking/`,
