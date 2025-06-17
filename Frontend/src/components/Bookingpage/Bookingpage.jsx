@@ -320,7 +320,7 @@ const Bookingpage = () => {
   const getSessionId = async () => {
     console.log("orderId in getSessionId:", orderId);
     try {
-      let res = await axios.get(
+      let res = await axios.post(
         `${ProductionApi}/payment/create`,
         {
           orderId: orderId,
@@ -348,7 +348,7 @@ const Bookingpage = () => {
 
   const verifyPayment = async () => {
     try {
-      let res = await axios.post(
+      let res = await axios.get(
         `${ProductionApi}payment/verify?orderId=${orderId}`,
         {
           headers: {
