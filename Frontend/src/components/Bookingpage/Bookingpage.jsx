@@ -341,6 +341,7 @@ const Bookingpage = () => {
         setOrderId(res.data.order_id);
         return res.data.payment_session_id;
       }
+
     } catch (error) {
       console.log(error);
     }
@@ -356,6 +357,7 @@ const Bookingpage = () => {
           },
         }
       );
+console.log(res.data);
 
       if (res && res.data) {
         alert("payment verified");
@@ -372,26 +374,26 @@ const Bookingpage = () => {
     console.log("Drop-off Date:", dropOffDate);
     console.log("Pick-up Date:", pickUpDate);
     console.log("token data :", token);
+ try {
+    const sessionId = await getSessionId();
 
-    try {
+    const cashfree = await load({
+      mode: "sandbox", // or "production" based on your environment
+    });
 
-      let sessionId = await getSessionId()
-      let checkoutOptions = {
-        paymentSessionId : sessionId,
-        redirectTarget:"_modal",
-      }
+    const checkoutOptions = {
+      paymentSessionId: sessionId,
+      redirectTarget: "_modal", // "_blank" or "_self" if not using modal
+    };
 
-      cashfree.checkout(checkoutOptions).then((res) => {
-        console.log("payment initialized")
+    cashfree.checkout(checkoutOptions).then((res) => {
+      console.log("payment initialized");
+      verifyPayment(orderId);
+    });
 
-        verifyPayment(orderId)
-      })
-
-
-    } catch (error) {
-      console.log(error)
-    }
-
+  } catch (error) {
+    console.log("Error during payment initialization:", error);
+  }
     try {
       const response = await axios.post(
         `${ProductionApi}/booking/`,
