@@ -374,6 +374,25 @@ const Bookingpage = () => {
     console.log("token data :", token);
 
     try {
+
+      let sessionId = await getSessionId()
+      let checkoutOptions = {
+        paymentSessionId : sessionId,
+        redirectTarget:"_modal",
+      }
+
+      cashfree.checkout(checkoutOptions).then((res) => {
+        console.log("payment initialized")
+
+        verifyPayment(orderId)
+      })
+
+
+    } catch (error) {
+      console.log(error)
+    }
+
+    try {
       const response = await axios.post(
         `${ProductionApi}/booking/`,
         {
