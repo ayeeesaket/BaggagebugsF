@@ -327,7 +327,9 @@ const Bookingpage = () => {
           },
         }
       );
-     console.log(res.data.payment_session_id);
+      console.log(res.data);
+      
+     console.log(res.data.data.payment_session_id);
      
 
     } catch (error) {
