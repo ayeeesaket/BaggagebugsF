@@ -387,7 +387,7 @@ function generateOrderId() {
         console.log("payment initialized");
 
         verifyPayment(orderId);
-        navigate("/reservation");
+        // navigate("/reservation");
       });
     } catch (error) {
       console.log(error);
