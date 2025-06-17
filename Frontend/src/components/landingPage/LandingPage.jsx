@@ -33,8 +33,8 @@ const LandingPage = () => {
   useEffect(() => {
     const urlToken = new URLSearchParams(window.location.search).get("token");
     const storedToken = localStorage.getItem("token");
-    const isPartner = useSelector((state) => state.partner.isPartner);
-    console.log("isPartner:", isPartner);
+    handlePartnerRedux();
+
     if (urlToken && !storedToken) {
       // Case 1: Token from URL on first login
       localStorage.setItem("token", urlToken);
@@ -49,6 +49,11 @@ const LandingPage = () => {
       console.log("Token from localStorage found, user logged in.");
     }
   }, [dispatch]);
+  const handlePartnerRedux = () => {
+    const isPartner = useSelector((state) => state.partner.isPartner);
+    console.log("isPartner:", isPartner);
+  };
+
   // useEffect(()=>{
   //  const token1 = localStorage.getItem("token");
 
@@ -156,7 +161,6 @@ const LandingPage = () => {
     }
     //  Cookies.set("token", token, { expires: 1});
     //  Cookies.set("role", role, { expires: 1 }); // Assuming role is 'user' for this example
- 
   }, []);
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
@@ -175,11 +179,11 @@ const LandingPage = () => {
   const onUnmount = React.useCallback(function callback(map) {
     setMap(null);
   }, []);
-  
 
   const handleLogoutClick = async () => {
     try {
-      const response = await axios.post(`${ProductionApi}/user/logout`,
+      const response = await axios.post(
+        `${ProductionApi}/user/logout`,
         {},
         {
           withCredentials: true,
@@ -757,7 +761,6 @@ const LandingPage = () => {
               <div className="mt-10">
                 <button
                   onClick={() => {
-                     
                     navigate("/partneroverview");
                     console.log("Become a Partner clicked", isPartner);
                   }}
