@@ -361,7 +361,7 @@ const getSessionId = async () => {
 
     await cashfreeRef.current.checkout({
       paymentSessionId: sessionId,
-      redirectTarget: "_modal",
+      redirectTarget: "_blank",
     });
 
     await verifyPayment();
