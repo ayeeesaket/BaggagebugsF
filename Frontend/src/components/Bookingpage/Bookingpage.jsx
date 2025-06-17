@@ -279,19 +279,11 @@ const Bookingpage = () => {
         Authorization:`Bearer ${token}`
       }
      })
+     console.log("hellosesionId",res.data);
      
    } catch (error) {
     console.log(error);
    }
-  }
-  const handleclick =  async() =>{
-       try {
-        
-
-        let sessionId = await getSesseionId()
-       } catch (error) {
-        
-       }
   }
   async function generateOrderId() {
   if (!window.crypto || !window.crypto.subtle) {
@@ -335,14 +327,8 @@ const Bookingpage = () => {
           },
         }
       );
-console.log(res.data);
-
-      if (res.data && res.data.payment_session_id) {
-        console.log(res.data);
-        setOrderId(res.data.order_id);
-        return res.data.payment_session_id;
-      }
-
+     console.log(res.data);
+     
     } catch (error) {
       console.log(error);
     }
@@ -384,7 +370,7 @@ console.log(res.data);
 
     const checkoutOptions = {
       paymentSessionId: sessionId,
-      redirectTarget: "_self", // "_blank" or "_self" if not using modal
+      redirectTarget: "_modal", // "_blank" or "_self" if not using modal
     };
 try {
   const result = await cashfree.checkout(checkoutOptions);
