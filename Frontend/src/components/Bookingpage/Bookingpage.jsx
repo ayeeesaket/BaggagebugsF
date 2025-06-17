@@ -335,6 +335,7 @@ const Bookingpage = () => {
           },
         }
       );
+console.log(res.data);
 
       if (res.data && res.data.payment_session_id) {
         console.log(res.data);
@@ -350,7 +351,7 @@ const Bookingpage = () => {
   const verifyPayment = async () => {
     try {
       let res = await axios.get(
-        `${ProductionApi}payment/verify?orderId=${orderId}`,
+        `${ProductionApi}/payment/verify?orderId=${orderId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
