@@ -276,21 +276,24 @@ const Bookingpage = () => {
   };
 
   insitialzeSDK();
-
 function generateOrderId() {
+  if (!window.crypto || !window.crypto.subtle) {
+    throw new Error("Web Crypto API not supported in this browser.");
+  }
+
   const array = new Uint8Array(16);
-  crypto.getRandomValues(array);
+  window.crypto.getRandomValues(array);
   const uniqueId = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
 
   const encoder = new TextEncoder();
   const data = encoder.encode(uniqueId);
 
-  return crypto.subtle.digest('SHA-256', data).then(hashBuffer => {
+  return window.crypto.subtle.digest('SHA-256', data).then(hashBuffer => {
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     return hashHex.substr(0, 12);
   });
-}generateOrderId().then(orderId => console.log(orderId))
+}
   // setOrderId(generateOrderId());
   const name = useSelector((state) => state.details.name);
   const phoneNo = useSelector((state) => state.details.phoneNo);
