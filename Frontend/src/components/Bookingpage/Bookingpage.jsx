@@ -266,17 +266,34 @@ const Bookingpage = () => {
       console.log("Error fetching facility details:", error);
     }
   };
-  
-  let cashfree;
+  const getSesseionId = async () =>{
+   try {
+     let res = await axios.post(`${ProductionApi}/payment/create`,{
+      orderId: orderId,
+      orderAmount: 100,
+      customerEmail: email,
+      customerPhone: phoneNo,
+      customerName: name
+     },{
+      headers:{
+        Authorization:`Bearer ${token}`
+      }
+     })
+     
+   } catch (error) {
+    console.log(error);
+   }
+  }
+  const handleclick =  async() =>{
+       try {
+        
 
-  let insitialzeSDK = async function () {
-    cashfree = await load({
-      mode: "sandbox",
-    });
-  };
-
-  insitialzeSDK();
-function generateOrderId() {
+        let sessionId = await getSesseionId()
+       } catch (error) {
+        
+       }
+  }
+  async function generateOrderId() {
   if (!window.crypto || !window.crypto.subtle) {
     throw new Error("Web Crypto API not supported in this browser.");
   }
@@ -288,63 +305,16 @@ function generateOrderId() {
   const encoder = new TextEncoder();
   const data = encoder.encode(uniqueId);
 
-  return window.crypto.subtle.digest('SHA-256', data).then(hashBuffer => {
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    return hashHex.substr(0, 12);
-  });
+  const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashHex.substr(0, 12);
 }
   // setOrderId(generateOrderId());
   const name = useSelector((state) => state.details.name);
   const phoneNo = useSelector((state) => state.details.phoneNo);
   const email = useSelector((state) => state.details.email);
-  const getSessionId = async () => {
-    console.log("orderId in getSessionId:", orderId);
-    try {
-      let res = await axios.get(
-        `${ProductionApi}/payment/create`,
-        {
-          orderId: orderId,
-          orderAmount: 100,
-          customerEmail: email,
-          customerPhone: phoneNo,
-          customerName: name,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
 
-      if (res.data && res.data.payment_session_id) {
-        console.log(res.data);
-        setOrderId(res.data.order_id);
-        return res.data.payment_session_id;
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const verifyPayment = async () => {
-    try {
-      let res = await axios.post(
-        `${ProductionApi}payment/verify?orderId=${orderId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (res && res.data) {
-        alert("payment verified");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
   const handleMakeBookingApi = async () => {
 
     console.log("yaha se dekh ::::::::");
@@ -375,22 +345,6 @@ function generateOrderId() {
       toast.success("Booking successful!");
     } catch (error) {
       console.error("Error making booking:", error);
-    }
-    try {
-      let sessionId = await getSessionId();
-      let checkoutOptions = {
-        paymentSessionId: sessionId,
-        redirectTarget: "_modal",
-      };
-
-      cashfree.checkout(checkoutOptions).then((res) => {
-        console.log("payment initialized");
-
-        verifyPayment(orderId);
-        // navigate("/reservation");
-      });
-    } catch (error) {
-      console.log(error);
     }
   };
  
