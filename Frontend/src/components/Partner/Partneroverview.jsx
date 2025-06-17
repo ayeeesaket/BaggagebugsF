@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import "../../styles/Login.css";
 import axios from "axios";
 import { ProductionApi, LocalApi } from "../../../utills";
-import { useSelector } from "react-redux";
+import { useSelector ,useDispatch} from "react-redux";
+import { useState } from "react";
 const Partneroverview = () => {
   const navigate = useNavigate();
 
@@ -33,25 +34,25 @@ const Partneroverview = () => {
   const handleReviewsClick = () => {
     navigate("/reviews");
   };
-  const handleAssistanceClick = () => { };
-  const [token, setToken] = useState(
-      useSelector((state) => state.token.tokenValue)
-    );
+  const handleAssistanceClick = () => {};
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
+const dispatch = useDispatch();
   const handleLogoutClick = async () => {
     try {
       const response = await axios.post(
         `${ProductionApi}/user/logout`,
-        {},
         {
           withCredentials: true,
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       console.log("logged out");
+      dispatch({ type: "login/login", payload: false }); // Set login state to false
+      localStorage.removeItem("token");
       navigate("/");
     } catch (error) {
       console.log(error);

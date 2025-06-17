@@ -31,34 +31,39 @@ const LandingPage = () => {
   const dispatch = useDispatch();
   // const [searchParams] = useSearchParams();
   useEffect(() => {
-  const urlToken = new URLSearchParams(window.location.search).get("token");
-  const storedToken = localStorage.getItem("token");
+    const urlToken = new URLSearchParams(window.location.search).get("token");
+    const storedToken = localStorage.getItem("token");
+    handlePartnerRedux();
 
-  if (urlToken && !storedToken) {
-    // Case 1: Token from URL on first login
-    localStorage.setItem("token", urlToken);
-    dispatch({ type: "token/setTokenValue", payload: urlToken });
-   
-    console.log("Token from URL saved and user logged in.");
-  } else if (storedToken) {
-    // Case 2: Returning user with token already in localStorage
-    // dispatch({ type: "token/setTokenValue", payload: storedToken });
-    // dispatch({ type: "login/login" }); 
-    dispatch({ type: "login/login" });
-    console.log("Token from localStorage found, user logged in.");
-  }
-}, [dispatch]);
+    if (urlToken && !storedToken) {
+      // Case 1: Token from URL on first login
+      localStorage.setItem("token", urlToken);
+      dispatch({ type: "token/setTokenValue", payload: urlToken });
+      dispatch({ type: "login/login", payload: true }); // Set login state to true
+      console.log("Token from URL saved and user logged in.");
+    } else if (storedToken) {
+      // Case 2: Returning user with token already in localStorage
+      // dispatch({ type: "token/setTokenValue", payload: storedToken });
+
+      dispatch({ type: "login/login", payload: true }); // Set login state to true
+      console.log("Token from localStorage found, user logged in.");
+    }
+  }, [dispatch]);
+  const handlePartnerRedux = () => {
+    const isPartner = useSelector((state) => state.partner.isPartner);
+    console.log("isPartner:", isPartner);
+  };
+
   // useEffect(()=>{
   //  const token1 = localStorage.getItem("token");
-  
-   
+
   //  if(token1) {
-    
+
   //   console.log("Token found, logout dispatched.");}
   // },[])
-   
+
   const token = useSelector((state) => state.token.tokenValue);
-  
+  const isPartner = useSelector((state) => state.partner.isPartner);
   const imgArr = [
     {
       img: "/Tower.svg",
@@ -156,7 +161,6 @@ const LandingPage = () => {
     }
     //  Cookies.set("token", token, { expires: 1});
     //  Cookies.set("role", role, { expires: 1 }); // Assuming role is 'user' for this example
-    //   dispatch({ type: "login/login" });
   }, []);
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
@@ -175,7 +179,6 @@ const LandingPage = () => {
   const onUnmount = React.useCallback(function callback(map) {
     setMap(null);
   }, []);
-  const [isPartner, setIsPartner] = useState(false);
 
   const handleLogoutClick = async () => {
     try {
@@ -184,11 +187,15 @@ const LandingPage = () => {
         {},
         {
           withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       console.log("logged out");
       navigate("/");
-      dispatch({ type: "login/login" });
+      dispatch({ type: "login/login", payload: false }); // Set login state to false
+      localStorage.removeItem("token");
     } catch (error) {
       console.log(error);
     }
@@ -344,10 +351,13 @@ const LandingPage = () => {
                     placeholder="Barcelona"
                     type="text"
                     onChange={(e) => setQuery(e.target.value)}
-                    onKeyDown={(e) =>
-                      e.key === "Enter" &&
-                      navigate("/bookingpage", { state: { query, isLoggedIn } })
-                    }
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && isLoggedIn) {
+                        navigate("/bookingpage", {
+                          state: { query, isLoggedIn },
+                        });
+                      }
+                    }}
                   />
                   <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#63C5DA]">
                     <IoIosSearch size={24} />
@@ -751,7 +761,6 @@ const LandingPage = () => {
               <div className="mt-10">
                 <button
                   onClick={() => {
-                    setIsPartner(true);
                     navigate("/partneroverview");
                     console.log("Become a Partner clicked", isPartner);
                   }}

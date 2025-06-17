@@ -48,9 +48,8 @@ const Bookingpage = () => {
   const [clicked, setClicked] = useState(false);
   const [facilities, setFacilities] = useState([]);
   const facilityId = useSelector((state) => state.facilityId);
-  const [token, setToken] = useState(() => localStorage.getItem("token"));
+   const [token, setToken] = useState(() => localStorage.getItem("token"));
   // const [orderId, setOrderId] = useState("")
- 
   const dispatch = useDispatch();
   //  New state for selected facility ID
 
@@ -58,7 +57,9 @@ const Bookingpage = () => {
 
   const handleLogoClick = () => {
     navigate("/landingpage");
-    //  dispatch({ type: "login/logout" });
+    if (!isLoggedIn) {
+      dispatch({ type: "login/login" });
+    }
   };
 
   const containerStyle = {
@@ -87,7 +88,7 @@ const Bookingpage = () => {
       setMap(mapInstance);
       console.log("token in Bookingpage:", token);
     },
-    
+
     [center]
   );
 
@@ -122,11 +123,12 @@ const Bookingpage = () => {
         const facilityRes = await axios.post(
           `${ProductionApi}/map/facilitiesBySearch`,
           { userCoordinates: [location.lng, location.lat] },
-            { withCredentials: true }, {
-              headers: {
-                Authorization: `Bearer ${token}`
-              }
-            }
+          
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
 
         const fetchedFacilities = facilityRes.data.message;
@@ -158,14 +160,14 @@ const Bookingpage = () => {
                 userCoordinates: [location.lng, location.lat],
                 facilityCoordinates: coordsArray[i], // coordsArray[i] is already an array
               },
-              { withCredentials: true },// optional third argument for cookies/auth
+              { withCredentials: true }, // optional third argument for cookies/auth
               {
                 headers: {
-                  Authorization: `Bearer ${token}`
-                }
+                  Authorization: `Bearer ${token}`,
+                },
               }
             );
-            
+
             const distanceData = distance1.data;
             setDistance1(distanceData);
             setfDuration(distance1.data.message.duration);
@@ -229,143 +231,40 @@ const Bookingpage = () => {
   };
   const [facilityName, setfacilityName] = useState("");
   // ✅ CORRECT: GET request - Single config object as second parameter
-const handleBookNow = async (facilityId) => {
-  dispatch({ type: "facilityId/setFacilityId", payload: facilityId });
-  console.log("Selected Facility ID1:", facilityId);
-  console.log(typeof facilityId);
-  console.log(token);
-  
-  try {
-   
-    const response1 = await axios.get(
-      `${ProductionApi}/facility/get?id=${facilityId}`,
-      {
-        
-        headers: {
-          Authorization: `Bearer ${token}`,
-         
-        }
-      }
-    );
-    setsfdata(response1.data);
-    setfAddress(response1.data.data.address);
-    setfTiming(response1.data.data.timing);
-    console.log("Facility Details:", response1.data);
-    setfacilityName(response1.data.data.name);
-    console.log("Facility Details Name:", response1.data.data.name);
-    console.log("above token", token);
-    
-  } catch (error) {
-    console.log("Error fetching facility details:", error);
-  }
-}; 
+  const handleBookNow = async (facilityId) => {
+    dispatch({ type: "facilityId/setFacilityId", payload: facilityId });
+    console.log("Selected Facility ID1:", facilityId);
+    console.log(typeof facilityId);
+    console.log(token);
 
-  let cashfree;
-
-  let insitialzeSDK = async function () {
-
-    cashfree = await load({
-      mode: "sandbox",
-    })
-  }
-
-  insitialzeSDK()
- 
-
-
-
-  const getSessionId = async () => {
-     function generateOrderId() {
-    const uniqueId = crypto.randomBytes(16).toString('hex');
-
-    const hash = crypto.createHash('sha256');
-    hash.update(uniqueId);
-
-    const orderId = hash.digest('hex');
-
-    return orderId.substr(0, 12); 
-    
-  
-}
- 
     try {
-      let res = await axios.get(`${ProductionApi}/payment/create`,
+      const response1 = await axios.get(
+        `${ProductionApi}/facility/get?id=${facilityId}`,
         {
-           orderId : orderId,
-           orderAmount : 100,
-           customerEmail : "",
-           customerName : "",
-           customerPhone : "",
-        },
-        {headers:
-           {
-          Authorization: `Bearer ${token}`,
-           }
-        },
-      )
-      if(res.data && res.data.payment_session_id){
-
-        console.log(res.data)
-        setOrderId(res.data.order_id)
-        return res.data.payment_session_id
-      }
-
-
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setsfdata(response1.data);
+      setfAddress(response1.data.data.address);
+      setfTiming(response1.data.data.timing);
+      console.log("Facility Details:", response1.data);
+      setfacilityName(response1.data.data.name);
+      console.log("Facility Details Name:", response1.data.data.name);
+      console.log("above token", token);
     } catch (error) {
-      console.log(error)
+      console.log("Error fetching facility details:", error);
     }
-  }
-const verifyPayment = async () => {
-    try {
-      
-      let res = await axios.post(`${ProductionApi}payment/verify?orderId=ORDER31`, {
-        orderId: orderId
-      })
-
-      if(res && res.data){
-        alert("payment verified")
-      }
-
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  const handleClick = async (e) => {
-    e.preventDefault()
-    try {
-
-      let sessionId = await getSessionId()
-      let checkoutOptions = {
-        paymentSessionId : sessionId,
-        redirectTarget:"_modal",
-      }
-
-      cashfree.checkout(checkoutOptions).then((res) => {
-        console.log("payment initialized")
-
-        verifyPayment(orderId)
-      })
-
-
-    } catch (error) {
-      console.log(error)
-    }
-
-  }
-
-
-
-
-
-const handleMakeBookingApi = async () => {
+  };
+  const handleMakeBookingApi = async () => {
     console.log("yaha se dekh ::::::::");
     console.log("Booking facility with ID:", facilityId);
     console.log("Booking facility with Name:", facilityName);
     console.log("Drop-off Date:", dropOffDate);
     console.log("Pick-up Date:", pickUpDate);
-    console.log("token data :",token);
-    
+    console.log("token data :", token);
+
     try {
       const response = await axios.post(
         `${ProductionApi}/booking/`,
@@ -376,15 +275,15 @@ const handleMakeBookingApi = async () => {
           luggageType: "Bag",
           facilityId: facilityId.facilityId,
         },
-       
+
         {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       console.log("Booking successful:", response.data);
-    toast.success("Booking successful!");
+      toast.success("Booking successful!");
     } catch (error) {
       console.error("Error making booking:", error);
     }

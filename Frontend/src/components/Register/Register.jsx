@@ -25,9 +25,8 @@ const Register = () => {
   const handletoLogin = () => navigate("/");
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
   const dispatch = useDispatch();
-  const [token, setToken] = useState(
-    useSelector((state) => state.token.tokenValue)
-  );
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
+
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
@@ -47,7 +46,7 @@ const Register = () => {
       );
       console.log("hello");
       navigate("/landingpage");
-      dispatch({ type: "login/login" });
+      dispatch({ type: "login/login", payload: true }); // Set login state to true
     } catch (error) {
       console.log(error);
     }
