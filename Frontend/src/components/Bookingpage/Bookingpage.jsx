@@ -274,16 +274,20 @@ const Bookingpage = () => {
 
 
 
-  let cashfree;
+let cashfree = null;
 
-  let insitialzeSDK = async function () {
+useEffect(() => {
+  const initializeCashfree = async () => {
+    try {
+      cashfree = await load({ mode: "production" }); // or "production"
+      console.log("✅ Cashfree SDK loaded");
+    } catch (e) {
+      console.error("❌ Failed to load Cashfree SDK", e);
+    }
+  };
 
-    cashfree = await load({
-      mode: "production",
-    })
-  }
-
-  insitialzeSDK()
+  initializeCashfree();
+}, []);
 
 
 
@@ -322,7 +326,7 @@ const getSessionId = async () => {
   const verifyPayment = async () => {
     try {
       
-      let res = await axios.post("${ProductionApi}/payment/verify?orderId=${orderId}")
+      let res = await axios.post(`${ProductionApi}/payment/verify?orderId=${orderId}`)
 
       if(res && res.data){
         alert("payment verified")
