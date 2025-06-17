@@ -298,6 +298,9 @@ function generateOrderId() {
   const name = useSelector((state) => state.details.name);
   const phoneNo = useSelector((state) => state.details.phoneNo);
   const email = useSelector((state) => state.details.email);
+  console.log("name in booking page:", name);
+  console.log("phoneNo in booking page:", phoneNo);
+  console.log("email in booking page:", email);
   const getSessionId = async () => {
     console.log("orderId in getSessionId:", orderId);
     try {
