@@ -327,9 +327,12 @@ const Bookingpage = () => {
           },
         }
       );
-  
-      
-     return (res.data.data.payment_session_id);
+    if(res.data && res.data.data.payment_session_id){
+
+        console.log(res.data)
+        setOrderId(res.data.order_id)
+        return res.data.data.payment_session_id
+      }
      
 
     } catch (error) {
