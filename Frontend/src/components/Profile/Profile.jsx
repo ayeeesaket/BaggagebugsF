@@ -50,6 +50,9 @@ const Profile = () => {
       );
       toast.success("Profile data saved!");
       console.log("Data Added", response.data);
+      dispatch({type : "details/setName", payload: firstName});
+      dispatch({type : "details/setEmail", payload: email});
+      dispatch({type : "details/setPhoneNo", payload: phoneNo});
     } catch (error) {
       console.log("Error", error);
     }
