@@ -34,7 +34,6 @@ const LandingPage = () => {
     const urlToken = new URLSearchParams(window.location.search).get("token");
     const storedToken = localStorage.getItem("token");
     handlePartnerRedux();
-
     if (urlToken && !storedToken) {
       // Case 1: Token from URL on first login
       localStorage.setItem("token", urlToken);
