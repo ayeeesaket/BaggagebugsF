@@ -314,7 +314,56 @@ const Bookingpage = () => {
   const name = useSelector((state) => state.details.name);
   const phoneNo = useSelector((state) => state.details.phoneNo);
   const email = useSelector((state) => state.details.email);
+  console.log("name in booking page:", name);
+  console.log("phoneNo in booking page:", phoneNo);
+  console.log("email in booking page:", email);
+  const getSessionId = async () => {
+    console.log("orderId in getSessionId:", orderId);
+    try {
+      let res = await axios.get(
+        `${ProductionApi}/payment/create`,
+        {
+          orderId: orderId,
+          orderAmount: 100,
+          customerEmail: email,
+          customerPhone: phoneNo,
+          customerName: name,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
+      if (res.data && res.data.payment_session_id) {
+        console.log(res.data);
+        setOrderId(res.data.order_id);
+        return res.data.payment_session_id;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const verifyPayment = async () => {
+    try {
+      let res = await axios.post(
+        `${ProductionApi}payment/verify?orderId=${orderId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res && res.data) {
+        alert("payment verified");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const handleMakeBookingApi = async () => {
 
     console.log("yaha se dekh ::::::::");
