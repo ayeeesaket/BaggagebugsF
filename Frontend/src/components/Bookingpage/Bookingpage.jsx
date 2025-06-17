@@ -386,7 +386,12 @@ console.log(res.data);
       paymentSessionId: sessionId,
       redirectTarget: "_self", // "_blank" or "_self" if not using modal
     };
-
+try {
+  const result = await cashfree.checkout(checkoutOptions);
+  console.log("Result:", result);
+} catch (err) {
+  console.error("Cashfree checkout failed:", err);
+}
     cashfree.checkout(checkoutOptions).then((res) => {
       console.log("payment initialized");
       verifyPayment(orderId);
