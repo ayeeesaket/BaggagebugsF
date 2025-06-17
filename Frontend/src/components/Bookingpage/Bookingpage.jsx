@@ -17,11 +17,13 @@ import { GoogleApi } from "../../../utills";
 import { ProductionApi, LocalApi } from "../../../utills";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import {load} from '@cashfreepayments/cashfree-js'
 const Bookingpage = () => {
   // bringing the name of the page from landingpage
   const location = useLocation();
   const query = location.state?.query || "";
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
+  
   useEffect(() => {
     console.log("Query from previous page:", query);
     // const token = useSelector((state) => state.token.tokenValue);
@@ -46,8 +48,8 @@ const Bookingpage = () => {
   const [clicked, setClicked] = useState(false);
   const [facilities, setFacilities] = useState([]);
   const facilityId = useSelector((state) => state.facilityId);
-  const [token, setToken] = useState(() => localStorage.getItem("token"));
-
+   const [token, setToken] = useState(() => localStorage.getItem("token"));
+  // const [orderId, setOrderId] = useState("")
   const dispatch = useDispatch();
   //  New state for selected facility ID
 
@@ -286,6 +288,7 @@ const Bookingpage = () => {
       console.error("Error making booking:", error);
     }
   };
+  
   return (
     <div className="main min-h-screen w-full">
       {/* Navbar */}
