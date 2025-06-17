@@ -384,7 +384,7 @@ console.log(res.data);
 
     const checkoutOptions = {
       paymentSessionId: sessionId,
-      redirectTarget: "_modal", // "_blank" or "_self" if not using modal
+      redirectTarget: "_self", // "_blank" or "_self" if not using modal
     };
 
     cashfree.checkout(checkoutOptions).then((res) => {
