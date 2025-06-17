@@ -25,15 +25,16 @@ import setRoleValue from "../redux/features/roleSlice";
 
 const LandingPage = () => {
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
-  const isReduxPartner = useSelector((state) => state.partner.isPartner);
+  const isPartner = useSelector((state) => state.partner.isPartner);
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const dispatch = useDispatch();
   // const [searchParams] = useSearchParams();
+
   useEffect(() => {
     const urlToken = new URLSearchParams(window.location.search).get("token");
     const storedToken = localStorage.getItem("token");
-    handlePartnerRedux();
+    console.log("ispartner : ", isPartner);
     if (urlToken && !storedToken) {
       // Case 1: Token from URL on first login
       localStorage.setItem("token", urlToken);
@@ -48,10 +49,6 @@ const LandingPage = () => {
       console.log("Token from localStorage found, user logged in.");
     }
   }, [dispatch]);
-  const handlePartnerRedux = () => {
-    const isPartner = useSelector((state) => state.partner.isPartner);
-    console.log("isPartner:", isPartner);
-  };
 
   // useEffect(()=>{
   //  const token1 = localStorage.getItem("token");
@@ -62,7 +59,7 @@ const LandingPage = () => {
   // },[])
 
   const token = useSelector((state) => state.token.tokenValue);
-  const isPartner = useSelector((state) => state.partner.isPartner);
+
   const imgArr = [
     {
       img: "/Tower.svg",

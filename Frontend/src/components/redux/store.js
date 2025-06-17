@@ -4,6 +4,7 @@ import facilityIdReducer from "./features/facilityIdSlice";
 import partnerReducer from "./features/partnerSlice";
 import tokenReducer from "./features/tokenSlice";
 import roleReducer from "./features/roleSlice";
+import detailsReducer from "./features/detailsSlice";
 export const store = configureStore({
   reducer: {
     login: loginReducer,
@@ -11,5 +12,6 @@ export const store = configureStore({
     partner: partnerReducer,
     token: tokenReducer,
     role: roleReducer,
+    details: detailsReducer,
   },
 });

@@ -17,13 +17,14 @@ import { GoogleApi } from "../../../utills";
 import { ProductionApi, LocalApi } from "../../../utills";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import {load} from '@cashfreepayments/cashfree-js'
+import { load } from "@cashfreepayments/cashfree-js";
+
 const Bookingpage = () => {
   // bringing the name of the page from landingpage
   const location = useLocation();
   const query = location.state?.query || "";
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
-  
+
   useEffect(() => {
     console.log("Query from previous page:", query);
     // const token = useSelector((state) => state.token.tokenValue);
@@ -48,7 +49,8 @@ const Bookingpage = () => {
   const [clicked, setClicked] = useState(false);
   const [facilities, setFacilities] = useState([]);
   const facilityId = useSelector((state) => state.facilityId);
-   const [token, setToken] = useState(() => localStorage.getItem("token"));
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
+  const [orderId, setOrderId] = useState("");
   // const [orderId, setOrderId] = useState("")
   const dispatch = useDispatch();
   //  New state for selected facility ID
@@ -123,7 +125,7 @@ const Bookingpage = () => {
         const facilityRes = await axios.post(
           `${ProductionApi}/map/facilitiesBySearch`,
           { userCoordinates: [location.lng, location.lat] },
-          
+
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -231,6 +233,13 @@ const Bookingpage = () => {
   };
   const [facilityName, setfacilityName] = useState("");
   // ✅ CORRECT: GET request - Single config object as second parameter
+  useEffect(() => {
+    async function createOrderId() {
+      const id = await generateOrderId();
+      setOrderId(id);
+    }
+    createOrderId();
+  }, []);
   const handleBookNow = async (facilityId) => {
     dispatch({ type: "facilityId/setFacilityId", payload: facilityId });
     console.log("Selected Facility ID1:", facilityId);
@@ -257,7 +266,84 @@ const Bookingpage = () => {
       console.log("Error fetching facility details:", error);
     }
   };
+  
+  let cashfree;
+
+  let insitialzeSDK = async function () {
+    cashfree = await load({
+      mode: "sandbox",
+    });
+  };
+
+  insitialzeSDK();
+
+function generateOrderId() {
+  const array = new Uint8Array(16);
+  crypto.getRandomValues(array);
+  const uniqueId = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+
+  const encoder = new TextEncoder();
+  const data = encoder.encode(uniqueId);
+
+  return crypto.subtle.digest('SHA-256', data).then(hashBuffer => {
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashHex.substr(0, 12);
+  });
+}generateOrderId().then(orderId => console.log(orderId))
+  // setOrderId(generateOrderId());
+  const name = useSelector((state) => state.details.name);
+  const phoneNo = useSelector((state) => state.details.phoneNo);
+  const email = useSelector((state) => state.details.email);
+  const getSessionId = async () => {
+    console.log("orderId in getSessionId:", orderId);
+    try {
+      let res = await axios.get(
+        `${ProductionApi}/payment/create`,
+        {
+          orderId: orderId,
+          orderAmount: 100,
+          customerEmail: email,
+          customerPhone: phoneNo,
+          customerName: name,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.data && res.data.payment_session_id) {
+        console.log(res.data);
+        setOrderId(res.data.order_id);
+        return res.data.payment_session_id;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const verifyPayment = async () => {
+    try {
+      let res = await axios.post(
+        `${ProductionApi}payment/verify?orderId=${orderId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res && res.data) {
+        alert("payment verified");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const handleMakeBookingApi = async () => {
+
     console.log("yaha se dekh ::::::::");
     console.log("Booking facility with ID:", facilityId);
     console.log("Booking facility with Name:", facilityName);
@@ -287,8 +373,24 @@ const Bookingpage = () => {
     } catch (error) {
       console.error("Error making booking:", error);
     }
+    try {
+      let sessionId = await getSessionId();
+      let checkoutOptions = {
+        paymentSessionId: sessionId,
+        redirectTarget: "_modal",
+      };
+
+      cashfree.checkout(checkoutOptions).then((res) => {
+        console.log("payment initialized");
+
+        verifyPayment(orderId);
+        navigate("/reservation");
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
-  
+ 
   return (
     <div className="main min-h-screen w-full">
       {/* Navbar */}
