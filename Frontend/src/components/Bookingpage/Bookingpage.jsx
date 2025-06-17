@@ -299,7 +299,7 @@ const getSessionId = async () => {
         `${ProductionApi}/payment/create`,
         {
           orderId: orderId,
-          orderAmount: 100,
+          orderAmount: 1,
           customerEmail: email,
           customerPhone: phoneNo,
           customerName: name,
