@@ -33,7 +33,8 @@ const LandingPage = () => {
   useEffect(() => {
     const urlToken = new URLSearchParams(window.location.search).get("token");
     const storedToken = localStorage.getItem("token");
-
+    const isPartner = useSelector((state) => state.partner.isPartner);
+    console.log("isPartner:", isPartner);
     if (urlToken && !storedToken) {
       // Case 1: Token from URL on first login
       localStorage.setItem("token", urlToken);
@@ -57,7 +58,7 @@ const LandingPage = () => {
   // },[])
 
   const token = useSelector((state) => state.token.tokenValue);
-
+  const isPartner = useSelector((state) => state.partner.isPartner);
   const imgArr = [
     {
       img: "/Tower.svg",
@@ -174,7 +175,7 @@ const LandingPage = () => {
   const onUnmount = React.useCallback(function callback(map) {
     setMap(null);
   }, []);
-  const [isPartner, setIsPartner] = useState(false);
+  
 
   const handleLogoutClick = async () => {
     try {
@@ -756,7 +757,7 @@ const LandingPage = () => {
               <div className="mt-10">
                 <button
                   onClick={() => {
-                    setIsPartner(true);
+                     
                     navigate("/partneroverview");
                     console.log("Become a Partner clicked", isPartner);
                   }}

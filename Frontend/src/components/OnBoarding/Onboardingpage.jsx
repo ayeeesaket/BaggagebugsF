@@ -539,18 +539,7 @@ const Onboardingpage = () => {
                 <span className="text-[#FA8128] font-bold">safe place</span>,
                 allowing you to enjoy your journey to the fullest!
               </div>
-              <div className="mt-10">
-                <button
-                  onClick={() => {
-                    setIsPartner(true);
-                    navigate("/partneroverview");
-                    console.log("Become a Partner clicked", isPartner);
-                  }}
-                  className="bg-[#FA8128] text-white px-3 py-2 rounded-lg shadow-md hover:bg-[#f77a20] transition cursor-pointer"
-                >
-                  Become a Partner
-                </button>
-              </div>
+               
             </div>
           </div>
         </div>
