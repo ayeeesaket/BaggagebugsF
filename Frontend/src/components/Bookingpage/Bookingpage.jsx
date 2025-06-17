@@ -367,31 +367,31 @@ console.log(res.data);
     console.log("Drop-off Date:", dropOffDate);
     console.log("Pick-up Date:", pickUpDate);
     console.log("token data :", token);
- try {
-    const sessionId = await getSessionId();
-
-    const cashfree = await load({
-      mode: "production", // or "production" based on your environment
-    });
-
-    const checkoutOptions = {
-      paymentSessionId: sessionId,
-      redirectTarget: "_self", // "_blank" or "_self" if not using modal
-    };
+ 
 try {
   const result = await cashfree.checkout(checkoutOptions);
   console.log("Result:", result);
 } catch (err) {
   console.error("Cashfree checkout failed:", err);
 }
-    cashfree.checkout(checkoutOptions).then((res) => {
-      console.log("payment initialized");
-      verifyPayment(orderId);
-    });
+    try {
 
-  } catch (error) {
-    console.log("Error during payment initialization:", error);
-  }
+      let sessionId = await getSessionId()
+      let checkoutOptions = {
+        paymentSessionId : sessionId,
+        redirectTarget:"_modal",
+      }
+
+      cashfree.checkout(checkoutOptions).then((res) => {
+        console.log("payment initialized")
+
+        verifyPayment(orderId)
+      })
+
+
+    } catch (error) {
+      console.log(error)
+    }
     try {
       const response = await axios.post(
         `${ProductionApi}/booking/`,
