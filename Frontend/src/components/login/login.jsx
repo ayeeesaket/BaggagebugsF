@@ -43,9 +43,7 @@ const Login = () => {
         { email, password },
         { withCredentials: true }
       );
-
       dispatch({ type: "login/login" });
-
       const { token, role } = response.data;
       navigate(`/landingpage?token=${token}&role=${role}`);
       console.log(response.data);

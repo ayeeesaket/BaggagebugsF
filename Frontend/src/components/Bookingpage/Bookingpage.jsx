@@ -17,11 +17,13 @@ import { GoogleApi } from "../../../utills";
 import { ProductionApi, LocalApi } from "../../../utills";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import {load} from '@cashfreepayments/cashfree-js'
 const Bookingpage = () => {
   // bringing the name of the page from landingpage
   const location = useLocation();
   const query = location.state?.query || "";
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
+  
   useEffect(() => {
     console.log("Query from previous page:", query);
     // const token = useSelector((state) => state.token.tokenValue);
@@ -46,8 +48,8 @@ const Bookingpage = () => {
   const [clicked, setClicked] = useState(false);
   const [facilities, setFacilities] = useState([]);
   const facilityId = useSelector((state) => state.facilityId);
- const [token, setToken] = useState(() => localStorage.getItem("token"));
-
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
+  // const [orderId, setOrderId] = useState("")
  
   const dispatch = useDispatch();
   //  New state for selected facility ID
@@ -256,7 +258,107 @@ const handleBookNow = async (facilityId) => {
   } catch (error) {
     console.log("Error fetching facility details:", error);
   }
-}; const handleMakeBookingApi = async () => {
+}; 
+
+  let cashfree;
+
+  let insitialzeSDK = async function () {
+
+    cashfree = await load({
+      mode: "sandbox",
+    })
+  }
+
+  insitialzeSDK()
+ 
+
+
+
+  const getSessionId = async () => {
+     function generateOrderId() {
+    const uniqueId = crypto.randomBytes(16).toString('hex');
+
+    const hash = crypto.createHash('sha256');
+    hash.update(uniqueId);
+
+    const orderId = hash.digest('hex');
+
+    return orderId.substr(0, 12); 
+    
+  
+}
+ 
+    try {
+      let res = await axios.get(`${ProductionApi}/payment/create`,
+        {
+           orderId : orderId,
+           orderAmount : 100,
+           customerEmail : "",
+           customerName : "",
+           customerPhone : "",
+        },
+        {headers:
+           {
+          Authorization: `Bearer ${token}`,
+           }
+        },
+      )
+      if(res.data && res.data.payment_session_id){
+
+        console.log(res.data)
+        setOrderId(res.data.order_id)
+        return res.data.payment_session_id
+      }
+
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+const verifyPayment = async () => {
+    try {
+      
+      let res = await axios.post(`${ProductionApi}payment/verify?orderId=ORDER31`, {
+        orderId: orderId
+      })
+
+      if(res && res.data){
+        alert("payment verified")
+      }
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleClick = async (e) => {
+    e.preventDefault()
+    try {
+
+      let sessionId = await getSessionId()
+      let checkoutOptions = {
+        paymentSessionId : sessionId,
+        redirectTarget:"_modal",
+      }
+
+      cashfree.checkout(checkoutOptions).then((res) => {
+        console.log("payment initialized")
+
+        verifyPayment(orderId)
+      })
+
+
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
+
+
+
+
+
+const handleMakeBookingApi = async () => {
     console.log("yaha se dekh ::::::::");
     console.log("Booking facility with ID:", facilityId);
     console.log("Booking facility with Name:", facilityName);
@@ -287,6 +389,7 @@ const handleBookNow = async (facilityId) => {
       console.error("Error making booking:", error);
     }
   };
+  
   return (
     <div className="main min-h-screen w-full">
       {/* Navbar */}
