@@ -132,14 +132,7 @@ const DashboardDetails = () => {
       );
       console.log("Registered Successfully:", response.data);
       if (response.status === 200) {
-        toast.success("Details added", {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
+        toast.success("Details added");
         navigate("/landingpage");
       }
       // Optional: Log form data if response status is 400
