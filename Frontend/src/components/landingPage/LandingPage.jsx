@@ -265,7 +265,9 @@ const LandingPage = () => {
             <div
   className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 px-4 cursor-pointer bg-white text-center"
   onClick={() => {
-    if (isPartner)  // Only navigate if it's a partner
+    if (isPartner)  
+      console.log(isPartner);
+      // Only navigate if it's a partner
     navigate("/onboarding");
   }}
 >
