@@ -20,6 +20,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { load } from "@cashfreepayments/cashfree-js";
 import { v4 as uuidv4 } from 'uuid';
+
 const Bookingpage = () => {
   // bringing the name of the page from landingpage
   const location = useLocation();
@@ -48,6 +49,7 @@ const Bookingpage = () => {
   const facilityId = useSelector((state) => state.facilityId);
   const [token, setToken] = useState(() => localStorage.getItem("token"));
   const [orderId, setOrderId] = useState(uuidv4());
+  const[isverified,setisverified] = useState(false);
   // const [orderId, setOrderId] = useState("")
   const dispatch = useDispatch();
   //  New state for selected facility ID
@@ -295,7 +297,7 @@ const getSessionId = async () => {
         `${ProductionApi}/payment/create`,
         {
           orderId: orderId,
-          orderAmount: 1,
+          orderAmount: 2.5,
           customerEmail: email,
           customerPhone: phoneNo,
           customerName: name,
@@ -316,6 +318,8 @@ const getSessionId = async () => {
 
     } catch (error) {
       console.log(error);
+      navigate("/profile")
+         toast.error("please add data");
     }
   };
 
@@ -326,6 +330,7 @@ const getSessionId = async () => {
 
       if(res && res.data){
         alert("payment verified")
+        setisverified(true)
       }
 
     } catch (error) {
@@ -361,13 +366,8 @@ const getSessionId = async () => {
     });
 
     await verifyPayment();
-
-  } catch (err) {
-    console.error("❌ Booking error:", err);
-  }
-
-
-    try {
+    if(isverified){
+      try {
       const response = await axios.post(
         `${ProductionApi}/booking/`,
         {
@@ -386,9 +386,16 @@ const getSessionId = async () => {
       );
       console.log("Booking successful:", response.data);
       toast.success("Booking successful!");
+      navigate("/landingpage")
     } catch (error) {
       console.error("Error making booking:", error);
+      
     }
+    }
+  } catch (err) {
+    console.error("❌ Booking error:", err);
+  }
+    
   };
  useEffect(() => {
   const handleBeforeUnload = (event) => {
