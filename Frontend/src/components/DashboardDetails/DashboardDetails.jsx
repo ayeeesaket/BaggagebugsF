@@ -361,33 +361,45 @@ useEffect(() => {
                       <div className="content flex-[30%]">
                         Bagpacker Services
                       </div>
-                      <div className="flex flex-[35%] gap-2">
-  {["wifi", "restroom", "CCtv"].map((label) => (
-    <button
-      key={label}
-      className={`border-2 border-[#63C5DA] rounded flex-1 px-1 py-1 capitalize ${
-        activeButtons.includes(label)
-          ? "bg-orange-500 text-white"
-          : "bg-white text-[#FA8128]"
-      }`}
-      onClick={() => {
-        setActiveButtons((prev) =>
-          prev.includes(label)
-            ? prev.filter((item) => item !== label)
-            : [...prev, label]
-        );
-
-        // Set wifi flag separately if needed
-        if (label === "wifi") {
-          setWifi((prev) => !prev);
-        }
-      }}
-    >
-      {label}
-    </button>
-  ))}
-</div>
-
+                      <div className="flex  flex-[35%] gap-2">
+                        <button
+                          className={`wifi border-2 border-[#63C5DA] flex-1/3 rounded px-1 py-1 ${
+                            activeButtons.includes("wifi")
+                              ? "bg-orange-500 text-white"
+                              : ""
+                          }`}
+                          onClick={() =>
+                            // setWifi(true)
+                            setWifi(true)
+                          }
+                        >
+                          Wifi
+                        </button>
+                        <button
+                          className={`restroom border-2 border-[#63C5DA] flex-1/3 rounded px-1 py-1 ${
+                            activeButtons.includes("restroom")
+                              ? "bg-orange-500 text-white"
+                              : ""
+                          }`}
+                          onClick={() =>
+                            setActiveButtons([...activeButtons, "button2"])
+                          }
+                        >
+                          Restroom
+                        </button>
+                        <button
+                          className={`CCtv border-2 border-[#63C5DA] rounded flex-1/3 px-1 py-1 ${
+                            activeButtons.includes("CCtv")
+                              ? "bg-orange-500 text-white"
+                              : ""
+                          }`}
+                          onClick={() =>
+                            setActiveButtons([...activeButtons, "button3"])
+                          }
+                        >
+                          CCtv
+                        </button>
+                      </div>
                       <div className="content-edit text-white flex-[25%] text-right">
                         Edit
                       </div>
