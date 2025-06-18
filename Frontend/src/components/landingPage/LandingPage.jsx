@@ -49,6 +49,28 @@ const LandingPage = () => {
       console.log("Token from localStorage found, user logged in.");
     }
   }, [dispatch]);
+useEffect(() => {
+  const handleBeforeUnload = (event) => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      try {
+        navigator.sendBeacon(
+          `${ProductionApi}/user/logout`,
+          JSON.stringify({})
+        );
+        localStorage.removeItem("token");
+      } catch (e) {
+        console.warn("Logout beacon failed:", e);
+      }
+    }
+  };
+
+  window.addEventListener("beforeunload", handleBeforeUnload);
+
+  return () => {
+    window.removeEventListener("beforeunload", handleBeforeUnload);
+  };
+}, []);
 
   // useEffect(()=>{
   //  const token1 = localStorage.getItem("token");
