@@ -7,6 +7,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { ProductionApi, LocalApi } from "../../../utills";
 import { useSelector } from "react-redux";
+import { ToastContainer  , toast } from "react-toastify";
 const DashboardDetails = () => {
   const navigate = useNavigate();
   const handleLogoClick = () => {
@@ -143,6 +144,7 @@ const DashboardDetails = () => {
       // Optional: Log form data if response status is 400
     } catch (error) {
       console.error("Error while registering facility:", error);
+      toast.error("Failed to add details")
     }
   };
   const [facilities, setFacilities] = useState([]);
