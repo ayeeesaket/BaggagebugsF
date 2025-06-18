@@ -26,11 +26,7 @@ const Bookingpage = () => {
   const query = location.state?.query || "";
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
 
-  useEffect(() => {
-    console.log("Query from previous page:", query);
-    // const token = useSelector((state) => state.token.tokenValue);
-    // console.log("Token from Redux::::::::::::::::::", token);
-  }, [query]);
+  
   // State variables
   const [sfdata, setsfdata] = useState([]);
   const [fcoord, setfcoord] = useState([]);
