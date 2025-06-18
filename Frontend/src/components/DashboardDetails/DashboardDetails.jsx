@@ -140,6 +140,7 @@ const DashboardDetails = () => {
           pauseOnHover: true,
           draggable: true,
         });
+        navigate("/landingpage");
       }
       // Optional: Log form data if response status is 400
     } catch (error) {

@@ -49,7 +49,9 @@ const Profile = () => {
         }
       );
       toast.success("Profile data saved!");
-      console.log("Data Added", response.data);
+     if (response.data == 200) {
+      navigate("/landingpage")
+     }
       dispatch({type : "details/setName", payload: firstName});
       dispatch({type : "details/setEmail", payload: email});
       dispatch({type : "details/setPhoneNo", payload: phoneNo});
