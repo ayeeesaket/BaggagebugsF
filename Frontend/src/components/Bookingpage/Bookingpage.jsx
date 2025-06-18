@@ -20,7 +20,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { load } from "@cashfreepayments/cashfree-js";
 import { v4 as uuidv4 } from 'uuid';
-import { status } from "init";
+
 const Bookingpage = () => {
   // bringing the name of the page from landingpage
   const location = useLocation();
