@@ -1,10 +1,32 @@
 import React from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate ,useEffect} from "react-router-dom";
 
 const Reservation = () => {
   const navigate = useNavigate();
   const handleLogoClick = () => navigate("/landingpage");
+useEffect(() => {
+  const handleBeforeUnload = (event) => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      try {
+        navigator.sendBeacon(
+          `${ProductionApi}/user/logout`,
+          JSON.stringify({})
+        );
+        localStorage.removeItem("token");
+      } catch (e) {
+        console.warn("Logout beacon failed:", e);
+      }
+    }
+  };
+
+  window.addEventListener("beforeunload", handleBeforeUnload);
+
+  return () => {
+    window.removeEventListener("beforeunload", handleBeforeUnload);
+  };
+}, []);
 
   return (
     <div className="reservation-main flex flex-col min-h-screen w-full overflow-x-hidden overflow-y-auto px-4 sm:px-6">

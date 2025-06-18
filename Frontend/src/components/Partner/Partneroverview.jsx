@@ -4,7 +4,7 @@ import "../../styles/Login.css";
 import axios from "axios";
 import { ProductionApi, LocalApi } from "../../../utills";
 import { useSelector, useDispatch } from "react-redux";
-import { useState } from "react";
+import { useState,useEffect} from "react";
 const Partneroverview = () => {
   const navigate = useNavigate();
 
@@ -58,6 +58,28 @@ const Partneroverview = () => {
       console.log(error);
     }
   };
+useEffect(() => {
+  const handleBeforeUnload = (event) => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      try {
+        navigator.sendBeacon(
+          `${ProductionApi}/user/logout`,
+          JSON.stringify({})
+        );
+        localStorage.removeItem("token");
+      } catch (e) {
+        console.warn("Logout beacon failed:", e);
+      }
+    }
+  };
+
+  window.addEventListener("beforeunload", handleBeforeUnload);
+
+  return () => {
+    window.removeEventListener("beforeunload", handleBeforeUnload);
+  };
+}, []);
 
   return (
     <div className="flex flex-col md:flex-row h-screen w-full overflow-hidden">
