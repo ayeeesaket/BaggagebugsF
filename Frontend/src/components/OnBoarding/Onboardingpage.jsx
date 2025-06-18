@@ -77,8 +77,8 @@ const Onboardingpage = () => {
     console.log("logged in ? : ", isLoggedIn);
   }, []);
   const dispatch = useDispatch();
-   const [token, setToken] = useState(() => localStorage.getItem("token"));
- 
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
+
   const handleLogoutApi = async () => {
     try {
       const response = await axios.post(
@@ -88,8 +88,8 @@ const Onboardingpage = () => {
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       console.log("logged out");
@@ -101,6 +101,13 @@ const Onboardingpage = () => {
     }
   };
 
+  const handleLogoClick = () => {
+    navigate("/landingpage");
+    if (!isLoggedIn) {
+      dispatch({ type: "login/login" });
+    }
+  };
+
   return (
     <>
       <div className="page p-2 md:pl-15 md:pr-15 px-5">
@@ -109,7 +116,7 @@ const Onboardingpage = () => {
           {/* Mobile layout: visible on small screens only */}
           <div className="md:hidden flex flex-col gap-4 p-4">
             <div className="flex justify-between items-center">
-              <div className="flex">
+              <div className="flex" onClick={handleLogoClick}>
                 <div className="logo-bag"></div>
                 <div className="logo"></div>
               </div>
@@ -539,7 +546,6 @@ const Onboardingpage = () => {
                 <span className="text-[#FA8128] font-bold">safe place</span>,
                 allowing you to enjoy your journey to the fullest!
               </div>
-               
             </div>
           </div>
         </div>

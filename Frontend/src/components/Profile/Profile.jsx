@@ -173,7 +173,7 @@ const Profile = () => {
               <div className="profile-div flex flex-col gap-10 px-5 md:px-10 pt-10 text-[20px] md:text-[24px] h-full text-[#FA8128] font-bold">
                 <div className="my-profile"> My Profile</div>
                 <div className="flex flex-col gap-14">
-                  <div className="row-1 flex justify-between items-center">
+                  <div className="row-1 flex justify-between items-center font-light">
                     <input
                       className="content-input  text-black border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
                       placeholder="First Name"
@@ -185,7 +185,7 @@ const Profile = () => {
                       onChange={(e) => setLastName(e.target.value)}
                     />
                   </div>
-                  <div className="row-2 flex justify-between items-center">
+                  <div className="row-2 flex justify-between items-center font-light">
                     <input
                       type="date"
                       className="content-input text-black  border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
@@ -198,7 +198,7 @@ const Profile = () => {
                       onChange={(e) => setEmail(e.target.value)}
                     />
                   </div>
-                  <div className="row-3 flex justify-between items-center">
+                  <div className="row-3 flex justify-between items-center font-light">
                     <input
                       type="number"
                       className="content-input text-black border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
@@ -219,7 +219,7 @@ const Profile = () => {
             {selectedItem === "Notifications" && (
               <div className="notification-div flex flex-col gap-10 px-5 md:px-10 pt-10 text-[20px] md:text-[24px] h-full text-[#FA8128] font-bold">
                 <div className="my-notifications"> My Notifications</div>
-                <div className="text-black text-[18px]">
+                <div className="text-black text-[18px] font-medium">
                   {" "}
                   Choose your notification preferences and how you prefer to be
                   contacted.
@@ -227,7 +227,7 @@ const Profile = () => {
                 <div className="text-[#FA8128] text-[18px]">
                   Message/Reminders
                 </div>
-                <div className="text-black text-[18px]">
+                <div className="text-black text-[18px] font-medium">
                   Recieve my booking information
                 </div>
                 <div className="flex items-center justify-between w-full">
@@ -258,7 +258,7 @@ const Profile = () => {
                   </>
                 ) : (
                   <div>
-                    <div className="bank-yes-div flex flex-col gap-4 text-black font-bold">
+                    <div className="bank-yes-div flex flex-col gap-4 text-black font-medium">
                       <div className="bank-row-1 flex flex-col md:flex-row gap-2">
                         <div className="bank-row-1-detail md:w-1/2">
                           Account Holder Name
@@ -321,7 +321,7 @@ const Profile = () => {
                           placeholder="Lorem ipsum"
                         />
                       </div>
-                      <div className="bank-row-9 flex flex-col sm:flex-row gap-4 mt-4">
+                      <div className="bank-row-9 flex flex-col sm:flex-row gap-4 mt-4 font-bold">
                         <button className="bg-[#FA8128] text-white px-4 py-2 rounded-3xl w-full sm:w-auto">
                           Save
                         </button>
@@ -335,7 +335,7 @@ const Profile = () => {
               </div>
             )}
             {selectedItem === "Passwords" && (
-              <div className="password-div flex flex-col gap-10 px-5 md:px-10 pt-10 text-[20px] md:text-[24px] h-full text-[#FA8128] font-bold">
+              <div className="password-div flex flex-col gap-10 px-5 md:px-10 pt-10 text-[20px] md:text-[24px] h-full text-[#FA8128] font-medium">
                 <div className="passwordAndSecurity">Password and Security</div>
                 <div className="row-1 flex justify-between items-center">
                   <input

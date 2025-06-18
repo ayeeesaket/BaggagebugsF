@@ -245,7 +245,7 @@ const DashboardDetails = () => {
             {selectedItem === "Details" && (
               <>
                 {detailsAdded ? (
-                  <div className="details-div flex flex-col justify-between px-5 md:px-10 pt-10 text-[20px] md:text-[24px] h-full   font-bold">
+                  <div className="details-div flex flex-col justify-between px-5 md:px-10 pt-10 text-[20px] md:text-[24px] h-full   font-medium">
                     <div className="row-1 flex">
                       <div className="row-1-detail flex-[30%]">
                         Facility Name
@@ -624,7 +624,7 @@ const DashboardDetails = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="available-right-item3 flex flex-col gap-2 text-[18px] md:text-[20px] text-black">
+                  <div className="available-right-item3 flex flex-col gap-2 text-[18px] md:text-[20px] text-black font-medium">
                     <div className="storage-capacity-text  ">
                       From Apr 18, 2025 to Apr 18, 2025 - Closed
                     </div>
@@ -653,7 +653,7 @@ const DashboardDetails = () => {
                   </div>
                 ) : (
                   <div>
-                    <div className="bank-yes-div flex flex-col gap-4 text-black font-bold">
+                    <div className="bank-yes-div flex flex-col gap-4 text-black font-medium">
                       <div className="bank-row-1 flex flex-col md:flex-row gap-2">
                         <div className="bank-row-1-detail md:w-1/2">
                           Account Holder Name
@@ -742,7 +742,7 @@ const DashboardDetails = () => {
                 <div className="income-right-item1 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                   <div className="total">Total Earnings</div>
                   <div className="opening-hours-text text-[#63C5DA] text-[18px] md:text-[20px] flex">
-                    <div className="amount px-3 py-1 border border-[#63C5DA] text-black">
+                    <div className="amount px-3 py-1 border border-[#63C5DA] text-black gont-medium">
                       100000
                     </div>
                     <div className="currency px-5 py-1 bg-[#FA8128] text-white">
