@@ -54,6 +54,28 @@ const Onboardingpage = () => {
     { name: "Jane Smith", review: "Highly Recommend!", img: "/person.svg" },
     { name: "Mark Johnson", review: "Very Satisfied!", img: "/person.svg" },
   ];
+useEffect(() => {
+  const handleBeforeUnload = (event) => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      try {
+        navigator.sendBeacon(
+          `${ProductionApi}/user/logout`,
+          JSON.stringify({})
+        );
+        localStorage.removeItem("token");
+      } catch (e) {
+        console.warn("Logout beacon failed:", e);
+      }
+    }
+  };
+
+  window.addEventListener("beforeunload", handleBeforeUnload);
+
+  return () => {
+    window.removeEventListener("beforeunload", handleBeforeUnload);
+  };
+}, []);
 
   const settings2 = {
     dots: false,
