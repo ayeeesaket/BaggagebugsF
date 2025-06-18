@@ -307,7 +307,7 @@ const LandingPage = () => {
                   className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 px-4 cursor-pointer bg-white"
                   onClick={() => navigate("/onboarding")}
                 >
-                  Partner
+                  {isPartner ? "User" : "Partner"}
                 </div>
                 <div className="relative">
                   <select className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 pr-10 bg-white">
