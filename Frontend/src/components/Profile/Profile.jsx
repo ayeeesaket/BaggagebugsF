@@ -1,6 +1,6 @@
 import React from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { useState } from "react";
+import { useState , useEffect } from "react";
 import { useSelector } from "react-redux";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
@@ -54,6 +54,7 @@ const Profile = () => {
       dispatch({type : "details/setEmail", payload: email});
       dispatch({type : "details/setPhoneNo", payload: phoneNo});
     } catch (error) {
+      toast.error("Failed to save profile data!");
       console.log("Error", error);
     }
   };
@@ -76,10 +77,11 @@ const Profile = () => {
           },
         }
       );
-
+toast.success("Password changed successfully!");
       console.log("Data Added", response.data);
     } catch (error) {
       console.log("error", error);
+      toast.error("Failed to change password!");
     }
   };
   const [toggleEmail, setToggleEmail] = useState(false);

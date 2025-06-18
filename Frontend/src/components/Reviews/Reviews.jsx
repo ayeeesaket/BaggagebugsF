@@ -1,7 +1,7 @@
 import React from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { useNavigate,useEffect} from "react-router-dom";
-
+import { useNavigate, } from "react-router-dom";
+import { useEffect } from "react";
 const Reviews = () => {
   const navigate = useNavigate();
   const handleLogoClick = () => {

@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { ProductionApi, LocalApi } from "../../../utills";
-
+import { ToastContainer , toast } from "react-toastify";
 const GoogleIcon = () => <span className="googleimg"></span>;
 const FacebookIcon = () => <span className="fbimg"></span>;
 const StoreIcon = () => <span className="bimg"></span>;
@@ -49,6 +49,7 @@ const Login = () => {
       const { token, role } = response.data;
       navigate(`/landingpage?token=${token}&role=${role}`);
       console.log(response.data);
+      toast.success("Login successful!");
     } catch (err) {
       console.log(err);
       if (err.response && err.response.data) {
@@ -56,6 +57,7 @@ const Login = () => {
       } else {
         setError("An error occurred. Please try again.");
       }
+      toast.error("Login failed!");
     }
   };
 

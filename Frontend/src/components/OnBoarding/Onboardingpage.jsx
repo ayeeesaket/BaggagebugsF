@@ -176,7 +176,7 @@ useEffect(() => {
           <div className="hidden md:block">
             <div className="navbar flex p-2 pl-15 pr-15  m-4 justify-between text-2xl ">
               {/* === Your original code stays untouched here === */}
-              <div className="flex">
+              <div className="flex " onClick={handleLogoClick}>
                 <div className="logo-bag"></div>
                 <div className="logo"></div>
               </div>

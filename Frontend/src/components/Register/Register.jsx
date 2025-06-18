@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { ProductionApi, LocalApi } from "../../../utills";
-
+import { ToastContainer , toast } from "react-toastify";
 const GoogleIcon = () => <span className="googleimg"></span>;
 const FacebookIcon = () => <span className="fbimg"></span>;
 const StoreIcon = () => <span className="bimg"></span>;
@@ -44,11 +44,13 @@ const Register = () => {
           },
         }
       );
+      toast.success("Registration successful!");
       console.log("hello");
       navigate("/landingpage");
       dispatch({ type: "login/login", payload: true }); // Set login state to true
     } catch (error) {
       console.log(error);
+      toast.error("Registration failed!");
     }
   };
 
