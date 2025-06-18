@@ -51,7 +51,7 @@ const DashboardDetails = () => {
 
   // Storage
 
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected] = useState();
   const [storageEdit, setStorageEdit] = useState(false);
   const [storageCapacity, setStorageCapacity] = useState("0");
   const [prevDetails, setPrevDetails] = useState(true);
@@ -361,45 +361,33 @@ useEffect(() => {
                       <div className="content flex-[30%]">
                         Bagpacker Services
                       </div>
-                      <div className="flex  flex-[35%] gap-2">
-                        <button
-                          className={`wifi border-2 border-[#63C5DA] flex-1/3 rounded px-1 py-1 ${
-                            activeButtons.includes("wifi")
-                              ? "bg-orange-500 text-white"
-                              : ""
-                          }`}
-                          onClick={() =>
-                            // setWifi(true)
-                            setWifi(true)
-                          }
-                        >
-                          Wifi
-                        </button>
-                        <button
-                          className={`restroom border-2 border-[#63C5DA] flex-1/3 rounded px-1 py-1 ${
-                            activeButtons.includes("restroom")
-                              ? "bg-orange-500 text-white"
-                              : ""
-                          }`}
-                          onClick={() =>
-                            setActiveButtons([...activeButtons, "button2"])
-                          }
-                        >
-                          Restroom
-                        </button>
-                        <button
-                          className={`CCtv border-2 border-[#63C5DA] rounded flex-1/3 px-1 py-1 ${
-                            activeButtons.includes("CCtv")
-                              ? "bg-orange-500 text-white"
-                              : ""
-                          }`}
-                          onClick={() =>
-                            setActiveButtons([...activeButtons, "button3"])
-                          }
-                        >
-                          CCtv
-                        </button>
-                      </div>
+                      <div className="flex flex-[35%] gap-2">
+  {["wifi", "restroom", "CCtv"].map((label) => (
+    <button
+      key={label}
+      className={`border-2 border-[#63C5DA] rounded flex-1 px-1 py-1 capitalize ${
+        activeButtons.includes(label)
+          ? "bg-orange-500 text-white"
+          : "bg-white text-[#FA8128]"
+      }`}
+      onClick={() => {
+        setActiveButtons((prev) =>
+          prev.includes(label)
+            ? prev.filter((item) => item !== label)
+            : [...prev, label]
+        );
+
+        // Set wifi flag separately if needed
+        if (label === "wifi") {
+          setWifi((prev) => !prev);
+        }
+      }}
+    >
+      {label}
+    </button>
+  ))}
+</div>
+
                       <div className="content-edit text-white flex-[25%] text-right">
                         Edit
                       </div>
@@ -491,31 +479,35 @@ useEffect(() => {
                     <div className="Limited-storage">Limited Storage?</div>
 
                     <div className="options-div items-center flex w-full justify-between gap-[700px]">
-                      <div className="yes-no-options flex   gap-2">
-                        <button
-                          className={`border-[#63C5DA] border-2 px-3 py-2 ${
-                            selected === "yes"
-                              ? "bg-[#FA8128] text-white"
-                              : "bg-white text-[#FA8128]"
-                          }`}
-                          onClick={() => setLimited(true)}
-                        >
-                          Yes
-                        </button>
+                     <div className="yes-no-options flex gap-2">
+  <button
+    className={`border-[#63C5DA] border-2 px-3 py-2 rounded ${
+      selected === true
+        ? "bg-[#FA8128] text-white"
+        : "bg-white text-[#FA8128]"
+    }`}
+    onClick={() => {
+      setLimited(true);
+      setSelected(true);
+    }}
+  >
+    Yes
+  </button>
 
-                        <button
-                          className={`border-[#63C5DA] border-2 px-3 py-2 ${
-                            selected === "no"
-                              ? "bg-[#FA8128] text-white"
-                              : "bg-white text-[#FA8128]"
-                          }`}
-                          onClick={() => {
-                            setLimited(false);
-                          }}
-                        >
-                          No
-                        </button>
-                      </div>
+  <button
+    className={`border-[#63C5DA] border-2 px-3 py-2 rounded ${
+      selected === false
+        ? "bg-[#FA8128] text-white"
+        : "bg-white text-[#FA8128]"
+    }`}
+    onClick={() => {
+      setLimited(false);
+      setSelected(false);
+    }}
+  >
+    No
+  </button>
+</div>
 
                       {/* Right Side - Save/Cancel */}
 
