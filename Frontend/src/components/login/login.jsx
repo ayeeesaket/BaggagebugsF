@@ -50,6 +50,7 @@ const Login = () => {
       navigate(`/landingpage?token=${token}&role=${role}`);
       console.log(response.data);
       toast.success("Login successful!");
+      localStorage.setItem("role", role);
     } catch (err) {
       console.log(err);
       if (err.response && err.response.data) {

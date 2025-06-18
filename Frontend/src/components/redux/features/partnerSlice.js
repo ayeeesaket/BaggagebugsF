@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  isPartner: false,
+  isPartner: "",
 };
 
 export const partnerSlice = createSlice({
@@ -9,7 +9,7 @@ export const partnerSlice = createSlice({
   initialState,
   reducers: {
     setIsPartner: (state, action) => {
-      state.isPartner = !state.isPartner;
+      state.isPartner = action.payload;
       console.log("partner state changed (from redux):", state.isPartner);
     },
   },

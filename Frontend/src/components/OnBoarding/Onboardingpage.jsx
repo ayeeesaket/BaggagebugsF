@@ -54,28 +54,28 @@ const Onboardingpage = () => {
     { name: "Jane Smith", review: "Highly Recommend!", img: "/person.svg" },
     { name: "Mark Johnson", review: "Very Satisfied!", img: "/person.svg" },
   ];
-useEffect(() => {
-  const handleBeforeUnload = (event) => {
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) {
-      try {
-        navigator.sendBeacon(
-          `${ProductionApi}/user/logout`,
-          JSON.stringify({})
-        );
-        localStorage.removeItem("token");
-      } catch (e) {
-        console.warn("Logout beacon failed:", e);
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      const storedToken = localStorage.getItem("token");
+      if (storedToken) {
+        try {
+          navigator.sendBeacon(
+            `${ProductionApi}/user/logout`,
+            JSON.stringify({})
+          );
+          localStorage.removeItem("token");
+        } catch (e) {
+          console.warn("Logout beacon failed:", e);
+        }
       }
-    }
-  };
+    };
 
-  window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("beforeunload", handleBeforeUnload);
 
-  return () => {
-    window.removeEventListener("beforeunload", handleBeforeUnload);
-  };
-}, []);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   const settings2 = {
     dots: false,
@@ -233,7 +233,6 @@ useEffect(() => {
                 className="bg-[#FA8128] w-60 md:w-72 z-[1] text-white font-semibold px-6 py-2 rounded-full shadow-md hover:bg-[#FA8128] transition border-5 border-[#FFA480] cursor-pointer"
                 onClick={() => {
                   isLoggedIn ? handleLogoutApi() : navigate("/");
-                  dispatch({ type: "partner/setIsPartner" });
                 }}
               >
                 Become a partner

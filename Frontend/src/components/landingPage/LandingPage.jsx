@@ -29,10 +29,15 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const dispatch = useDispatch();
+
   // const [searchParams] = useSearchParams();
 
   useEffect(() => {
     const urlToken = new URLSearchParams(window.location.search).get("token");
+    const urlRole = new URLSearchParams(window.location.search).get("role");
+    if (urlRole === "partner") {
+      dispatch({ type: "partner/setIsPartner", payload: true });
+    }
     const storedToken = localStorage.getItem("token");
     console.log("ispartner : ", isPartner);
     if (urlToken && !storedToken) {
@@ -49,28 +54,28 @@ const LandingPage = () => {
       console.log("Token from localStorage found, user logged in.");
     }
   }, [dispatch]);
-useEffect(() => {
-  const handleBeforeUnload = (event) => {
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) {
-      try {
-        navigator.sendBeacon(
-          `${ProductionApi}/user/logout`,
-          JSON.stringify({})
-        );
-        localStorage.removeItem("token");
-      } catch (e) {
-        console.warn("Logout beacon failed:", e);
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      const storedToken = localStorage.getItem("token");
+      if (storedToken) {
+        try {
+          navigator.sendBeacon(
+            `${ProductionApi}/user/logout`,
+            JSON.stringify({})
+          );
+          localStorage.removeItem("token");
+        } catch (e) {
+          console.warn("Logout beacon failed:", e);
+        }
       }
-    }
-  };
+    };
 
-  window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("beforeunload", handleBeforeUnload);
 
-  return () => {
-    window.removeEventListener("beforeunload", handleBeforeUnload);
-  };
-}, []);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   // useEffect(()=>{
   //  const token1 = localStorage.getItem("token");
