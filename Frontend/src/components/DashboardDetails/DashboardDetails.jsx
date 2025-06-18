@@ -7,8 +7,6 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { ProductionApi, LocalApi } from "../../../utills";
 import { useSelector } from "react-redux";
-
-import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const DashboardDetails = () => {
   const navigate = useNavigate();
