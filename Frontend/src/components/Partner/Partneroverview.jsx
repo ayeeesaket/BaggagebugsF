@@ -4,7 +4,7 @@ import "../../styles/Login.css";
 import axios from "axios";
 import { ProductionApi, LocalApi } from "../../../utills";
 import { useSelector, useDispatch } from "react-redux";
-import { useState } from "react";
+import { useState,useEffect} from "react";
 const Partneroverview = () => {
   const navigate = useNavigate();
 
