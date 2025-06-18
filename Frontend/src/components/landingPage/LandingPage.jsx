@@ -262,12 +262,16 @@ const LandingPage = () => {
               >
                 {isLoggedIn ? "Logout" : "Login"}
               </div>
-              <div
-                className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 px-4 cursor-pointer bg-white text-center"
-                onClick={() => navigate("/onboarding")}
-              >
-                {isPartner ? "User" : "Partner"}
-              </div>
+            <div
+  className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 px-4 cursor-pointer bg-white text-center"
+  onClick={() => {
+    if (!isPartner) return; // Only navigate if it's a partner
+    navigate("/onboarding");
+  }}
+>
+  {isPartner ? "User" : "Partner"}
+</div>
+
               <div className="relative w-full">
                 <select className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 pr-10 bg-white w-full">
                   <option value="en">English</option>
