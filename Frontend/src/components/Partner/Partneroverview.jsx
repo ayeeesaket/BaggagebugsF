@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "../../styles/Login.css";
 import axios from "axios";
 import { ProductionApi, LocalApi } from "../../../utills";
-import { useSelector ,useDispatch} from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
 const Partneroverview = () => {
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ const Partneroverview = () => {
   };
   const handleAssistanceClick = () => {};
   const [token, setToken] = useState(() => localStorage.getItem("token"));
-const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const handleLogoutClick = async () => {
     try {
       const response = await axios.post(
@@ -94,11 +94,7 @@ const dispatch = useDispatch();
               text="My Profile"
               onClick={handleProfileClick}
             />
-            <SocialButton
-              icon={<FacebookIcon />}
-              text="Account Settings"
-              onClick={handleSettingsClick}
-            />
+
             <SocialButton
               icon={<StoreIcon />}
               text="My Bookings"
@@ -109,11 +105,7 @@ const dispatch = useDispatch();
               text="My Reviews"
               onClick={handleReviewsClick}
             />
-            <SocialButton
-              icon={<StarIcon />}
-              text="Assistance"
-              onClick={handleAssistanceClick}
-            />
+
             <SocialButton
               icon={<LogoutIcon />}
               text="Logout"

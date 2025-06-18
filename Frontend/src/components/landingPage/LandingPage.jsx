@@ -239,7 +239,7 @@ const LandingPage = () => {
                 className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 px-4 cursor-pointer bg-white text-center"
                 onClick={() => navigate("/onboarding")}
               >
-                Partner
+                {isPartner ? "User" : "Partner"}
               </div>
               <div className="relative w-full">
                 <select className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 pr-10 bg-white w-full">
@@ -753,17 +753,6 @@ const LandingPage = () => {
                 Your luggage will always have a{" "}
                 <span className="text-[#FA8128] font-bold">safe place</span>,
                 allowing you to enjoy your journey to the fullest!
-              </div>
-              <div className="mt-10">
-                <button
-                  onClick={() => {
-                    navigate("/partneroverview");
-                    console.log("Become a Partner clicked", isPartner);
-                  }}
-                  className="bg-[#FA8128] text-white px-3 py-2 rounded-lg shadow-md hover:bg-[#f77a20] transition cursor-pointer"
-                >
-                  Become a Partner
-                </button>
               </div>
             </div>
           </div>

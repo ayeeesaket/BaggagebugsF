@@ -35,10 +35,10 @@ const UserOverview = () => {
   const handleBookingsClick = () => {
     navigate("/userbookings");
   };
-  const handleAssistanceClick = () => { };
+  const handleAssistanceClick = () => {};
   const [token, setToken] = useState(
-      useSelector((state) => state.token.tokenValue)
-    );
+    useSelector((state) => state.token.tokenValue)
+  );
   const handleLogoutClick = async () => {
     try {
       const response = await axios.post(
@@ -96,21 +96,13 @@ const UserOverview = () => {
               text="My Profile"
               onClick={handleProfileClick}
             />
-            <SocialButton
-              icon={<FacebookIcon />}
-              text="Account Settings"
-              onClick={handleSettingsClick}
-            />
+
             <SocialButton
               icon={<StoreIcon />}
               text="My Bookings"
               onClick={handleBookingsClick}
             />
-            <SocialButton
-              icon={<StarIcon />}
-              text="Assistance"
-              onClick={handleAssistanceClick}
-            />
+
             <SocialButton
               icon={<LogoutIcon />}
               text="Logout"

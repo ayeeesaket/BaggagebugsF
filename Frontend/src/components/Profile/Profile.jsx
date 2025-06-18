@@ -173,7 +173,7 @@ const Profile = () => {
               <div className="profile-div flex flex-col gap-10 px-5 md:px-10 pt-10 text-[20px] md:text-[24px] h-full text-[#FA8128] font-bold">
                 <div className="my-profile"> My Profile</div>
                 <div className="flex flex-col gap-14">
-                  <div className="row-1 flex justify-between items-center">
+                  <div className="row-1 flex justify-between items-center font-light">
                     <input
                       className="content-input  text-black border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
                       placeholder="First Name"
@@ -185,7 +185,7 @@ const Profile = () => {
                       onChange={(e) => setLastName(e.target.value)}
                     />
                   </div>
-                  <div className="row-2 flex justify-between items-center">
+                  <div className="row-2 flex justify-between items-center font-light">
                     <input
                       type="date"
                       className="content-input text-black  border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
@@ -198,7 +198,7 @@ const Profile = () => {
                       onChange={(e) => setEmail(e.target.value)}
                     />
                   </div>
-                  <div className="row-3 flex justify-between items-center">
+                  <div className="row-3 flex justify-between items-center font-light">
                     <input
                       type="number"
                       className="content-input text-black border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
