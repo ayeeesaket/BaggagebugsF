@@ -309,12 +309,13 @@ const LandingPage = () => {
                 >
                   {isLoggedIn ? "Logout" : "Login"}
                 </div>
+                {!isPartner&&(
                 <div
                   className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 px-4 cursor-pointer bg-white"
                   onClick={() => navigate("/onboarding")}
                 >
-                  {isPartner ? "User" : "Partner"}
-                </div>
+                 Partner 
+                </div>)}
                 <div className="relative">
                   <select className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 pr-10 bg-white">
                     <option value="en">English</option>
