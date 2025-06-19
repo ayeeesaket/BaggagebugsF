@@ -144,6 +144,7 @@ useEffect(() => {
       });
 
       const data = response.data;
+console.log(data);
 
       // Assuming response data structure looks like:
       // { firstName: "John", lastName: "Doe", email: "...", ... }
