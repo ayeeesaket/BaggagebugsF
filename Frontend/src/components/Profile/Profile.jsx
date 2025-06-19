@@ -262,7 +262,7 @@ useEffect(() => {
                       type="number"
                       value={phoneNo}
                       className="content-input text-black border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
-                      placeholder="Phone Number"
+                      placeholder={phoneNo}
                       onChange={(e) => setPhoneNo(e.target.value)}
                     />
                   </div>
