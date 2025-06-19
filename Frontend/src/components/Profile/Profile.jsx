@@ -151,11 +151,7 @@ console.log(data);
       setFirstName(data.data.firstName || "" );
       setLastName(data.data.lastName || "");
       setEmail(data.data.email|| "" );
-      const formattedDate = data.dateOfBirth
-        ? new Date(data.dateOfBirth).toISOString().split("T")[0]
-        : "";
-      setDateOfBirth(formattedDate);
-
+      setDateOfBirth(data.data.dateOfBirth || "");
       setPhoneNo(data.data.phoneNo || "");
     } catch (error) {
       console.error("Error fetching user details:", error);
