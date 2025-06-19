@@ -137,7 +137,7 @@ toast.success("Password changed successfully!");
 useEffect(() => {
   const fetchUserDetails = async () => {
     try {
-      const response = await axios.get(`${ProductionApi}/user/getDetails`, {
+      const response = await axios.get(`${ProductionApi}/user/getUser`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
