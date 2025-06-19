@@ -494,7 +494,7 @@ const LandingPage = () => {
               <div className="text-[32px] md:text-[50px] font-bold text-end leading-tight">
                 <div className="text-[#FA8128]">Services starting</div>
                 <div className="text-[#FA8128]">from just</div>
-                <div className="text-[#63C5DA]">€4.5</div>
+                <div className="text-[#63C5DA]">€2.5</div>
               </div>
 
               <div className="text-[#FA8128] text-end text-[18px] md:text-[22px] leading-tight mt-4 md:mt-5">
