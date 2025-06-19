@@ -155,7 +155,7 @@ console.log(data);
         ? new Date(data.dateOfBirth).toISOString().split("T")[0]
         : "";
       setDateOfBirth(formattedDate);
-      setDateOfBirth(data.data.dateOfBirth || "");
+
       setPhoneNo(data.data.phoneNo || "");
     } catch (error) {
       console.error("Error fetching user details:", error);
