@@ -35,7 +35,7 @@ const Profile = () => {
 
   const handleApi = async (e) => {
     console.log("your token which is stored", token);
-
+    
     e.preventDefault();
     try {
       const response = await axios.post(
@@ -134,6 +134,34 @@ toast.success("Password changed successfully!");
     window.removeEventListener("beforeunload", handleBeforeUnload);
   };
 }, []);
+useEffect(() => {
+  const fetchUserDetails = async () => {
+    try {
+      const response = await axios.get(`${ProductionApi}/user/getDetails`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = response.data;
+
+      // Assuming response data structure looks like:
+      // { firstName: "John", lastName: "Doe", email: "...", ... }
+      setFirstName(data.firstName || "");
+      setLastName(data.lastName || "");
+      setEmail(data.email || "");
+      setDateOfBirth(data.dateOfBirth || "");
+      setPhoneNo(data.phoneNo || "");
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+      toast.error("Failed to load profile data");
+    }
+  };
+
+  if (token) {
+    fetchUserDetails();
+  }
+}, [token]);
 
   return (
     <>
@@ -204,11 +232,13 @@ toast.success("Password changed successfully!");
                     <input
                       className="content-input  text-black border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
                       placeholder="First Name"
+                      value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                     />
                     <input
                       className="content-input  text-black border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
                       placeholder="Last Name"
+                      value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
                     />
                   </div>
@@ -217,17 +247,20 @@ toast.success("Password changed successfully!");
                       type="date"
                       className="content-input text-black  border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
                       placeholder="Date of Birth"
+                      value={dateOfBirth}
                       onChange={(e) => setDateOfBirth(e.target.value)}
                     />
                     <input
                       className="content-input text-black border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
                       placeholder="Email"
+                      value={email}
                       onChange={(e) => setEmail(e.target.value)}
                     />
                   </div>
                   <div className="row-3 flex justify-between items-center font-light">
                     <input
                       type="number"
+                      value={phoneNo}
                       className="content-input text-black border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
                       placeholder="Phone Number"
                       onChange={(e) => setPhoneNo(e.target.value)}
