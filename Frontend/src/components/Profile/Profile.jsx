@@ -148,11 +148,11 @@ console.log(data);
 
       // Assuming response data structure looks like:
       // { firstName: "John", lastName: "Doe", email: "...", ... }
-      setFirstName(data.firstName || "");
-      setLastName(data.lastName || "");
-      setEmail(data.email || "");
-      setDateOfBirth(data.dateOfBirth || "");
-      setPhoneNo(data.phoneNo || "");
+      setFirstName(data.data.firstName || "" );
+      setLastName(data.data.lastName || "");
+      setEmail(data.data.email|| "" );
+      setDateOfBirth(data.data.dateOfBirth || "");
+      setPhoneNo(data.data.phoneNo || "");
     } catch (error) {
       console.error("Error fetching user details:", error);
       toast.error("Failed to load profile data");
@@ -232,13 +232,13 @@ console.log(data);
                   <div className="row-1 flex justify-between items-center font-light">
                     <input
                       className="content-input  text-black border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
-                      placeholder="First Name"
+                      placeholder={firstName}
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                     />
                     <input
                       className="content-input  text-black border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
-                      placeholder="Last Name"
+                      placeholder={lastName}
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
                     />
@@ -247,7 +247,7 @@ console.log(data);
                     <input
                       type="date"
                       className="content-input text-black  border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
-                      placeholder="Date of Birth"
+                      placeholder={dateOfBirth}
                       value={dateOfBirth}
                       onChange={(e) => setDateOfBirth(e.target.value)}
                     />
