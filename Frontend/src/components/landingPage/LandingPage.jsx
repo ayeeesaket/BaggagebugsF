@@ -504,7 +504,7 @@ const LandingPage = () => {
             </div>
 
             {/* ✅ Hidden on mobile only */}
-            <div className="suitcase z-10 absolute translate-x-[176%] -translate-y-[80%] hidden md:block"></div>
+            <div className="suitcase z-10 absolute lg:translate-x-[176%] -translate-y-[80%] hidden md:block"></div>
           </div>
         </div>
 
