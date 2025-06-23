@@ -38,7 +38,7 @@ const Login = () => {
     e.preventDefault();
     setError("");
      if (isPartner) {
-        localStorage.setItem("token", "partner");
+        localStorage.setItem("role", "partner");
       }
     try {
       const response = await axios.post(

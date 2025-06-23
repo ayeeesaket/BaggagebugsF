@@ -39,6 +39,7 @@ const LandingPage = () => {
       dispatch({ type: "partner/setIsPartner", payload: true });
     }
     const storedToken = localStorage.getItem("token");
+    const storedrole = localStorage.getItem("role");
     console.log("ispartner : ", isPartner);
 
     if (urlToken && !storedToken) {
