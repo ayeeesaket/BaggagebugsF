@@ -262,17 +262,23 @@ const LandingPage = () => {
               >
                 {isLoggedIn ? "Logout" : "Login"}
               </div>
-            <div
-  className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 px-4 cursor-pointer bg-white text-center"
-  onClick={() => {
-    if (isPartner)  
-      console.log(!isPartner);
-      // Only navigate if it's a partner
-    navigate("/onboarding");
-  }}
->
-  {isPartner ? "User" : "Partner"}
-</div>
+              <div
+                className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 px-4 cursor-pointer bg-white text-center"
+                onClick={() => {
+                  if (isPartner) console.log(!isPartner);
+                  // Only navigate if it's a partner
+                  navigate("/onboarding");
+                }}
+              >
+                {!isPartner && (
+                  <div
+                    className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 px-4 cursor-pointer bg-white"
+                    onClick={() => navigate("/onboarding")}
+                  >
+                    Partner
+                  </div>
+                )}
+              </div>
 
               <div className="relative w-full">
                 <select className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 pr-10 bg-white w-full">
@@ -309,13 +315,14 @@ const LandingPage = () => {
                 >
                   {isLoggedIn ? "Logout" : "Login"}
                 </div>
-                {!isPartner&&(
-                <div
-                  className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 px-4 cursor-pointer bg-white"
-                  onClick={() => navigate("/onboarding")}
-                >
-                 Partner 
-                </div>)}
+                {!isPartner && (
+                  <div
+                    className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 px-4 cursor-pointer bg-white"
+                    onClick={() => navigate("/onboarding")}
+                  >
+                    Partner
+                  </div>
+                )}
                 <div className="relative">
                   <select className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 pr-10 bg-white">
                     <option value="en">English</option>

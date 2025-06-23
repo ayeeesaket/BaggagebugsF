@@ -3,8 +3,9 @@ import "../../styles/Login.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import { ProductionApi, LocalApi } from "../../../utills";
+import { ProductionApi } from "../../../utills";
 import { ToastContainer, toast } from "react-toastify";
+
 const GoogleIcon = () => <span className="googleimg"></span>;
 const FacebookIcon = () => <span className="fbimg"></span>;
 const StoreIcon = () => <span className="bimg"></span>;
@@ -25,31 +26,32 @@ const Register = () => {
   const handletoLogin = () => navigate("/");
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
   const dispatch = useDispatch();
-  const [token, setToken] = useState(() => localStorage.getItem("token"));
 
   const handleRegister = async (e) => {
     e.preventDefault();
+
+    // Basic validation
+    if (!firstName || !lastName || !email || !password) {
+      toast.error("Please fill in all fields.");
+      return;
+    }
+
     try {
-      const response = await axios.post(
-        `${ProductionApi}/user/register`,
-        {
-          firstName,
-          lastName,
-          email,
-          password,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.post(`${ProductionApi}/user/register`, {
+        firstName,
+        lastName,
+        email,
+        password,
+      });
+
       const { token, role } = response.data;
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("role", role);
+
       toast.success("Registration successful!");
       navigate(`/landingpage?token=${token}&role=${role}`);
-      console.log(response.data);
-      localStorage.setItem("role", role);
-      dispatch({ type: "login/login", payload: true }); // Set login state to true
+      dispatch({ type: "login/login", payload: true });
     } catch (error) {
       console.log(error);
       toast.error("Registration failed!");

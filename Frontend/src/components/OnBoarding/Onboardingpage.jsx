@@ -102,6 +102,7 @@ const Onboardingpage = () => {
   const [token, setToken] = useState(() => localStorage.getItem("token"));
 
   const handleLogoutApi = async () => {
+    dispatch({ type: "partner/setIsPartner", payload: true });
     try {
       const response = await axios.post(
         `${ProductionApi}/user/logout`,
