@@ -38,7 +38,7 @@ const Login = () => {
     e.preventDefault();
     setError("");
      if (isPartner) {
-        localStorage.setItem("role", "partner");
+        role = 'partner'
       }
     try {
       const response = await axios.post(
@@ -48,8 +48,8 @@ const Login = () => {
       );
 
       dispatch({ type: "login/login" , payload: true }); // Set login state to true
-
-      const { token, role } = response.data;
+if(!isPartner){const role= response.data}
+      const { token } = response.data;
       navigate(`/landingpage?token=${token}&role=${role}`);
       console.log(response.data);
       toast.success("Login successful!");
