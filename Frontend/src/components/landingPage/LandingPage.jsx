@@ -31,6 +31,8 @@ const LandingPage = () => {
   const dispatch = useDispatch();
 
   // const [searchParams] = useSearchParams();
+const tokenFromLogin = location.state.token;
+console.log(tokenFromLogin);
 
   useEffect(() => {
     const urlToken = new URLSearchParams(window.location.search).get("token");
@@ -41,11 +43,11 @@ const LandingPage = () => {
     const storedToken = localStorage.getItem("token");
     
     console.log("ispartner : ", isPartner);
-
+const tokenf = urlToken || tokenFromLogin 
     if (urlToken && !storedToken) {
       // Case 1: Token from URL on first login
      
-      localStorage.setItem("token", urlToken);
+      localStorage.setItem("token", tokenf);
       dispatch({ type: "token/setTokenValue", payload: urlToken });
       dispatch({ type: "login/login", payload: true }); // Set login state to true
       console.log("Token from URL saved and user logged in.");
