@@ -95,8 +95,13 @@ console.log("your location is here",query);
   );
 
   const onUnmount = useCallback(() => setMap(null), []);
-const prevLocation = destination || query;
-    console.log("data from prev page ",prevLocation);
+useEffect(() => {
+  if (query) {
+    setDestination(query); // set destination input field
+    handleSearchDestination(); // trigger search automatically
+  }
+}, []);
+
   useEffect(() => {
     navigator.geolocation?.getCurrentPosition(({ coords }) => {
       const { latitude, longitude } = coords;
