@@ -494,19 +494,20 @@ const getSessionId = async () => {
                   onClick={() => toggleCal(!showCal)}
                 />
                 {showCal && (
-                  <div className="absolute z-20 mt-1 left-0 right-0">
+                  <div className="absolute z-50 mt-1 w-[320px]">
                     <Calendar
                       onChange={(d) => {
                         const normalizedDate = new Date(
                           d.getFullYear(),
                           d.getMonth(),
-                          d.getDate()
+                          d.getDate(),
+                          12 // set time to noon to avoid timezone shift
                         );
                         updateDate(normalizedDate);
                         toggleCal(false);
                       }}
                       value={date}
-                      className="text-sm"
+                      className="text-sm w-full"
                     />
                   </div>
                 )}

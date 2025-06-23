@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { ProductionApi, LocalApi } from "../../../utills";
-import { ToastContainer , toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 const GoogleIcon = () => <span className="googleimg"></span>;
 const FacebookIcon = () => <span className="fbimg"></span>;
 const StoreIcon = () => <span className="bimg"></span>;
@@ -44,9 +44,11 @@ const Register = () => {
           },
         }
       );
+      const { token, role } = response.data;
       toast.success("Registration successful!");
-      console.log("hello");
-      navigate("/landingpage");
+      navigate(`/landingpage?token=${token}&role=${role}`);
+      console.log(response.data);
+      localStorage.setItem("role", role);
       dispatch({ type: "login/login", payload: true }); // Set login state to true
     } catch (error) {
       console.log(error);
@@ -120,7 +122,7 @@ const Register = () => {
               Register
             </button>
 
-            <div className="flex space-x-1 ml-0 md:ml-24 max-w-[300px]">
+            <div className="flex space-x-1 ml-10 max-w-[300px]">
               <p className="text-black text-sm">Already have an account?</p>
               <span
                 onClick={handletoLogin}
@@ -130,15 +132,6 @@ const Register = () => {
               </span>
             </div>
           </form>
-
-          <div className="space-y-3 mt-6 md:w-[300px] pb-6">
-            <SocialButton icon={<GoogleIcon />} text="Continue with Google" />
-            <SocialButton
-              icon={<FacebookIcon />}
-              text="Continue with Facebook"
-            />
-            <SocialButton icon={<StoreIcon />} text="Store Baggage" />
-          </div>
         </div>
       </div>
     </div>
