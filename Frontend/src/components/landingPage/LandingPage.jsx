@@ -31,7 +31,9 @@ const LandingPage = () => {
   const dispatch = useDispatch();
 
   // const [searchParams] = useSearchParams();
-const tokenFromLogin = location.state.token;
+const location = useLocation();
+const tokenFromLogin = location.state?.token;
+const roleFromLogin = location.state?.role;
 console.log(tokenFromLogin);
 
   useEffect(() => {

@@ -49,7 +49,9 @@ const Login = () => {
 if (isPartner) {
   const token = response.data;
        const role = 'partner';
-       navigate(`/landingpage?token=${token}&role=${role}`);
+       navigate(`/landingpage?token=${token}&role=${role}`, {
+  state: { token, role },
+});
       }
      else{ const { token,role } = response.data;
     navigate(`/landingpage?token=${token}&role=${role}`);}
