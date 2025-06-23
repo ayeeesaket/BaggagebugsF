@@ -11,6 +11,7 @@ import { BsArrowLeftCircle } from "react-icons/bs";
 import { BsArrowRightCircle } from "react-icons/bs";
 import { HiArrowNarrowRight } from "react-icons/hi";
 import Slider from "react-slick";
+import { useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
