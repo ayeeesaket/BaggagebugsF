@@ -115,7 +115,7 @@ useEffect(() => {
 
   const handleSearchDestination = async () => {
     if (!destination) return;
-    
+    const prevLocation =  query
     
     try {
       const geoRes = await fetch(
