@@ -24,7 +24,7 @@ import { v4 as uuidv4 } from 'uuid';
 const Bookingpage = () => {
   // bringing the name of the page from landingpage
   const location = useLocation();
-  const query = location.state?.query || "";
+  const query = location.state.query || "";
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
 
   
@@ -62,6 +62,7 @@ const Bookingpage = () => {
       dispatch({ type: "login/login" });
     }
   };
+console.log("your location is here",query);
 
   const containerStyle = {
     width: "100%",
@@ -94,7 +95,8 @@ const Bookingpage = () => {
   );
 
   const onUnmount = useCallback(() => setMap(null), []);
-
+const prevLocation = destination || query;
+    console.log("data from prev page ",prevLocation);
   useEffect(() => {
     navigator.geolocation?.getCurrentPosition(({ coords }) => {
       const { latitude, longitude } = coords;
@@ -108,7 +110,8 @@ const Bookingpage = () => {
 
   const handleSearchDestination = async () => {
     if (!destination) return;
-    const prevLocation = destination || query;
+    
+    
     try {
       const geoRes = await fetch(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(

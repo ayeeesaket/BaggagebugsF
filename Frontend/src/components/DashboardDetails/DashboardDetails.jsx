@@ -138,11 +138,29 @@ const DashboardDetails = () => {
       // Optional: Log form data if response status is 400
     } catch (error) {
       console.error("Error while registering facility:", error);
-      toast.error("Failed to add details")
+      toast.error("Failed to add details");
     }
   };
+  const [details, setdetails] = useState(true);
   const [facilities, setFacilities] = useState([]);
+  
+
+
   const handleFacilityApi = async () => {
+    if (
+    !name ||
+    !email ||
+    !address ||
+    !phone ||
+    !capacity ||
+    !timing ||
+    limited === undefined
+  ) {
+    toast.error("Please fill out all required fields.");
+    setdetails(false);
+  } else {
+    setdetails(true);
+  }
     try {
       const response = await axios.get(
         `${ProductionApi}/facility/`,
@@ -164,28 +182,28 @@ const DashboardDetails = () => {
     handleFacilityApi();
     console.log("Token in DashboardDetails:", token);
   }, []);
-useEffect(() => {
-  const handleBeforeUnload = (event) => {
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) {
-      try {
-        navigator.sendBeacon(
-          `${ProductionApi}/user/logout`,
-          JSON.stringify({})
-        );
-        localStorage.removeItem("token");
-      } catch (e) {
-        console.warn("Logout beacon failed:", e);
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      const storedToken = localStorage.getItem("token");
+      if (storedToken) {
+        try {
+          navigator.sendBeacon(
+            `${ProductionApi}/user/logout`,
+            JSON.stringify({})
+          );
+          localStorage.removeItem("token");
+        } catch (e) {
+          console.warn("Logout beacon failed:", e);
+        }
       }
-    }
-  };
+    };
 
-  window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("beforeunload", handleBeforeUnload);
 
-  return () => {
-    window.removeEventListener("beforeunload", handleBeforeUnload);
-  };
-}, []);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   return (
     <>
@@ -250,11 +268,15 @@ useEffect(() => {
               ))}
             </div>
             <button
-              onClick={handleDetailsAPI}
-              className="bg-[#FA8128] text-white px-3 py-3  rounded-3xl cursor-pointer"
-            >
-              Save
-            </button>
+  onClick={handleDetailsAPI}
+  className={`px-3 py-3 rounded-3xl cursor-pointer ${
+    details ? 'bg-[#FA8128] text-white' : 'bg-gray-400 text-white cursor-not-allowed'
+  }`}
+  
+>
+  Save
+</button>
+
           </div>
 
           {/* RIGHT SECTION */}
@@ -272,6 +294,7 @@ useEffect(() => {
                         className="content-input flex-[35%] border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px] "
                         placeholder="Lorem ipsum"
                         onChange={(e) => setName(e.target.value)}
+                        value={name}
                       />
                       <div
                         className="edit text-[#63C5DA] flex-[25%] text-right"
@@ -312,6 +335,7 @@ useEffect(() => {
                         className="content-input flex-[35%] border-2 items-start border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px] focus:border-[#63C5DA] focus:ring-0"
                         placeholder="Shuddjdsi26@gmail.com"
                         onChange={(e) => setEmail(e.target.value)}
+                        value={email}
                       />
                       <div className="flex-[25%]"></div>
                     </div>
@@ -321,6 +345,7 @@ useEffect(() => {
                         className="content-input flex-[35%] border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
                         placeholder="+99 873629273839"
                         onChange={(e) => setPhone(e.target.value)}
+                        value={phone}
                       />
                       <div className="flex-[25%]"></div>
                     </div>
@@ -330,7 +355,8 @@ useEffect(() => {
                       </div>
                       <select
                         className="content-input border-2 flex-[35%] border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
-                        onChange={(e) => setType(e.target.value)} // Correct event handler
+                        onChange={(e) => setType(e.target.value)}
+                        value={type} // Correct event handler
                       >
                         <option value="airport-luggage">Airport Luggage</option>
                       </select>
@@ -345,6 +371,7 @@ useEffect(() => {
                         className="content-input flex-[35%] border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
                         placeholder="wolfer dog streetrnckclc"
                         onChange={(e) => setAddress(e.target.value)}
+                        value={address}
                       />
                       <div className="edit text-white flex-[25%] text-right">
                         Edit
@@ -354,32 +381,32 @@ useEffect(() => {
                       <div className="content flex-[30%]">
                         Bagpacker Services
                       </div>
-                     <div className="flex flex-[35%] gap-2">
-  {["wifi", "restroom", "CCtv"].map((label) => (
-    <button
-      key={label}
-      className={`border-2 border-[#63C5DA] rounded flex-1 px-1 py-1 capitalize ${
-        activeButtons.includes(label)
-          ? "bg-orange-500 text-white"
-          : "bg-white text-[#FA8128]"
-      }`}
-      onClick={() => {
-        setActiveButtons((prev) =>
-          prev.includes(label)
-            ? prev.filter((item) => item !== label)
-            : [...prev, label]
-        );
-
-        // Set wifi flag separately if needed
-        if (label === "wifi") {
-          setWifi((prev) => !prev);
-        }
-      }}
-    >
-      {label}
-    </button>
-  ))}
-</div>
+                      <div className="flex flex-[35%] gap-2">
+                        {["wifi", "restroom", "CCtv"].map((label) => (
+                          <button
+                            key={label}
+                            className={`border-2 border-[#63C5DA] rounded flex-1 px-1 py-1 capitalize ${
+                              activeButtons.includes(label)
+                                ? "bg-orange-500 text-white"
+                                : "bg-white text-[#FA8128]"
+                            }`}
+                            value={wifi}
+                            onClick={() => {
+                              setActiveButtons((prev) =>
+                                prev.includes(label)
+                                  ? prev.filter((item) => item !== label)
+                                  : [...prev, label]
+                              );
+                              // Set wifi flag separately if needed
+                              if (label === "wifi") {
+                                setWifi((prev) => !prev);
+                              }
+                            }}
+                          >
+                            {label}
+                          </button>
+                        ))}
+                      </div>
 
                       <div className="content-edit text-white flex-[25%] text-right">
                         Edit
@@ -472,35 +499,35 @@ useEffect(() => {
                     <div className="Limited-storage">Limited Storage?</div>
 
                     <div className="options-div items-center flex w-full justify-between gap-[700px]">
-                     <div className="yes-no-options flex gap-2">
-  <button
-    className={`border-[#63C5DA] border-2 px-3 py-2 rounded ${
-      selected === true
-        ? "bg-[#FA8128] text-white"
-        : "bg-white text-[#FA8128]"
-    }`}
-    onClick={() => {
-      setLimited(true);
-      setSelected(true);
-    }}
-  >
-    Yes
-  </button>
+                      <div className="yes-no-options flex gap-2">
+                        <button
+                          className={`border-[#63C5DA] border-2 px-3 py-2 rounded ${
+                            selected === true
+                              ? "bg-[#FA8128] text-white"
+                              : "bg-white text-[#FA8128]"
+                          }`}
+                          onClick={() => {
+                            setLimited(true);
+                            setSelected(true);
+                          }}
+                        >
+                          Yes
+                        </button>
 
-  <button
-    className={`border-[#63C5DA] border-2 px-3 py-2 rounded ${
-      selected === false
-        ? "bg-[#FA8128] text-white"
-        : "bg-white text-[#FA8128]"
-    }`}
-    onClick={() => {
-      setLimited(false);
-      setSelected(false);
-    }}
-  >
-    No
-  </button>
-</div>
+                        <button
+                          className={`border-[#63C5DA] border-2 px-3 py-2 rounded ${
+                            selected === false
+                              ? "bg-[#FA8128] text-white"
+                              : "bg-white text-[#FA8128]"
+                          }`}
+                          onClick={() => {
+                            setLimited(false);
+                            setSelected(false);
+                          }}
+                        >
+                          No
+                        </button>
+                      </div>
 
                       {/* Right Side - Save/Cancel */}
 
@@ -726,20 +753,7 @@ useEffect(() => {
                           placeholder="Lorem ipsum"
                         />
                       </div>
-                      <div className="bank-row-9 flex flex-col sm:flex-row gap-4 mt-4">
-                        <button
-                          className="bg-[#FA8128] text-white px-4 py-2 rounded-3xl w-full sm:w-auto"
-                          onClick={handleBankSave}
-                        >
-                          Save
-                        </button>
-                        <button
-                          className="bg-[#FA8128] text-white px-4 py-2 rounded-3xl w-full sm:w-auto"
-                          onClick={handleBankCancel}
-                        >
-                          Cancel
-                        </button>
-                      </div>
+                      <div className="bank-row-9 flex flex-col sm:flex-row gap-4 mt-4"></div>
                     </div>
                   </div>
                 )}
