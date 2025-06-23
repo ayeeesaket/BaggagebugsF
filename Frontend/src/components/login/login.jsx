@@ -25,7 +25,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
+   const isPartner = useSelector((state) => state.partner.isPartner);
   const handleRegister = () => navigate("/register");
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
   const dispatch = useDispatch();
@@ -37,6 +37,9 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+     if (isPartner) {
+        localStorage.setItem("token", "partner");
+      }
     try {
       const response = await axios.post(
         `${ProductionApi}/user/login`,
