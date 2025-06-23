@@ -50,6 +50,8 @@ const Register = () => {
       localStorage.setItem("role", role);
 
       toast.success("Registration successful!");
+      console.log(response.data);
+      
       navigate(`/landingpage?token=${token}&role=${role}`);
       dispatch({ type: "login/login", payload: true });
     } catch (error) {
