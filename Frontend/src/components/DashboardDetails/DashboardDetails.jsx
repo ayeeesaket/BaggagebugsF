@@ -143,24 +143,32 @@ const DashboardDetails = () => {
   };
   const [details, setdetails] = useState(true);
   const [facilities, setFacilities] = useState([]);
-  
 
+  const [bankDetails, setBankDetails] = useState({
+    holderName: "",
+    email: "",
+    accountNumber: "",
+    address: "",
+    postCode: "",
+    city: "",
+    stateCode: "",
+  });
 
   const handleFacilityApi = async () => {
     if (
-    !name ||
-    !email ||
-    !address ||
-    !phone ||
-    !capacity ||
-    !timing ||
-    limited === undefined
-  ) {
-    toast.error("Please fill out all required fields.");
-    setdetails(false);
-  } else {
-    setdetails(true);
-  }
+      !name ||
+      !email ||
+      !address ||
+      !phone ||
+      !capacity ||
+      !timing ||
+      limited === undefined
+    ) {
+      toast.error("Please fill out all required fields.");
+      setdetails(false);
+    } else {
+      setdetails(true);
+    }
     try {
       const response = await axios.get(
         `${ProductionApi}/facility/`,
@@ -175,6 +183,30 @@ const DashboardDetails = () => {
       setFacilities(response.data.data);
     } catch (error) {
       console.error("Error fetching facility data:", error);
+    }
+    try {
+      const response = await axios.get(
+        `${ProductionApi}/user/addBankAccount`,
+        {
+          accountNumber: "123456789012",
+          bankName: "State Bank of India",
+          ifscCode: "SBIN0001234",
+          accountHolderName: "John Doe",
+          holderAddress: "123 Main Street",
+          holderPostalCode: "110001",
+          holderCity: "New Delhi",
+          holderStateCode: "DL",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("Facility Data:", response.data.data);
+      setFacilities(response.data.data);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -268,15 +300,15 @@ const DashboardDetails = () => {
               ))}
             </div>
             <button
-  onClick={handleDetailsAPI}
-  className={`px-3 py-3 rounded-3xl cursor-pointer ${
-    details ? 'bg-[#FA8128] text-white' : 'bg-gray-400 text-white cursor-not-allowed'
-  }`}
-  
->
-  Save
-</button>
-
+              onClick={handleDetailsAPI}
+              className={`px-3 py-3 rounded-3xl cursor-pointer ${
+                details
+                  ? "bg-[#FA8128] text-white"
+                  : "bg-gray-400 text-white cursor-not-allowed"
+              }`}
+            >
+              Save
+            </button>
           </div>
 
           {/* RIGHT SECTION */}
@@ -696,13 +728,28 @@ const DashboardDetails = () => {
                           Account Holder Name
                         </div>
                         <input
+                          value={bankDetails.holderName}
+                          onChange={(e) =>
+                            setBankDetails({
+                              ...bankDetails,
+                              holderName: e.target.value,
+                            })
+                          }
                           className="content-input border-2 border-[#63C5DA] rounded px-2 py-2 w-full text-[18px] md:text-[20px]"
                           placeholder="Lorem ipsum"
                         />
                       </div>
+
                       <div className="bank-row-2 flex flex-col md:flex-row gap-2">
                         <div className="bank-row-2-detail md:w-1/2">Email</div>
                         <input
+                          value={bankDetails.email}
+                          onChange={(e) =>
+                            setBankDetails({
+                              ...bankDetails,
+                              email: e.target.value,
+                            })
+                          }
                           className="content-input border-2 border-[#63C5DA] rounded px-2 py-2 w-full text-[18px] md:text-[20px]"
                           placeholder="Lorem ipsum"
                         />
@@ -713,46 +760,86 @@ const DashboardDetails = () => {
                           Account Number
                         </div>
                         <input
+                          value={bankDetails.accountNumber}
+                          onChange={(e) =>
+                            setBankDetails({
+                              ...bankDetails,
+                              accountNumber: e.target.value,
+                            })
+                          }
                           className="content-input border-2 border-[#63C5DA] rounded px-2 py-2 w-full text-[18px] md:text-[20px]"
                           placeholder="Lorem ipsum"
                         />
                       </div>
+
                       <div className="bank-row-5 flex flex-col md:flex-row gap-2">
                         <div className="bank-row-5-detail md:w-1/2">
                           Account Holder's Address
                         </div>
                         <input
+                          value={bankDetails.address}
+                          onChange={(e) =>
+                            setBankDetails({
+                              ...bankDetails,
+                              address: e.target.value,
+                            })
+                          }
                           className="content-input border-2 border-[#63C5DA] rounded px-2 py-2 w-full text-[18px] md:text-[20px]"
                           placeholder="Lorem ipsum"
                         />
                       </div>
+
                       <div className="bank-row-6 flex flex-col md:flex-row gap-2">
                         <div className="bank-row-6-detail md:w-1/2">
                           Account Holder's Post Code
                         </div>
                         <input
+                          value={bankDetails.postCode}
+                          onChange={(e) =>
+                            setBankDetails({
+                              ...bankDetails,
+                              postCode: e.target.value,
+                            })
+                          }
                           className="content-input border-2 border-[#63C5DA] rounded px-2 py-2 w-full text-[18px] md:text-[20px]"
                           placeholder="Lorem ipsum"
                         />
                       </div>
+
                       <div className="bank-row-7 flex flex-col md:flex-row gap-2">
                         <div className="bank-row-7-detail md:w-1/2">
                           Account Holder's Town/City
                         </div>
                         <input
+                          value={bankDetails.city}
+                          onChange={(e) =>
+                            setBankDetails({
+                              ...bankDetails,
+                              city: e.target.value,
+                            })
+                          }
                           className="content-input border-2 border-[#63C5DA] rounded px-2 py-2 w-full text-[18px] md:text-[20px]"
                           placeholder="Lorem ipsum"
                         />
                       </div>
+
                       <div className="bank-row-8 flex flex-col md:flex-row gap-2">
                         <div className="bank-row-8-detail md:w-1/2">
                           State Code
                         </div>
                         <input
+                          value={bankDetails.stateCode}
+                          onChange={(e) =>
+                            setBankDetails({
+                              ...bankDetails,
+                              stateCode: e.target.value,
+                            })
+                          }
                           className="content-input border-2 border-[#63C5DA] rounded px-2 py-2 w-full text-[18px] md:text-[20px]"
                           placeholder="Lorem ipsum"
                         />
                       </div>
+
                       <div className="bank-row-9 flex flex-col sm:flex-row gap-4 mt-4"></div>
                     </div>
                   </div>

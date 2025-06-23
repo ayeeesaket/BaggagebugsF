@@ -40,7 +40,7 @@ const LandingPage = () => {
     }
     const storedToken = localStorage.getItem("token");
     console.log("ispartner : ", isPartner);
-    
+
     if (urlToken && !storedToken) {
       // Case 1: Token from URL on first login
       localStorage.setItem("token", urlToken);
@@ -260,17 +260,14 @@ const LandingPage = () => {
               >
                 {isLoggedIn ? "Logout" : "Login"}
               </div>
-            <div
-  className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 px-4 cursor-pointer bg-white text-center"
-  onClick={() => {
-    if (isPartner)  
-      console.log(!isPartner);
-      // Only navigate if it's a partner
-    navigate("/onboarding");
-  }}
->
-  {isPartner ? "User" : "Partner"}
-</div>
+            {!isPartner && (
+                <div
+                  className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 px-4 cursor-pointer bg-white text-center"
+                  onClick={() => navigate("/onboarding")}
+                >
+                  Partner
+                </div>
+              )}
 
               <div className="relative w-full">
                 <select className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 pr-10 bg-white w-full">
