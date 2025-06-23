@@ -37,9 +37,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
-     if (isPartner) {
-        role = 'partner'
-      }
+     
     try {
       const response = await axios.post(
         `${ProductionApi}/user/login`,
@@ -48,9 +46,14 @@ const Login = () => {
       );
 
       dispatch({ type: "login/login" , payload: true }); // Set login state to true
-if(!isPartner){const role= response.data}
-      const { token } = response.data;
-      navigate(`/landingpage?token=${token}&role=${role}`);
+if (isPartner) {
+  const token = response.data;
+       const role = 'partner';
+       navigate(`/landingpage?token=${token}&role=${role}`);
+      }
+     else{ const { token,role } = response.data;
+    navigate(`/landingpage?token=${token}&role=${role}`);}
+      
       console.log(response.data);
       toast.success("Login successful!");
       localStorage.setItem("role", role);
