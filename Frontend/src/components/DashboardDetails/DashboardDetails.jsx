@@ -159,8 +159,7 @@ const DashboardDetails = () => {
       !name ||
       !email ||
       !address ||
-      !phone ||
-      !capacity 
+      !phone 
       
     ) {
       toast.error("Please fill out all required fields.");
