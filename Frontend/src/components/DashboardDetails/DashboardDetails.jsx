@@ -141,7 +141,7 @@ const DashboardDetails = () => {
       toast.error("Failed to add details");
     }
   };
-  const [details, setdetails] = useState(true);
+  const [details, setDetails] = useState(true);
   const [facilities, setFacilities] = useState([]);
 
   const [bankDetails, setBankDetails] = useState({
@@ -155,18 +155,12 @@ const DashboardDetails = () => {
   });
 
   const handleFacilityApi = async () => {
-    if (
-      !name ||
-      !email ||
-      !address ||
-      !phone 
-      
-    ) {
-      toast.error("Please fill out all required fields.");
-      setdetails(false);
-    } else {
-      setdetails(true);
-    }
+    if (!name || !email || !address || !phone) {
+    toast.error("Please fill out all required fields.");
+    setDetails(false);
+  } else {
+    setDetails(true);
+  }
     try {
       const response = await axios.get(
         `${ProductionApi}/facility/`,
