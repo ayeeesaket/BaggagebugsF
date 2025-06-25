@@ -235,6 +235,7 @@ const Onboardingpage = () => {
   onClick={() => {
     dispatch(setIsPartner(true)); // Set isPartner to true
     isLoggedIn ? handleLogoutApi() : navigate("/");
+      localStorage.setItem("role", "partner");
   }}
 >
   Become a partner
