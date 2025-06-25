@@ -45,7 +45,6 @@ const Register = () => {
       });
 
       const { token, role } = response.data;
-
       localStorage.setItem("token", token);
       localStorage.setItem("role", role);
 

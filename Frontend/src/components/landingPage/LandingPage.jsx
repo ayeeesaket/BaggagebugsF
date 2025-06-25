@@ -46,7 +46,7 @@ console.log(tokenFromLogin);
     const storedToken = localStorage.getItem("token");
     
     console.log("ispartner : ", isPartner);
-const tokenf = urlToken || tokenFromLogin 
+    const tokenf = urlToken || tokenFromLogin 
     if (urlToken && !storedToken) {
       // Case 1: Token from URL on first login
      

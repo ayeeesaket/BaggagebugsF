@@ -14,7 +14,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { ProductionApi, LocalApi } from "../../../utills";
-
+import { setIsPartner } from "../redux/features/partnerSlice"; // adjust path as needed
 const Onboardingpage = () => {
   const [count, setCount] = useState(5);
   const [earnings, setEarnings] = useState(15);
@@ -230,14 +230,15 @@ const Onboardingpage = () => {
               Why not boost your income by storing <br /> luggage?
             </p>
             <div className="w-full flex justify-center md:justify-end md:pr-44">
-              <button
-                className="bg-[#FA8128] w-60 md:w-72 z-[1] text-white font-semibold px-6 py-2 rounded-full shadow-md hover:bg-[#FA8128] transition border-5 border-[#FFA480] cursor-pointer"
-                onClick={() => {
-                  isLoggedIn ? handleLogoutApi() : navigate("/");
-                }}
-              >
-                Become a partner
-              </button>
+             <button
+  className="bg-[#FA8128] w-60 md:w-72 z-[1] text-white font-semibold px-6 py-2 rounded-full shadow-md hover:bg-[#FA8128] transition border-5 border-[#FFA480] cursor-pointer"
+  onClick={() => {
+    dispatch(setIsPartner(true)); // Set isPartner to true
+    isLoggedIn ? handleLogoutApi() : navigate("/");
+  }}
+>
+  Become a partner
+</button>
             </div>
           </div>
         </div>
