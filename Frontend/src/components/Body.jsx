@@ -14,6 +14,7 @@ import Reservation from "./reservation/Reservation";
 import UserBookings from "./User/UserBookings";
 import Onboardingpage from "./OnBoarding/Onboardingpage";
 import Loginmid from "./login/logmid";
+import Registerpartner from "./Register/Registerpartner";
 const Body = () => {
   const approuter = createBrowserRouter([
     { path: "/", element: <Login /> },
