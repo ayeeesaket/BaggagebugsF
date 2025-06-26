@@ -440,7 +440,7 @@ const Bookingpage = () => {
           {/* Destination Search */}
           <div className="relative w-full sm:w-[200px] lg:w-[300px]">
             <input
-              className="border-2 rounded-4xl border-[#63C5DA] p-2 w-full text-[#FA8128] shadow-md pr-12 h-8 lg:h-8 text-sm lg:text-base"
+              className="border-2 rounded-4xl border-[#63C5DA] p-2 w-full text-[#FA8128] shadow-md pr-12 h-12 lg:h-12 text-sm lg:text-base"
               placeholder="Destination"
               type="text"
               value={destination}
@@ -567,7 +567,7 @@ const Bookingpage = () => {
 
           {/* Facility Cards Overlay */}
           {!clicked ? (
-            <div className="absolute bottom-4 left-0 right-0 flex justify-center px-2 lg:px-4">
+            <div className="absolute bottom-4 left-0 h-10 right-0 flex justify-center px-2 lg:px-4">
               <div className="w-full max-w-7xl">
                 <Slider {...sliderSettings} className="facility-slider">
                   {facilities.map((item, index) => (
