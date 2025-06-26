@@ -105,7 +105,6 @@ const DashboardDetails = () => {
     typeof timing,
     typeof activeButtons
   );
-   // ...above your validation...
 
 const [bankDetails, setBankDetails] = useState({
   holderName: "",
@@ -120,6 +119,14 @@ const [bankDetails, setBankDetails] = useState({
   branchName: "",
 });
 
+// Validation for basic details (for button styling)
+const isBasicDetailsValid =
+  name.trim() !== "" &&
+  email.trim() !== "" &&
+  address.trim() !== "" &&
+  phone.trim() !== "";
+
+// Full validation including bank details (for API call)
 const isDetailsValid =
   name.trim() !== "" &&
   email.trim() !== "" &&
@@ -135,12 +142,11 @@ const isDetailsValid =
   bankDetails.ifscCode.trim() !== "" &&
   bankDetails.bankName.trim() !== "" &&
   bankDetails.branchName.trim() !== "";
-// Check if all required fields are filled
 
   const handleDetailsAPI = async () => {
    // Check if all required fields are filled
    if (!isDetailsValid) {
-     toast.error("Please fill out all required fields.");
+     toast.error("Please fill out all required fields including bank details.");
      return;
    }
 
