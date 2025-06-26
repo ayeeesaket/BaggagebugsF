@@ -105,9 +105,15 @@ const DashboardDetails = () => {
     typeof timing,
     typeof activeButtons
   );
-
+// Check if all required fields are filled
+const isDetailsValid =
+  name.trim() !== "" &&
+  email.trim() !== "" &&
+  address.trim() !== "" &&
+  phone.trim() !== "";
   const handleDetailsAPI = async () => {
-   
+   // Check if all required fields are filled
+
     try {
       const response = await axios.post(
         `${ProductionApi}/facility/register`,
