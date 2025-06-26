@@ -489,9 +489,9 @@ console.log(tokenFromLogin);
         </div>
 
         <div className="section-3 mt-40">
-          <div className="text-[#63C5DA] text-[30px] md:text-[45px] font-bold text-center">
+          <div className="text-[#63C5DA] ml-52 text-[30px] md:text-[45px] font-bold text-center">
             We have your back for the{" "}
-            <span className="text-[#FA8128] ml-3 md:ml-7">Luggage</span>
+            <span className="text-[#FA8128] ml-3  md:ml-1">Luggage</span>
           </div>
           <div className="relative">
             <div className="w-[90%] md:w-[50%] mx-auto md:ml-[4%] mt-10 md:mt-28 p-5 md:p-10 md:pr-20 border-2 border-[#63C5DA] md:border-l-0">
