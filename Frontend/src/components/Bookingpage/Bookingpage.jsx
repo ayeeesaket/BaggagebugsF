@@ -1,19 +1,15 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { IoIosSearch } from "react-icons/io";
+import { IoIosSearch, IoIosArrowDown } from "react-icons/io";
 import { GiHamburgerMenu } from "react-icons/gi";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "../../styles/Bookingpage.css";
 import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
-import { BsArrowLeftCircle, BsArrowRightCircle } from "react-icons/bs";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import { GoogleApi } from "../../../utills"; // Assuming this is a correct path
-import { ProductionApi } from "../../../utills"; // Assuming this is a correct path
+import { GoogleApi } from "../../../utills";
+import { ProductionApi, LocalApi } from "../../../utills";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { load } from "@cashfreepayments/cashfree-js";
@@ -45,17 +41,15 @@ const Bookingpage = () => {
   const [showPickUpCalendar, setShowPickUpCalendar] = useState(false);
   const [clicked, setClicked] = useState(false);
   const [facilities, setFacilities] = useState([]);
-  const [token] = useState(() => localStorage.getItem("token"));
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
   const [orderId, setOrderId] = useState(uuidv4());
   const [isverified, setisverified] = useState(false);
   const [facilityName, setfacilityName] = useState("");
 
-  // Refs for component logic and click-away listeners
+  // Refs for component logic
   const [map, setMap] = useState(null);
   const cashfreeRef = useRef(null);
   const initialSearchPerformedRef = useRef(false);
-  const dropOffCalendarRef = useRef(null);
-  const pickUpCalendarRef = useRef(null);
 
   // --- Functions and Callbacks ---
   const handleLogoClick = () => {
@@ -85,10 +79,13 @@ const Bookingpage = () => {
   const handleSearchDestination = useCallback(
     async (searchQuery = destination) => {
       if (!searchQuery) return;
-      
-      // Reset the clicked state before any new search to show the slider
-      setClicked(false);
-      
+
+      if (initialSearchPerformedRef.current && searchQuery === query) {
+        return;
+      }
+
+      initialSearchPerformedRef.current = true;
+
       try {
         const geoRes = await fetch(
           `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
@@ -114,57 +111,48 @@ const Bookingpage = () => {
           const fetchedFacilities = facilityRes.data.message;
           setFacilities(fetchedFacilities);
 
-          if (fetchedFacilities.length > 0) {
-            const coordsArray = fetchedFacilities
-              .map((facility) => facility.geolocation?.coordinates)
-              .filter(Boolean);
+          const coordsArray = fetchedFacilities
+            .map((facility) => facility.geolocation?.coordinates)
+            .filter(Boolean);
 
-            setfcoord(coordsArray);
-            const newMarkers = coordsArray.map((coords) => ({ lat: coords[1], lng: coords[0] }));
-            setMarkerPositions(newMarkers);
+          setfcoord(coordsArray);
+          const newMarkers = coordsArray.map((coords) => ({ lat: coords[1], lng: coords[0] }));
+          setMarkerPositions(newMarkers);
 
-            if (map && newMarkers.length > 0) {
-              map.panTo(newMarkers[0]);
-              map.setZoom(14);
-            }
-            
-            for (const coords of coordsArray) {
-              try {
-                const distanceRes = await axios.post(
-                  `${ProductionApi}/map/facilitiesDistanceTime`,
-                  {
-                    userCoordinates: [location.lng, location.lat],
-                    facilityCoordinates: coords,
+          for (const coords of coordsArray) {
+            try {
+              const distanceRes = await axios.post(
+                `${ProductionApi}/map/facilitiesDistanceTime`,
+                {
+                  userCoordinates: [location.lng, location.lat],
+                  facilityCoordinates: coords,
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
                   },
-                  {
-                    headers: {
-                      Authorization: `Bearer ${token}`,
-                    },
-                  }
-                );
-                setDistance1(distanceRes.data);
-                setfDuration(distanceRes.data.message.duration);
-              } catch (error) {
-                console.error("Error fetching distance/time:", error);
-              }
+                }
+              );
+              setDistance1(distanceRes.data);
+              setfDuration(distanceRes.data.message.duration);
+            } catch (error) {
+              console.error("Error fetching distance/time:", error);
             }
-            toast.success(`Found ${fetchedFacilities.length} facilities near ${searchQuery}!`);
-          } else {
-            setFacilities([]);
-            setMarkerPositions([]);
-            toast.info(`No facilities found in ${searchQuery}.`);
+          }
+
+          if (map && newMarkers.length > 0) {
+            map.panTo(newMarkers[0]);
+            map.setZoom(14);
           }
         } else {
           toast.warn("Location not found.");
-          setFacilities([]);
-          setMarkerPositions([]);
         }
       } catch (err) {
         console.error("Search error:", err);
         toast.error("Failed to search for facilities.");
       }
     },
-    [destination, map, token]
+    [destination, map, token, query]
   );
 
   const onLoad = useCallback(
@@ -295,13 +283,10 @@ const Bookingpage = () => {
       toast.error("An error occurred during the booking process.");
     }
   };
-  
-  // --- useEffect Hooks ---
-  
+
   useEffect(() => {
     if (query && !initialSearchPerformedRef.current) {
       handleSearchDestination(query);
-      initialSearchPerformedRef.current = true;
     }
   }, [query, handleSearchDestination]);
 
@@ -317,7 +302,7 @@ const Bookingpage = () => {
     };
     initCashfree();
   }, []);
-  
+
   useEffect(() => {
     navigator.geolocation?.getCurrentPosition(({ coords }) => {
       const { latitude, longitude } = coords;
@@ -347,75 +332,6 @@ const Bookingpage = () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);
-
-  // --- NEW: Click-away logic for calendars ---
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      // Check for Drop-off calendar
-      if (
-        dropOffCalendarRef.current &&
-        !dropOffCalendarRef.current.contains(event.target)
-      ) {
-        setShowDropOffCalendar(false);
-      }
-      // Check for Pick-up calendar
-      if (
-        pickUpCalendarRef.current &&
-        !pickUpCalendarRef.current.contains(event.target)
-      ) {
-        setShowPickUpCalendar(false);
-      }
-    };
-
-    if (showDropOffCalendar || showPickUpCalendar) {
-      // Add event listener to the document only when a calendar is open
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    // Cleanup: remove the event listener when the component unmounts or state changes
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [showDropOffCalendar, showPickUpCalendar]); // Re-run effect when calendar visibility changes
-  // --- END: Click-away logic ---
-
-  // --- Slider Settings ---
-  const sliderSettings = {
-    dots: false,
-    infinite: true,
-    speed: 500,
-    slidesToShow:
-      window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 3,
-    slidesToScroll: 1,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
-        },
-      },
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          arrows: false,
-          dots: true,
-        },
-      },
-    ],
-    prevArrow: (
-      <div className="absolute -left-4 md:-left-8 top-1/2 transform -translate-y-1/2 z-10 cursor-pointer">
-        <BsArrowLeftCircle className="text-[#63C5DA] text-2xl md:text-4xl" />
-      </div>
-    ),
-    nextArrow: (
-      <div className="absolute -right-4 md:-right-8 top-1/2 transform -translate-y-1/2 z-10 cursor-pointer">
-        <BsArrowRightCircle className="text-[#63C5DA] text-2xl md:text-4xl" />
-      </div>
-    ),
-  };
 
   // --- JSX Rendering ---
   return (
@@ -468,53 +384,50 @@ const Bookingpage = () => {
 
           {/* Date Pickers Row */}
           <div className="flex gap-2 flex-1">
-            {/* Drop-off Date Picker */}
-            <div className="relative flex-1">
-              <input
-                className="border-2 rounded-4xl border-[#63C5DA] p-2 w-full text-black shadow-md h-10 lg:h-12 text-sm lg:text-base"
-                placeholder="Drop-off"
-                readOnly
-                value={formatDate(dropOffDate)}
-                onClick={() => setShowDropOffCalendar(!showDropOffCalendar)}
-              />
-              {showDropOffCalendar && (
-                <div ref={dropOffCalendarRef} className="absolute z-50 mt-1 w-[320px]">
-                  <Calendar
-                    onChange={(d) => {
-                      const normalizedDate = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12);
-                      setDropOffDate(normalizedDate);
-                      setShowDropOffCalendar(false);
-                    }}
-                    value={dropOffDate}
-                    className="text-sm w-full"
-                  />
-                </div>
-              )}
-            </div>
-
-            {/* Pick-up Date Picker */}
-            <div className="relative flex-1">
-              <input
-                className="border-2 rounded-4xl border-[#63C5DA] p-2 w-full text-black shadow-md h-10 lg:h-12 text-sm lg:text-base"
-                placeholder="Pick-up"
-                readOnly
-                value={formatDate(pickUpDate)}
-                onClick={() => setShowPickUpCalendar(!showPickUpCalendar)}
-              />
-              {showPickUpCalendar && (
-                <div ref={pickUpCalendarRef} className="absolute z-50 mt-1 w-[320px]">
-                  <Calendar
-                    onChange={(d) => {
-                      const normalizedDate = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12);
-                      setPickUpDate(normalizedDate);
-                      setShowPickUpCalendar(false);
-                    }}
-                    value={pickUpDate}
-                    className="text-sm w-full"
-                  />
-                </div>
-              )}
-            </div>
+            {[
+              [
+                "Drop-off",
+                dropOffDate,
+                showDropOffCalendar,
+                setShowDropOffCalendar,
+                setDropOffDate,
+              ],
+              [
+                "Pick-up",
+                pickUpDate,
+                showPickUpCalendar,
+                setShowPickUpCalendar,
+                setPickUpDate,
+              ],
+            ].map(([label, date, showCal, toggleCal, updateDate]) => (
+              <div className="relative flex-1" key={label}>
+                <input
+                  className="border-2 rounded-4xl border-[#63C5DA] p-2 w-full text-black shadow-md h-10 lg:h-12 text-sm lg:text-base"
+                  placeholder={label}
+                  readOnly
+                  value={formatDate(date)}
+                  onClick={() => toggleCal(!showCal)}
+                />
+                {showCal && (
+                  <div className="absolute z-50 mt-1 w-[320px]">
+                    <Calendar
+                      onChange={(d) => {
+                        const normalizedDate = new Date(
+                          d.getFullYear(),
+                          d.getMonth(),
+                          d.getDate(),
+                          12
+                        );
+                        updateDate(normalizedDate);
+                        toggleCal(false);
+                      }}
+                      value={date}
+                      className="text-sm w-full"
+                    />
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
 
@@ -575,60 +488,57 @@ const Bookingpage = () => {
             ))}
           </GoogleMap>
 
-          {/* Facility Cards Overlay */}
-          {!clicked ? (
-            <div className="absolute bottom-4 left-0 right-0 flex justify-center px-2 lg:px-4">
-              <div className="w-full max-w-5xl">
-                <Slider {...sliderSettings} className="facility-slider">
-                  {facilities.map((item, index) => (
-                    <div key={index} className="p-2 lg:p-4">
-                      <div className="flex flex-col sm:flex-row border-2 border-[#63C5DA] rounded-xl shadow-lg p-3 lg:p-4 bg-white sm:h-[300px] lg:h-[200px]">
-                        <div className="w-full sm:w-[35%] mb-3 sm:mb-0">
+          {/* Facility Cards Vertical List Overlay */}
+          {!clicked && facilities.length > 0 && (
+            <div className="absolute left-4 top-[10%] bottom-[5%] w-[350px] p-4 flex flex-col gap-4 overflow-y-auto z-10">
+              {facilities.map((item, index) => (
+                <div key={index} className="w-full flex flex-col sm:flex-row border-2 border-[#63C5DA] rounded-xl shadow-lg p-3 lg:p-4 bg-white">
+                  <div className="w-full sm:w-[35%] mb-3 sm:mb-0">
+                    <img
+                      src="/BookingPhoto.svg"
+                      alt="Storage"
+                      className="h-32 w-full object-cover rounded-lg shadow-md"
+                    />
+                  </div>
+                  <div className="w-full sm:w-[60%] flex flex-col justify-between sm:pl-4">
+                    <div>
+                      <div className="text-[#FA8128] text-lg lg:text-xl font-semibold">
+                        {item?.name || "Storage Facility"}
+                      </div>
+                      <div className="text-[#FA8128] text-sm font-light">
+                        {item?.address || "Unknown address"}
+                      </div>
+                      <div className="flex items-center mt-1">
+                        {[...Array(item.rating)].map((_, i) => (
                           <img
-                            src="/BookingPhoto.svg"
-                            alt="Storage"
-                            className="h-32 sm:h-32 w-full object-cover rounded-lg shadow-md"
+                            key={i}
+                            src="/Rating.svg"
+                            alt="Star"
+                            className="w-4 h-4 lg:w-5 lg:h-5"
                           />
-                        </div>
-                        <div className="w-full sm:w-[60%] flex flex-col justify-between sm:pl-4">
-                          <div>
-                            <div className="text-[#FA8128] text-lg lg:text-xl font-semibold">
-                              {item?.name || "Storage Facility"}
-                            </div>
-                            <div className="text-[#FA8128] text-sm font-light">
-                              {item?.address || "Unknown address"}
-                            </div>
-                            <div className="flex items-center mt-1">
-                              {[...Array(item.rating)].map((_, i) => (
-                                <img
-                                  key={i}
-                                  src="/Rating.svg"
-                                  alt="Star"
-                                  className="w-4 h-4 lg:w-5 lg:h-5"
-                                />
-                              ))}
-                            </div>
-                          </div>
-                          <div className="text-sm mt-2">
-                            <div className="text-green-700">{item.timing}</div>
-                          </div>
-                          <button
-                            className="bg-[#FA8128] text-white px-4 py-2 rounded-3xl mt-3 self-start text-sm lg:text-base"
-                            onClick={async () => {
-                              await handleBookNow(item._id);
-                              setClicked(true);
-                            }}
-                          >
-                            Book Now
-                          </button>
-                        </div>
+                        ))}
                       </div>
                     </div>
-                  ))}
-                </Slider>
-              </div>
+                    <div className="text-sm mt-2">
+                      <div className="text-green-700">{item.timing}</div>
+                    </div>
+                    <button
+                      className="bg-[#FA8128] text-white px-4 py-2 rounded-3xl mt-3 self-start text-sm lg:text-base"
+                      onClick={async () => {
+                        await handleBookNow(item._id);
+                        setClicked(true);
+                      }}
+                    >
+                      Book Now
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
-          ) : (
+          )}
+
+          {/* Facility Details Card Overlay */}
+          {clicked && (
             <div className="absolute inset-0 flex justify-center items-center p-4 bg-gray-50 bg-opacity-80 backdrop-blur-sm">
               <div className="border-2 border-[#63C5DA] p-4 lg:p-6 shadow-lg bg-white transition-all hover:shadow-xl flex flex-col gap-y-4 divide-y divide-gray-300 max-w-sm lg:max-w-md w-full max-h-[90vh] overflow-y-auto">
                 {/* Image */}
