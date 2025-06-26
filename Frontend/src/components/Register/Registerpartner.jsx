@@ -16,7 +16,7 @@ const SocialButton = ({ icon, text }) => (
   </button>
 );
 
-const Register = () => {
+const Registerpartner = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -141,4 +141,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Registerpartner;
