@@ -440,7 +440,7 @@ const Bookingpage = () => {
           {/* Destination Search */}
           <div className="relative w-full sm:w-[200px] lg:w-[300px]">
             <input
-              className="border-2 rounded-4xl border-[#63C5DA] p-2 w-full text-[#FA8128] shadow-md pr-12 h-10 lg:h-10 text-sm lg:text-base"
+              className="border-2 rounded-4xl border-[#63C5DA] p-2 w-full text-[#FA8128] shadow-md pr-12 h-8 lg:h-8 text-sm lg:text-base"
               placeholder="Destination"
               type="text"
               value={destination}
