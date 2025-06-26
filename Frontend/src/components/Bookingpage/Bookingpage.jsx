@@ -472,7 +472,7 @@ const getSessionId = async () => {
             />
             <span
               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#63C5DA] cursor-pointer"
-              onClick={handleSearchDestination}
+              onLoad={handleSearchDestination}
             >
               <IoIosSearch size={20} />
             </span>
