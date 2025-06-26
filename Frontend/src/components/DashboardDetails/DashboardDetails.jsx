@@ -107,6 +107,7 @@ const DashboardDetails = () => {
   );
 
   const handleDetailsAPI = async () => {
+   
     try {
       const response = await axios.post(
         `${ProductionApi}/facility/register`,
@@ -131,10 +132,10 @@ const DashboardDetails = () => {
         }
       );
       console.log("Registered Successfully:", response.data);
-      if (response.status === 200) {
+   
         toast.success("Details added");
         navigate("/landingpage");
-      }
+   
       // Optional: Log form data if response status is 400
     } catch (error) {
       console.error("Error while registering facility:", error);
@@ -286,16 +287,17 @@ const DashboardDetails = () => {
                 </div>
               ))}
             </div>
-            <button
-              onClick={handleDetailsAPI}
-              className={`px-3 py-3 rounded-3xl cursor-pointer ${
-                details
-                  ? "bg-[#FA8128] text-white"
-                  : "bg-gray-400 text-white cursor-not-allowed"
-              }`}
-            >
-              Save
-            </button>
+           <button
+  onClick={handleDetailsAPI}
+  disabled={!isDetailsValid}
+  className={`px-3 py-3 rounded-3xl cursor-pointer transition ${
+    isDetailsValid
+      ? "bg-[#FA8128] text-white"
+      : "bg-gray-400 text-white cursor-not-allowed"
+  }`}
+>
+  Save
+</button>
           </div>
 
           {/* RIGHT SECTION */}
