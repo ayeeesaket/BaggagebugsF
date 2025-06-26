@@ -285,6 +285,12 @@ const Bookingpage = () => {
       console.error("❌ Booking error:", err);
     }
   };
+  const handleLogoClick = () => {
+  navigate("/landingpage");
+  if (!isLoggedIn) {
+    dispatch({ type: "login/login" });
+  }
+};
 
   useEffect(() => {
     const handleBeforeUnload = () => {
