@@ -116,7 +116,7 @@ const Onboardingpage = () => {
         }
       );
       console.log("logged out");
-   navigate("register/partner");
+   navigate("/register/partner");
       dispatch({ type: "login/login", payload: false }); // Set login state to false
       localStorage.removeItem("token");
 
