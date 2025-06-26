@@ -82,19 +82,19 @@ console.log("your location is here",query);
   });
 
   const [map, setMap] = useState(null);
-
+    let i = 1;
   const onLoad = useCallback(
     async (mapInstance) => {
       const bounds = new window.google.maps.LatLngBounds(center);
       mapInstance.fitBounds(bounds);
       setMap(mapInstance);
       console.log("token in Bookingpage:", token);
-      let i = 1;
+      i = i + 1;
       if (query) {
-        if(i<1)
-        {
-        await handleSearchDestination();
-      }}
+        if (i < 1) {
+          await handleSearchDestination();
+        }
+      }
     },
 
     [center]
