@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { IoIosSearch } from "react-icons/io";
+import { IoIosSearch, IoIosArrowDown } from "react-icons/io";
 import { GiHamburgerMenu } from "react-icons/gi";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
@@ -12,16 +12,21 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import { GoogleApi, ProductionApi } from "../../../utills"; // Assuming these are correct paths
+import { GoogleApi } from "../../../utills"; // Assuming this is a correct path
+import { ProductionApi, LocalApi } from "../../../utills"; // Assuming these are correct paths
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { load } from "@cashfreepayments/cashfree-js";
 import { v4 as uuidv4 } from 'uuid';
 
 const Bookingpage = () => {
+  // --- State and Redux Hooks ---
   const location = useLocation();
-  const query = location.state?.query || ""; // Use optional chaining for safety
+  const query = location.state?.query || ""; // Use optional chaining for safer access
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
+  const facilityIdFromRedux = useSelector((state) => state.facilityId); // Renamed for clarity
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // State variables
   const [sfdata, setsfdata] = useState([]);
@@ -32,7 +37,7 @@ const Bookingpage = () => {
   const [fTiming, setfTiming] = useState("");
   const [center, setCenter] = useState({ lat: 41.3851, lng: 2.1734 });
   const [markerPositions, setMarkerPositions] = useState([]);
-  const [destination, setDestination] = useState(query || ""); // Initialize with query
+  const [destination, setDestination] = useState(query); // Initialize with the query from the previous page
   const [numberofbag, setNumberofBag] = useState(0);
   const [dropOffDate, setDropOffDate] = useState(new Date());
   const [pickUpDate, setPickUpDate] = useState(new Date());
@@ -40,19 +45,17 @@ const Bookingpage = () => {
   const [showPickUpCalendar, setShowPickUpCalendar] = useState(false);
   const [clicked, setClicked] = useState(false);
   const [facilities, setFacilities] = useState([]);
-  const facilityIdFromRedux = useSelector((state) => state.facilityId); // Renamed to avoid conflict
   const [token, setToken] = useState(() => localStorage.getItem("token"));
   const [orderId, setOrderId] = useState(uuidv4());
   const [isverified, setisverified] = useState(false);
   const [facilityName, setfacilityName] = useState("");
 
+  // Refs for component logic
+  const [map, setMap] = useState(null);
+  const cashfreeRef = useRef(null);
+  const initialSearchPerformedRef = useRef(false); // New ref to prevent search from firing on every render
 
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  // Ref to track if initial search has been performed
-  const initialSearchPerformed = useRef(false);
-
+  // --- Functions and Callbacks ---
   const handleLogoClick = () => {
     navigate("/landingpage");
     if (!isLoggedIn) {
@@ -77,13 +80,27 @@ const Bookingpage = () => {
     googleMapsApiKey: GoogleApi,
   });
 
-  const [map, setMap] = useState(null);
-
+  /**
+   * Memoized function to handle destination search and fetch facilities.
+   * Uses useCallback to prevent re-creation on every render, which is crucial
+   * for dependencies in useEffect and useCallback hooks.
+   */
   const handleSearchDestination = useCallback(
     async (searchQuery = destination) => {
-      if (!searchQuery || initialSearchPerformed.current) return; // Prevent multiple calls
+      // Prevent running if no query is provided
+      if (!searchQuery) return;
 
-      initialSearchPerformed.current = true; // Mark as performed
+      // This is the check that was preventing subsequent manual searches.
+      // We will now rely on the ref reset in the onChange handler to allow new searches.
+      // The logic below ensures it only runs when a search is needed.
+      if (initialSearchPerformedRef.current && searchQuery === query) {
+        // If the initial search has been performed and the query hasn't changed,
+        // we can bail out to avoid redundant API calls on component re-renders.
+        return; 
+      }
+
+      // Mark the initial search as performed to prevent re-running on map load
+      initialSearchPerformedRef.current = true;
 
       try {
         const geoRes = await fetch(
@@ -110,28 +127,23 @@ const Bookingpage = () => {
           const fetchedFacilities = facilityRes.data.message;
           setFacilities(fetchedFacilities);
 
-          const coordsArray = [];
-          const newMarkers = fetchedFacilities
-            .map((facility) => {
-              const coords = facility.geolocation?.coordinates;
-              if (coords && coords.length === 2) {
-                coordsArray.push(coords);
-                return { lat: coords[1], lng: coords[0] };
-              }
-              return null;
-            })
+          // Collect coordinates for markers
+          const coordsArray = fetchedFacilities
+            .map((facility) => facility.geolocation?.coordinates)
             .filter(Boolean);
 
-          setfcoord(coordsArray);
+          setfcoord(coordsArray); // Update facility coordinates state
+          const newMarkers = coordsArray.map((coords) => ({ lat: coords[1], lng: coords[0] }));
           setMarkerPositions(newMarkers);
 
-          for (let i = 0; i < coordsArray.length; i++) {
+          // Fetch distance and time for each facility
+          for (const coords of coordsArray) {
             try {
               const distanceRes = await axios.post(
                 `${ProductionApi}/map/facilitiesDistanceTime`,
                 {
                   userCoordinates: [location.lng, location.lat],
-                  facilityCoordinates: coordsArray[i],
+                  facilityCoordinates: coords,
                 },
                 {
                   headers: {
@@ -139,53 +151,192 @@ const Bookingpage = () => {
                   },
                 }
               );
-              setDistance1(distanceRes.data); // Assuming this is for a single distance, might need to store an array
+              setDistance1(distanceRes.data);
               setfDuration(distanceRes.data.message.duration);
             } catch (error) {
               console.error("Error fetching distance/time:", error);
             }
           }
 
+          // Pan and zoom the map to the first marker's location
           if (map && newMarkers.length > 0) {
             map.panTo(newMarkers[0]);
             map.setZoom(14);
           }
         } else {
-          toast.error("Location not found.");
+          toast.warn("Location not found.");
         }
       } catch (err) {
         console.error("Search error:", err);
-        toast.error("Error searching for destination.");
+        toast.error("Failed to search for facilities.");
       }
     },
-    [destination, map, token] // Add `token` to dependencies if it can change
+    [destination, map, token, query] // Add dependencies for useCallback
   );
 
   const onLoad = useCallback(
-    async (mapInstance) => {
+    (mapInstance) => {
       setMap(mapInstance);
       const bounds = new window.google.maps.LatLngBounds(center);
       mapInstance.fitBounds(bounds);
-
-      // Only call handleSearchDestination here if it hasn't been called by useEffect yet
-      // This might be redundant if the useEffect handles it reliably on initial load.
-      // Keeping it here for demonstrative purposes, but consider removing if useEffect is sufficient.
-      if (query && !initialSearchPerformed.current) {
-         handleSearchDestination(query);
-      }
     },
-    [center, query, handleSearchDestination]
+    [center]
   );
 
   const onUnmount = useCallback(() => setMap(null), []);
 
+  const formatDate = (date) =>
+    date instanceof Date ? date.toISOString().split("T")[0] : "";
+
+  const handleBookNow = async (facilityId) => {
+    dispatch({ type: "facilityId/setFacilityId", payload: facilityId });
+    try {
+      const response = await axios.get(
+        `${ProductionApi}/facility/get?id=${facilityId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setsfdata(response.data);
+      setfAddress(response.data.data.address);
+      setfTiming(response.data.data.timing);
+      setfacilityName(response.data.data.name);
+    } catch (error) {
+      console.error("Error fetching facility details:", error);
+      toast.error("Error fetching facility details.");
+    }
+  };
+
+  const name = useSelector((state) => state.details.name);
+  const phoneNo = useSelector((state) => state.details.phoneNo);
+  const email = useSelector((state) => state.details.email);
+
+  const getSessionId = async () => {
+    try {
+      const res = await axios.post(
+        `${ProductionApi}/payment/create`,
+        {
+          orderId: orderId,
+          orderAmount: 2.5,
+          customerEmail: email,
+          customerPhone: phoneNo,
+          customerName: name,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (res.data && res.data.data.payment_session_id) {
+        setOrderId(res.data.order_id);
+        return res.data.data.payment_session_id;
+      }
+    } catch (error) {
+      console.error("Error getting session ID:", error);
+      toast.error("Please update your profile information before booking.");
+      navigate("/profile");
+    }
+    return null;
+  };
+
+  const verifyPayment = async () => {
+    try {
+      const res = await axios.post(`${ProductionApi}/payment/verify?orderId=${orderId}`);
+      if (res?.data) {
+        toast.success("Payment verified successfully!");
+        setisverified(true);
+        return true;
+      }
+    } catch (error) {
+      console.error("Error verifying payment:", error);
+      toast.error("Payment verification failed.");
+    }
+    return false;
+  };
+
+  const handleMakeBookingApi = async () => {
+    try {
+      const sessionId = await getSessionId();
+
+      if (!cashfreeRef.current) {
+        toast.error("Cashfree SDK not ready.");
+        return;
+      }
+
+      if (!sessionId) {
+        toast.error("Invalid payment session ID.");
+        return;
+      }
+
+      // Initiate Cashfree checkout
+      await cashfreeRef.current.checkout({
+        paymentSessionId: sessionId,
+        redirectTarget: "_modal",
+      });
+
+      // After checkout, verify payment status
+      const paymentVerified = await verifyPayment();
+      if (paymentVerified) {
+        const response = await axios.post(
+          `${ProductionApi}/booking/`,
+          {
+            area: facilityName,
+            dropIn: dropOffDate,
+            pickup: pickUpDate,
+            luggageType: "Bag",
+            facilityId: facilityIdFromRedux.facilityId,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log("Booking successful:", response.data);
+        toast.success("Booking successful!");
+        navigate("/landingpage");
+      }
+    } catch (err) {
+      console.error("Booking process error:", err);
+      toast.error("An error occurred during the booking process.");
+    }
+  };
+  
+  // --- useEffect Hooks ---
+  
+  /**
+   * This effect runs once when the component mounts.
+   * It checks for an initial `query` from the previous page and triggers the search.
+   * The `initialSearchPerformedRef` prevents it from running again on re-renders.
+   */
   useEffect(() => {
-    // Initial search when component mounts or query changes
-    if (query && !initialSearchPerformed.current) {
+    if (query && !initialSearchPerformedRef.current) {
       handleSearchDestination(query);
     }
-  }, [query, handleSearchDestination]); // Dependency on query and handleSearchDestination
+  }, [query, handleSearchDestination]);
 
+  /**
+   * This effect initializes the Cashfree SDK once when the component mounts.
+   */
+  useEffect(() => {
+    const initCashfree = async () => {
+      try {
+        const sdk = await load({ mode: "sandbox" }); // or "production"
+        cashfreeRef.current = sdk;
+        console.log("✅ Cashfree SDK loaded");
+      } catch (e) {
+        console.error("❌ SDK Load Failed:", e);
+      }
+    };
+    initCashfree();
+  }, []);
+  
+  /**
+   * This effect gets the user's current geolocation on mount.
+   */
   useEffect(() => {
     navigator.geolocation?.getCurrentPosition(({ coords }) => {
       const { latitude, longitude } = coords;
@@ -193,9 +344,34 @@ const Bookingpage = () => {
     });
   }, []);
 
-  const formatDate = (date) =>
-    date instanceof Date ? date.toISOString().split("T")[0] : "";
+  /**
+   * This effect handles the user logout on page unload.
+   */
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      const storedToken = localStorage.getItem("token");
+      if (storedToken) {
+        try {
+          // Use sendBeacon for a fire-and-forget request on page unload
+          navigator.sendBeacon(
+            `${ProductionApi}/user/logout`,
+            JSON.stringify({})
+          );
+          localStorage.removeItem("token");
+        } catch (e) {
+          console.warn("Logout beacon failed:", e);
+        }
+      }
+    };
 
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+
+  // --- Slider Settings ---
   const sliderSettings = {
     dots: false,
     infinite: true,
@@ -233,164 +409,7 @@ const Bookingpage = () => {
     ),
   };
 
-  const handleBookNow = async (facilityId) => {
-    dispatch({ type: "facilityId/setFacilityId", payload: facilityId });
-    try {
-      const response1 = await axios.get(
-        `${ProductionApi}/facility/get?id=${facilityId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setsfdata(response1.data);
-      setfAddress(response1.data.data.address);
-      setfTiming(response1.data.data.timing);
-      setfacilityName(response1.data.data.name);
-    } catch (error) {
-      console.error("Error fetching facility details:", error);
-      toast.error("Error fetching facility details.");
-    }
-  };
-
-  const name = useSelector((state) => state.details.name);
-  const phoneNo = useSelector((state) => state.details.phoneNo);
-  const email = useSelector((state) => state.details.email);
-
-  const cashfreeRef = useRef(null);
-
-  useEffect(() => {
-    const initCashfree = async () => {
-      try {
-        const sdk = await load({ mode: "sandbox" }); // or "production"
-        cashfreeRef.current = sdk;
-      } catch (e) {
-        console.error("❌ SDK Load Failed:", e);
-      }
-    };
-    initCashfree();
-  }, []);
-
-  const getSessionId = async () => {
-    try {
-      let res = await axios.post(
-        `${ProductionApi}/payment/create`,
-        {
-          orderId: orderId,
-          orderAmount: 2.5,
-          customerEmail: email,
-          customerPhone: phoneNo,
-          customerName: name,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      if (res.data && res.data.data.payment_session_id) {
-        setOrderId(res.data.order_id); // Update orderId with the one from the backend
-        return res.data.data.payment_session_id;
-      }
-    } catch (error) {
-      console.error("Error getting session ID:", error);
-      toast.error("Please update your profile information.");
-      navigate("/profile");
-    }
-    return null;
-  };
-
-  const verifyPayment = async () => {
-    try {
-      let res = await axios.post(`${ProductionApi}/payment/verify?orderId=${orderId}`);
-      if (res && res.data) {
-        alert("Payment verified successfully!");
-        setisverified(true);
-        return true;
-      }
-    } catch (error) {
-      console.error("Error verifying payment:", error);
-      toast.error("Payment verification failed.");
-    }
-    return false;
-  };
-
-  const handleMakeBookingApi = async () => {
-    try {
-      const sessionId = await getSessionId();
-
-      if (!cashfreeRef.current) {
-        toast.error("Cashfree SDK not ready.");
-        return;
-      }
-
-      if (!sessionId) {
-        toast.error("Invalid payment session ID.");
-        return;
-      }
-
-      await cashfreeRef.current.checkout({
-        paymentSessionId: sessionId,
-        redirectTarget: "_modal",
-      });
-
-      const paymentVerified = await verifyPayment();
-      if (paymentVerified) {
-        try {
-          const response = await axios.post(
-            `${ProductionApi}/booking/`,
-            {
-              area: facilityName,
-              dropIn: dropOffDate,
-              pickup: pickUpDate,
-              luggageType: "Bag",
-              facilityId: facilityIdFromRedux.facilityId, // Use the correct redux state for facilityId
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          console.log("Booking successful:", response.data);
-          toast.success("Booking successful!");
-          navigate("/landingpage");
-        } catch (error) {
-          console.error("Error making booking:", error);
-          toast.error("Error making booking.");
-        }
-      }
-    } catch (err) {
-      console.error("❌ Booking process error:", err);
-      toast.error("Booking process failed.");
-    }
-  };
-
-  useEffect(() => {
-    const handleBeforeUnload = (event) => {
-      const storedToken = localStorage.getItem("token");
-      if (storedToken) {
-        try {
-          // Note: sendBeacon is for fire-and-forget; you won't get a response or error handling here.
-          navigator.sendBeacon(
-            `${ProductionApi}/user/logout`,
-            JSON.stringify({})
-          );
-          localStorage.removeItem("token");
-        } catch (e) {
-          console.warn("Logout beacon failed:", e);
-        }
-      }
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, []);
-
+  // --- JSX Rendering ---
   return (
     <div className="main min-h-screen w-full">
       <ToastContainer />
@@ -427,14 +446,14 @@ const Bookingpage = () => {
               value={destination}
               onChange={(e) => {
                 setDestination(e.target.value);
-                initialSearchPerformed.current = false; // Reset when user types
+                // Reset ref when user manually changes the input, allowing a new search
+                initialSearchPerformedRef.current = false; 
               }}
               onKeyDown={(e) => e.key === "Enter" && handleSearchDestination()}
-              // Removed onClick here to prevent immediate search on input focus
             />
             <span
               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#63C5DA] cursor-pointer"
-              onClick={() => handleSearchDestination()} // Call with current destination state
+              onClick={() => handleSearchDestination()}
             >
               <IoIosSearch size={20} />
             </span>
