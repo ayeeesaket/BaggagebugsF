@@ -68,7 +68,7 @@ const DashboardDetails = () => {
   const handleBankCancel = () => {
     setIsBankClicked(false);
   };
-  const [activeButtons, setActiveButtons] = useState("");
+  const [activeButtons, setActiveButtons] = useState([]);
   const [token, setToken] = useState(() => localStorage.getItem("token"));
   const handleClick = (button) => {
     setActiveButtons((prev) => {
