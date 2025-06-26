@@ -235,7 +235,7 @@ const Onboardingpage = () => {
   className="bg-[#FA8128] w-60 md:w-72 z-[1] text-white font-semibold px-6 py-2 rounded-full shadow-md hover:bg-[#FA8128] transition border-5 border-[#FFA480] cursor-pointer"
   onClick={() => {
     // Set isPartner to true
-    isLoggedIn ? handleLogoutApi() : navigate("/login/partner");
+    isLoggedIn ? handleLogoutApi() : navigate("/register/partner");
       
   }}
 >
