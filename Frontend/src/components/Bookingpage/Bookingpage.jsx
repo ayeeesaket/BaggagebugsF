@@ -344,7 +344,7 @@ const Bookingpage = () => {
               value={destination}
               onChange={(e) => setDestination(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSearchDestination()}
-              onClick={handleSearchDestination1()}
+          
             />
             <span
               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#63C5DA] cursor-pointer"
