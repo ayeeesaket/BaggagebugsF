@@ -37,7 +37,7 @@ const Register = () => {
     }
 
     try {
-      const response = await axios.post(`${ProductionApi}/user/register`, {
+      const response = await axios.post(`${ProductionApi}/partner/register`, {
         firstName,
         lastName,
         email,
@@ -51,7 +51,7 @@ const Register = () => {
       toast.success("Registration successful!");
       console.log(response.data);
       
-      navigate("/");
+     navigate("/login/partner");
       dispatch({ type: "login/login", payload: true });
     } catch (error) {
       console.log(error);

@@ -48,7 +48,7 @@ console.log(tokenFromLogin);
     console.log("ispartner : ", isPartner);
     const tokenf = urlToken || tokenFromLogin 
     if (urlToken && !storedToken) {
-      // Case 1: Token from URL on first login
+      
      
       localStorage.setItem("token", tokenf);
       dispatch({ type: "token/setTokenValue", payload: urlToken });
@@ -223,6 +223,7 @@ console.log(tokenFromLogin);
       console.log("logged out");
       navigate("/");
       dispatch({ type: "login/login", payload: false }); // Set login state to false
+      dispatch({ type: "partner/setIsPartner", payload: false }); // Set isPartner to false
       localStorage.removeItem("token");
     } catch (error) {
       console.log(error);

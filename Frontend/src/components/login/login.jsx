@@ -46,15 +46,9 @@ const Login = () => {
       );
 
       dispatch({ type: "login/login" , payload: true }); // Set login state to true
-if (isPartner) {
-  const token = response.data;
-       const role = 'partner';
-       navigate(`/landingpage?token=${token}&role=${role}`, {
-  state: { token, role },
-});
-      }
-     else{ const { token,role } = response.data;
-    navigate(`/landingpage?token=${token}&role=${role}`);}
+
+const { token,role } = response.data;
+    navigate(`/landingpage?token=${token}&role=${role}`);
       
       console.log(response.data);
       toast.success("Login successful!");

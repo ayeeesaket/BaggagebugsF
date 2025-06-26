@@ -14,7 +14,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { ProductionApi, LocalApi } from "../../../utills";
-import { setIsPartner } from "../redux/features/partnerSlice"; // adjust path as needed
+// adjust path as needed
 const Onboardingpage = () => {
   const [count, setCount] = useState(5);
   const [earnings, setEarnings] = useState(15);
@@ -102,7 +102,7 @@ const Onboardingpage = () => {
   const [token, setToken] = useState(() => localStorage.getItem("token"));
 
   const handleLogoutApi = async () => {
-    dispatch({ type: "partner/setIsPartner", payload: true });
+   
     try {
       const response = await axios.post(
         `${ProductionApi}/user/logout`,
@@ -116,9 +116,10 @@ const Onboardingpage = () => {
         }
       );
       console.log("logged out");
-      navigate("/");
+      navigate("/login/partner");
       dispatch({ type: "login/login", payload: false }); // Set login state to false
       localStorage.removeItem("token");
+
     } catch (error) {
       console.log("error : ", error);
     }
@@ -233,9 +234,9 @@ const Onboardingpage = () => {
              <button
   className="bg-[#FA8128] w-60 md:w-72 z-[1] text-white font-semibold px-6 py-2 rounded-full shadow-md hover:bg-[#FA8128] transition border-5 border-[#FFA480] cursor-pointer"
   onClick={() => {
-    dispatch(setIsPartner(true)); // Set isPartner to true
-    isLoggedIn ? handleLogoutApi() : navigate("/");
-      localStorage.setItem("role", "partner");
+    // Set isPartner to true
+    isLoggedIn ? handleLogoutApi() : navigate("/login/partner");
+      
   }}
 >
   Become a partner
