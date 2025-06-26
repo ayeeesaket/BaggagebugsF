@@ -19,6 +19,7 @@ const Body = () => {
     { path: "/", element: <Login /> },
     {path: "/login/partner", element: <Loginmid />},
     { path: "/register", element: <Register /> },
+    {path: "/register/partner", element: <Registerpartner />},
     { path: "/partneroverview", element: <Partneroverview /> },
     { path: "/landingpage", element: <LandingPage /> },
     { path: "/dashboard", element: <DashboardDetails /> },
