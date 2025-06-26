@@ -105,7 +105,21 @@ const DashboardDetails = () => {
     typeof timing,
     typeof activeButtons
   );
-// Check if all required fields are filled
+   // ...above your validation...
+
+const [bankDetails, setBankDetails] = useState({
+  holderName: "",
+  email: "",
+  accountNumber: "",
+  address: "",
+  postCode: "",
+  city: "",
+  stateCode: "",
+  ifscCode: "",
+  bankName: "",
+  branchName: "",
+});
+
 const isDetailsValid =
   name.trim() !== "" &&
   email.trim() !== "" &&
@@ -117,7 +131,12 @@ const isDetailsValid =
   bankDetails.address.trim() !== "" &&
   bankDetails.postCode.trim() !== "" &&
   bankDetails.city.trim() !== "" &&
-  bankDetails.stateCode.trim() !== "";
+  bankDetails.stateCode.trim() !== "" &&
+  bankDetails.ifscCode.trim() !== "" &&
+  bankDetails.bankName.trim() !== "" &&
+  bankDetails.branchName.trim() !== "";
+// Check if all required fields are filled
+
   const handleDetailsAPI = async () => {
    // Check if all required fields are filled
    if (!isDetailsValid) {
@@ -162,15 +181,7 @@ const isDetailsValid =
   const [details, setDetails] = useState(true);
   const [facilities, setFacilities] = useState([]);
 
-  const [bankDetails, setBankDetails] = useState({
-    holderName: "",
-    email: "",
-    accountNumber: "",
-    address: "",
-    postCode: "",
-    city: "",
-    stateCode: "",
-  });
+
 
   const handleFacilityApi = async () => {
    
