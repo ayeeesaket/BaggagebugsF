@@ -111,17 +111,19 @@ const DashboardDetails = () => {
       const response = await axios.post(
         `${ProductionApi}/facility/register`,
         {
-          name: "122334",
-          email: "fmnvksnv",
-          address: "ceqc1",
-          phone: "ceqceqce",
-          services: { wifi: true },
-          capacity: "1",
-          limited: true,
-          type: "airport storage",
-          timing: "9AM - 9PM"
+          name,
+          email,
+          address,
+          phone,
+          services: {
+            wifi,
+          },
+          capacity,
+          limited,
+          type,
+          timing,
         },
-      
+
         {
           headers: {
             Authorization: `Bearer ${token}`,
