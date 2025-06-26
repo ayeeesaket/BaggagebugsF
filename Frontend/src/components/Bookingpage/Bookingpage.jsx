@@ -567,12 +567,12 @@ const Bookingpage = () => {
 
           {/* Facility Cards Overlay */}
           {!clicked ? (
-            <div className="absolute bottom-4 left-0 h-10 right-0 flex justify-center px-2 lg:px-4">
+            <div className="absolute bottom-4 left-0  right-0 flex justify-center px-2 lg:px-4">
               <div className="w-full max-w-7xl">
                 <Slider {...sliderSettings} className="facility-slider">
                   {facilities.map((item, index) => (
                     <div key={index} className="p-2 lg:p-4">
-                      <div className="flex flex-col sm:flex-row border-2 border-[#63C5DA] rounded-xl shadow-lg p-3 lg:p-4 bg-white h-auto sm:h-[300px] lg:h-[350px]">
+                      <div className="flex flex-col sm:flex-row h-10 border-2 border-[#63C5DA] rounded-xl shadow-lg p-3 lg:p-4 bg-white h-auto sm:h-[300px] lg:h-[350px]">
                         <div className="w-full sm:w-[35%] mb-3 sm:mb-0">
                           <img
                             src="/BookingPhoto.svg"
