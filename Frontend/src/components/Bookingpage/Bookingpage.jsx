@@ -89,9 +89,12 @@ console.log("your location is here",query);
       mapInstance.fitBounds(bounds);
       setMap(mapInstance);
       console.log("token in Bookingpage:", token);
+      let i = 1;
       if (query) {
+        if(i<1)
+        {
         await handleSearchDestination();
-      }
+      }}
     },
 
     [center]
