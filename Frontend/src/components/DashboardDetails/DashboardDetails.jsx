@@ -110,9 +110,20 @@ const isDetailsValid =
   name.trim() !== "" &&
   email.trim() !== "" &&
   address.trim() !== "" &&
-  phone.trim() !== "";
+  phone.trim() !== "" &&
+  bankDetails.holderName.trim() !== "" &&
+  bankDetails.email.trim() !== "" &&
+  bankDetails.accountNumber.trim() !== "" &&
+  bankDetails.address.trim() !== "" &&
+  bankDetails.postCode.trim() !== "" &&
+  bankDetails.city.trim() !== "" &&
+  bankDetails.stateCode.trim() !== "";
   const handleDetailsAPI = async () => {
    // Check if all required fields are filled
+   if (!isDetailsValid) {
+     toast.error("Please fill out all required fields.");
+     return;
+   }
 
     try {
       const response = await axios.post(
