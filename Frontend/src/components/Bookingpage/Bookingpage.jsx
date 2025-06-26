@@ -101,15 +101,10 @@ console.log("your location is here",query);
 useEffect(() => {
   if (query) {
     setDestination(query);
+    handleSearchDestination(query); // run only once with initial query
   }
-}, [query]);
-
-useEffect(() => {
-  if (destination) {
-    handleSearchDestination();
-  }
-  // eslint-disable-next-line
-}, [destination]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
 
   useEffect(() => {
     navigator.geolocation?.getCurrentPosition(({ coords }) => {
