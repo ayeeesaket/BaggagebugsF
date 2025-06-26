@@ -97,10 +97,16 @@ console.log("your location is here",query);
   const onUnmount = useCallback(() => setMap(null), []);
 useEffect(() => {
   if (query) {
-    setDestination(query); // set destination input field
-    handleSearchDestination(); // trigger search automatically
+    setDestination(query);
   }
-}, []);
+}, [query]);
+
+useEffect(() => {
+  if (destination) {
+    handleSearchDestination();
+  }
+  // eslint-disable-next-line
+}, [destination]);
 
   useEffect(() => {
     navigator.geolocation?.getCurrentPosition(({ coords }) => {
@@ -113,14 +119,14 @@ useEffect(() => {
   const formatDate = (date) =>
     date instanceof Date ? date.toISOString().split("T")[0] : "";
 
-  const handleSearchDestination = async () => {
-    if (!destination) return;
-    const prevLocation =  query
-    
-    try {
-      const geoRes = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-          prevLocation
+  const handleSearchDestination = async (searchQuery) => {
+  const searchTerm = searchQuery || destination;
+  if (!searchTerm) return;
+
+  try {
+    const geoRes = await fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+        searchTerm
         )}&key=${GoogleApi}` // Use GoogleApi from utills.js
       );
       const geoData = await geoRes.json();
