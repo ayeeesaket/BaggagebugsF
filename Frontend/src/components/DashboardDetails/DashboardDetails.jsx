@@ -138,10 +138,7 @@ const isDetailsValid =
   bankDetails.address.trim() !== "" &&
   bankDetails.postCode.trim() !== "" &&
   bankDetails.city.trim() !== "" &&
-  bankDetails.stateCode.trim() !== "" &&
-  bankDetails.ifscCode.trim() !== "" &&
-  bankDetails.bankName.trim() !== "" &&
-  bankDetails.branchName.trim() !== "";
+  bankDetails.stateCode.trim() !== "" ;
 
   const handleDetailsAPI = async () => {
    // Check if all required fields are filled
