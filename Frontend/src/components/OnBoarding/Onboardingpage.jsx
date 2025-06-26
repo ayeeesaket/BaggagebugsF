@@ -102,7 +102,6 @@ const Onboardingpage = () => {
   const [token, setToken] = useState(() => localStorage.getItem("token"));
 
   const handleLogoutApi = async () => {
-   
     try {
       const response = await axios.post(
         `${ProductionApi}/user/logout`,
@@ -116,10 +115,9 @@ const Onboardingpage = () => {
         }
       );
       console.log("logged out");
-   navigate("/register/partner");
+      navigate("/register/partner");
       dispatch({ type: "login/login", payload: false }); // Set login state to false
       localStorage.removeItem("token");
-
     } catch (error) {
       console.log("error : ", error);
     }
@@ -231,16 +229,17 @@ const Onboardingpage = () => {
               Why not boost your income by storing <br /> luggage?
             </p>
             <div className="w-full flex justify-center md:justify-end md:pr-44">
-             <button
-  className="bg-[#FA8128] w-60 md:w-72 z-[1] text-white font-semibold px-6 py-2 rounded-full shadow-md hover:bg-[#FA8128] transition border-5 border-[#FFA480] cursor-pointer"
-  onClick={() => {
-    // Set isPartner to true
-    isLoggedIn ? handleLogoutApi() : navigate("/register/partner");
-      
-  }}
->
-  Become a partner
-</button>
+              <button
+                className="bg-[#FA8128] w-60 md:w-72 z-[1] text-white font-semibold px-6 py-2 rounded-full shadow-md hover:bg-[#FA8128] transition border-5 border-[#FFA480] cursor-pointer"
+                onClick={() => {
+                  // Set isPartner to true
+                  isLoggedIn
+                    ? handleLogoutApi()
+                    : navigate("/register/partner");
+                }}
+              >
+                Become a partner
+              </button>
             </div>
           </div>
         </div>

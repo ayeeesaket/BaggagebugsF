@@ -155,12 +155,7 @@ const DashboardDetails = () => {
   });
 
   const handleFacilityApi = async () => {
-    if (!name || !email || !address || !phone||!capacity || !limited || !type || !timing) {
-    toast.error("Please fill out all required fields.");
-    setDetails(false);
-  } else {
-    setDetails(true);
-  }
+   
     try {
       const response = await axios.get(
         `${ProductionApi}/facility/`,
