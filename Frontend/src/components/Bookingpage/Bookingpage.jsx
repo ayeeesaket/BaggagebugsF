@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { IoIosSearch, IoIosArrowDown } from "react-icons/io";
+import { IoIosSearch } from "react-icons/io";
 import { GiHamburgerMenu } from "react-icons/gi";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
@@ -13,7 +13,7 @@ import "slick-carousel/slick/slick-theme.css";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { GoogleApi } from "../../../utills"; // Assuming this is a correct path
-import { ProductionApi, LocalApi } from "../../../utills"; // Assuming these are correct paths
+import { ProductionApi } from "../../../utills"; // Assuming this is a correct path
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { load } from "@cashfreepayments/cashfree-js";
@@ -22,9 +22,9 @@ import { v4 as uuidv4 } from 'uuid';
 const Bookingpage = () => {
   // --- State and Redux Hooks ---
   const location = useLocation();
-  const query = location.state?.query || ""; // Use optional chaining for safer access
+  const query = location.state?.query || "";
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
-  const facilityIdFromRedux = useSelector((state) => state.facilityId); // Renamed for clarity
+  const facilityIdFromRedux = useSelector((state) => state.facilityId);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -37,7 +37,7 @@ const Bookingpage = () => {
   const [fTiming, setfTiming] = useState("");
   const [center, setCenter] = useState({ lat: 41.3851, lng: 2.1734 });
   const [markerPositions, setMarkerPositions] = useState([]);
-  const [destination, setDestination] = useState(query); // Initialize with the query from the previous page
+  const [destination, setDestination] = useState(query);
   const [numberofbag, setNumberofBag] = useState(0);
   const [dropOffDate, setDropOffDate] = useState(new Date());
   const [pickUpDate, setPickUpDate] = useState(new Date());
@@ -45,15 +45,17 @@ const Bookingpage = () => {
   const [showPickUpCalendar, setShowPickUpCalendar] = useState(false);
   const [clicked, setClicked] = useState(false);
   const [facilities, setFacilities] = useState([]);
-  const [token, setToken] = useState(() => localStorage.getItem("token"));
+  const [token] = useState(() => localStorage.getItem("token"));
   const [orderId, setOrderId] = useState(uuidv4());
   const [isverified, setisverified] = useState(false);
   const [facilityName, setfacilityName] = useState("");
 
-  // Refs for component logic
+  // Refs for component logic and click-away listeners
   const [map, setMap] = useState(null);
   const cashfreeRef = useRef(null);
-  const initialSearchPerformedRef = useRef(false); // New ref to prevent search from firing on every render
+  const initialSearchPerformedRef = useRef(false);
+  const dropOffCalendarRef = useRef(null);
+  const pickUpCalendarRef = useRef(null);
 
   // --- Functions and Callbacks ---
   const handleLogoClick = () => {
@@ -80,28 +82,13 @@ const Bookingpage = () => {
     googleMapsApiKey: GoogleApi,
   });
 
-  /**
-   * Memoized function to handle destination search and fetch facilities.
-   * Uses useCallback to prevent re-creation on every render, which is crucial
-   * for dependencies in useEffect and useCallback hooks.
-   */
   const handleSearchDestination = useCallback(
     async (searchQuery = destination) => {
-      // Prevent running if no query is provided
       if (!searchQuery) return;
-
-      // This is the check that was preventing subsequent manual searches.
-      // We will now rely on the ref reset in the onChange handler to allow new searches.
-      // The logic below ensures it only runs when a search is needed.
-      if (initialSearchPerformedRef.current && searchQuery === query) {
-        // If the initial search has been performed and the query hasn't changed,
-        // we can bail out to avoid redundant API calls on component re-renders.
-        return; 
-      }
-
-      // Mark the initial search as performed to prevent re-running on map load
-      initialSearchPerformedRef.current = true;
-
+      
+      // Reset the clicked state before any new search to show the slider
+      setClicked(false);
+      
       try {
         const geoRes = await fetch(
           `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
@@ -127,51 +114,57 @@ const Bookingpage = () => {
           const fetchedFacilities = facilityRes.data.message;
           setFacilities(fetchedFacilities);
 
-          // Collect coordinates for markers
-          const coordsArray = fetchedFacilities
-            .map((facility) => facility.geolocation?.coordinates)
-            .filter(Boolean);
+          if (fetchedFacilities.length > 0) {
+            const coordsArray = fetchedFacilities
+              .map((facility) => facility.geolocation?.coordinates)
+              .filter(Boolean);
 
-          setfcoord(coordsArray); // Update facility coordinates state
-          const newMarkers = coordsArray.map((coords) => ({ lat: coords[1], lng: coords[0] }));
-          setMarkerPositions(newMarkers);
+            setfcoord(coordsArray);
+            const newMarkers = coordsArray.map((coords) => ({ lat: coords[1], lng: coords[0] }));
+            setMarkerPositions(newMarkers);
 
-          // Fetch distance and time for each facility
-          for (const coords of coordsArray) {
-            try {
-              const distanceRes = await axios.post(
-                `${ProductionApi}/map/facilitiesDistanceTime`,
-                {
-                  userCoordinates: [location.lng, location.lat],
-                  facilityCoordinates: coords,
-                },
-                {
-                  headers: {
-                    Authorization: `Bearer ${token}`,
-                  },
-                }
-              );
-              setDistance1(distanceRes.data);
-              setfDuration(distanceRes.data.message.duration);
-            } catch (error) {
-              console.error("Error fetching distance/time:", error);
+            if (map && newMarkers.length > 0) {
+              map.panTo(newMarkers[0]);
+              map.setZoom(14);
             }
-          }
-
-          // Pan and zoom the map to the first marker's location
-          if (map && newMarkers.length > 0) {
-            map.panTo(newMarkers[0]);
-            map.setZoom(14);
+            
+            for (const coords of coordsArray) {
+              try {
+                const distanceRes = await axios.post(
+                  `${ProductionApi}/map/facilitiesDistanceTime`,
+                  {
+                    userCoordinates: [location.lng, location.lat],
+                    facilityCoordinates: coords,
+                  },
+                  {
+                    headers: {
+                      Authorization: `Bearer ${token}`,
+                    },
+                  }
+                );
+                setDistance1(distanceRes.data);
+                setfDuration(distanceRes.data.message.duration);
+              } catch (error) {
+                console.error("Error fetching distance/time:", error);
+              }
+            }
+            toast.success(`Found ${fetchedFacilities.length} facilities near ${searchQuery}!`);
+          } else {
+            setFacilities([]);
+            setMarkerPositions([]);
+            toast.info(`No facilities found in ${searchQuery}.`);
           }
         } else {
           toast.warn("Location not found.");
+          setFacilities([]);
+          setMarkerPositions([]);
         }
       } catch (err) {
         console.error("Search error:", err);
         toast.error("Failed to search for facilities.");
       }
     },
-    [destination, map, token, query] // Add dependencies for useCallback
+    [destination, map, token]
   );
 
   const onLoad = useCallback(
@@ -271,13 +264,11 @@ const Bookingpage = () => {
         return;
       }
 
-      // Initiate Cashfree checkout
       await cashfreeRef.current.checkout({
         paymentSessionId: sessionId,
         redirectTarget: "_modal",
       });
 
-      // After checkout, verify payment status
       const paymentVerified = await verifyPayment();
       if (paymentVerified) {
         const response = await axios.post(
@@ -307,24 +298,17 @@ const Bookingpage = () => {
   
   // --- useEffect Hooks ---
   
-  /**
-   * This effect runs once when the component mounts.
-   * It checks for an initial `query` from the previous page and triggers the search.
-   * The `initialSearchPerformedRef` prevents it from running again on re-renders.
-   */
   useEffect(() => {
     if (query && !initialSearchPerformedRef.current) {
       handleSearchDestination(query);
+      initialSearchPerformedRef.current = true;
     }
   }, [query, handleSearchDestination]);
 
-  /**
-   * This effect initializes the Cashfree SDK once when the component mounts.
-   */
   useEffect(() => {
     const initCashfree = async () => {
       try {
-        const sdk = await load({ mode: "sandbox" }); // or "production"
+        const sdk = await load({ mode: "sandbox" });
         cashfreeRef.current = sdk;
         console.log("✅ Cashfree SDK loaded");
       } catch (e) {
@@ -334,9 +318,6 @@ const Bookingpage = () => {
     initCashfree();
   }, []);
   
-  /**
-   * This effect gets the user's current geolocation on mount.
-   */
   useEffect(() => {
     navigator.geolocation?.getCurrentPosition(({ coords }) => {
       const { latitude, longitude } = coords;
@@ -344,15 +325,11 @@ const Bookingpage = () => {
     });
   }, []);
 
-  /**
-   * This effect handles the user logout on page unload.
-   */
   useEffect(() => {
-    const handleBeforeUnload = (event) => {
+    const handleBeforeUnload = () => {
       const storedToken = localStorage.getItem("token");
       if (storedToken) {
         try {
-          // Use sendBeacon for a fire-and-forget request on page unload
           navigator.sendBeacon(
             `${ProductionApi}/user/logout`,
             JSON.stringify({})
@@ -370,6 +347,37 @@ const Bookingpage = () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);
+
+  // --- NEW: Click-away logic for calendars ---
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Check for Drop-off calendar
+      if (
+        dropOffCalendarRef.current &&
+        !dropOffCalendarRef.current.contains(event.target)
+      ) {
+        setShowDropOffCalendar(false);
+      }
+      // Check for Pick-up calendar
+      if (
+        pickUpCalendarRef.current &&
+        !pickUpCalendarRef.current.contains(event.target)
+      ) {
+        setShowPickUpCalendar(false);
+      }
+    };
+
+    if (showDropOffCalendar || showPickUpCalendar) {
+      // Add event listener to the document only when a calendar is open
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    // Cleanup: remove the event listener when the component unmounts or state changes
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showDropOffCalendar, showPickUpCalendar]); // Re-run effect when calendar visibility changes
+  // --- END: Click-away logic ---
 
   // --- Slider Settings ---
   const sliderSettings = {
@@ -440,19 +448,18 @@ const Bookingpage = () => {
           {/* Destination Search */}
           <div className="relative w-full sm:w-[200px] lg:w-[300px]">
             <input
-              className="border-2 rounded-4xl border-[#63C5DA] p-2 w-full text-[#FA8128] shadow-md pr-12 h-12 lg:h-12 text-sm lg:text-base"
+              className="border-2 rounded-4xl border-[#63C5DA] p-2 w-full text-black shadow-md pr-12 h-12 lg:h-12 text-sm lg:text-base"
               placeholder="Destination"
               type="text"
               value={destination}
               onChange={(e) => {
                 setDestination(e.target.value);
-                // Reset ref when user manually changes the input, allowing a new search
-                initialSearchPerformedRef.current = false; 
+                initialSearchPerformedRef.current = false;
               }}
               onKeyDown={(e) => e.key === "Enter" && handleSearchDestination()}
             />
             <span
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#63C5DA] cursor-pointer"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-black cursor-pointer"
               onClick={() => handleSearchDestination()}
             >
               <IoIosSearch size={20} />
@@ -461,50 +468,53 @@ const Bookingpage = () => {
 
           {/* Date Pickers Row */}
           <div className="flex gap-2 flex-1">
-            {[
-              [
-                "Drop-off",
-                dropOffDate,
-                showDropOffCalendar,
-                setShowDropOffCalendar,
-                setDropOffDate,
-              ],
-              [
-                "Pick-up",
-                pickUpDate,
-                showPickUpCalendar,
-                setShowPickUpCalendar,
-                setPickUpDate,
-              ],
-            ].map(([label, date, showCal, toggleCal, updateDate]) => (
-              <div className="relative flex-1" key={label}>
-                <input
-                  className="border-2 rounded-4xl border-[#63C5DA] p-2 w-full text-[#FA8128] shadow-md h-10 lg:h-12 text-sm lg:text-base"
-                  placeholder={label}
-                  readOnly
-                  value={formatDate(date)}
-                  onClick={() => toggleCal(!showCal)}
-                />
-                {showCal && (
-                  <div className="absolute z-50 mt-1 w-[320px]">
-                    <Calendar
-                      onChange={(d) => {
-                        const normalizedDate = new Date(
-                          d.getFullYear(),
-                          d.getMonth(),
-                          d.getDate(),
-                          12 // set time to noon to avoid timezone shift
-                        );
-                        updateDate(normalizedDate);
-                        toggleCal(false);
-                      }}
-                      value={date}
-                      className="text-sm w-full"
-                    />
-                  </div>
-                )}
-              </div>
-            ))}
+            {/* Drop-off Date Picker */}
+            <div className="relative flex-1">
+              <input
+                className="border-2 rounded-4xl border-[#63C5DA] p-2 w-full text-black shadow-md h-10 lg:h-12 text-sm lg:text-base"
+                placeholder="Drop-off"
+                readOnly
+                value={formatDate(dropOffDate)}
+                onClick={() => setShowDropOffCalendar(!showDropOffCalendar)}
+              />
+              {showDropOffCalendar && (
+                <div ref={dropOffCalendarRef} className="absolute z-50 mt-1 w-[320px]">
+                  <Calendar
+                    onChange={(d) => {
+                      const normalizedDate = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12);
+                      setDropOffDate(normalizedDate);
+                      setShowDropOffCalendar(false);
+                    }}
+                    value={dropOffDate}
+                    className="text-sm w-full"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Pick-up Date Picker */}
+            <div className="relative flex-1">
+              <input
+                className="border-2 rounded-4xl border-[#63C5DA] p-2 w-full text-black shadow-md h-10 lg:h-12 text-sm lg:text-base"
+                placeholder="Pick-up"
+                readOnly
+                value={formatDate(pickUpDate)}
+                onClick={() => setShowPickUpCalendar(!showPickUpCalendar)}
+              />
+              {showPickUpCalendar && (
+                <div ref={pickUpCalendarRef} className="absolute z-50 mt-1 w-[320px]">
+                  <Calendar
+                    onChange={(d) => {
+                      const normalizedDate = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12);
+                      setPickUpDate(normalizedDate);
+                      setShowPickUpCalendar(false);
+                    }}
+                    value={pickUpDate}
+                    className="text-sm w-full"
+                  />
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -567,17 +577,17 @@ const Bookingpage = () => {
 
           {/* Facility Cards Overlay */}
           {!clicked ? (
-            <div className="absolute bottom-4 left-0  right-0 flex justify-center px-2 lg:px-4">
-              <div className="w-full max-w-7xl">
+            <div className="absolute bottom-4 left-0 right-0 flex justify-center px-2 lg:px-4">
+              <div className="w-full max-w-5xl">
                 <Slider {...sliderSettings} className="facility-slider">
                   {facilities.map((item, index) => (
-                    <div key={index} className="p-2 h-20 lg:p-4">
-                      <div className="flex flex-col sm:flex-row  border-2 border-[#63C5DA] rounded-xl shadow-lg p-3 lg:p-4 bg-white  sm:h-[300px] lg:h-[350px]">
+                    <div key={index} className="p-2 lg:p-4">
+                      <div className="flex flex-col sm:flex-row border-2 border-[#63C5DA] rounded-xl shadow-lg p-3 lg:p-4 bg-white sm:h-[300px] lg:h-[200px]">
                         <div className="w-full sm:w-[35%] mb-3 sm:mb-0">
                           <img
                             src="/BookingPhoto.svg"
                             alt="Storage"
-                            className="h-32 sm:h-48 w-full object-cover rounded-lg shadow-md"
+                            className="h-32 sm:h-32 w-full object-cover rounded-lg shadow-md"
                           />
                         </div>
                         <div className="w-full sm:w-[60%] flex flex-col justify-between sm:pl-4">
