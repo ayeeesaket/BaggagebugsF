@@ -75,7 +75,7 @@ const Registerpartner = () => {
           <div className="flex justify-between items-center w-full mb-10 px-4">
             <h1 className="text-3xl md:text-3xl font-bold flex gap-2">
               <span className="text-[#FA8128]">Hello,</span>
-              <span className="text-[#28d3fa]">bagpacker</span>
+              <span className="text-[#28d3fa]">Partner</span>
             </h1>
 
             <button

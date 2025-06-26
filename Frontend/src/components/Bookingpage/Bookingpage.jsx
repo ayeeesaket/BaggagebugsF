@@ -1,81 +1,53 @@
-import React, { useState,  useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import { IoIosSearch, IoIosArrowDown } from "react-icons/io";
-import { GiHamburgerMenu } from "react-icons/gi";
-import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css";
-import "../../styles/Bookingpage.css";
+import React, { useState, useCallback, useEffect, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
 import { BsArrowLeftCircle, BsArrowRightCircle } from "react-icons/bs";
+import Calendar from "react-calendar";
 import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import { useRef, useEffect } from "react";
-import "slick-carousel/slick/slick-theme.css";
 import axios from "axios";
-import { useSelector, useDispatch } from "react-redux";
-import { useLocation } from "react-router-dom";
-import { GoogleApi } from "../../../utills";
-import { ProductionApi, LocalApi } from "../../../utills";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { load } from "@cashfreepayments/cashfree-js";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
+
+import "react-calendar/dist/Calendar.css";
+import "react-toastify/dist/ReactToastify.css";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import "../../styles/Bookingpage.css";
+
+import { GoogleApi, ProductionApi } from "../../../utills";
 
 const Bookingpage = () => {
-  // bringing the name of the page from landingpage
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const location = useLocation();
-  const query = location.state.query || "";
-  const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
 
-  
-  // State variables
-  const [sfdata, setsfdata] = useState([]);
-  const [fcoord, setfcoord] = useState([]);
-  const [distance1, setDistance1] = useState([]);
-  const [fDuration, setfDuration] = useState("");
-  const [fAddress, setfAddress] = useState("");
-  const [fTiming, setfTiming] = useState("");
+  const query = location.state?.query || "";
+  const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
+  const facilityId = useSelector((state) => state.facilityId);
+  const name = useSelector((state) => state.details.name);
+  const phoneNo = useSelector((state) => state.details.phoneNo);
+  const email = useSelector((state) => state.details.email);
+
+  const [facilities, setFacilities] = useState([]);
   const [center, setCenter] = useState({ lat: 41.3851, lng: 2.1734 });
   const [markerPositions, setMarkerPositions] = useState([]);
-  const [destination, setDestination] = useState("");
-  const [numberofbag, setNumberofBag] = useState(0);
-  const [dropOffDate, setDropOffDate] = useState(new Date());
-  const [pickUpDate, setPickUpDate] = useState(new Date());
-  const [showDropOffCalendar, setShowDropOffCalendar] = useState(false);
-  const [showPickUpCalendar, setShowPickUpCalendar] = useState(false);
-  const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
-  const [clicked, setClicked] = useState(false);
-  const [facilities, setFacilities] = useState([]);
-  const facilityId = useSelector((state) => state.facilityId);
-  const [token, setToken] = useState(() => localStorage.getItem("token"));
+  const [destination, setDestination] = useState(query);
+  const [distanceInfo, setDistanceInfo] = useState([]);
+  const [selectedFacilityData, setSelectedFacilityData] = useState({});
+  const [bookingDates, setBookingDates] = useState({
+    dropOff: new Date(),
+    pickUp: new Date(),
+    showDropOff: false,
+    showPickUp: false,
+  });
+
   const [orderId, setOrderId] = useState(uuidv4());
-  const[isverified,setisverified] = useState(false);
-  // const [orderId, setOrderId] = useState("")
-  const dispatch = useDispatch();
-  //  New state for selected facility ID
+  const [isVerified, setIsVerified] = useState(false);
+  const token = localStorage.getItem("token");
 
-  const navigate = useNavigate();
-
-  const handleLogoClick = () => {
-    navigate("/landingpage");
-    if (!isLoggedIn) {
-      dispatch({ type: "login/login" });
-    }
-  };
-console.log("your location is here",query);
-
-  const containerStyle = {
-    width: "100%",
-    height:
-      window.innerWidth < 768
-        ? "250px"
-        : window.innerWidth < 1024
-        ? "400px"
-        : "700px",
-    maxWidth: "100vw",
-    maxHeight: "80vh",
-  };
-
+  const cashfreeRef = useRef(null);
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: GoogleApi,
@@ -83,356 +55,214 @@ console.log("your location is here",query);
 
   const [map, setMap] = useState(null);
 
-  const onLoad = useCallback(
-    (mapInstance) => {
-      const bounds = new window.google.maps.LatLngBounds(center);
-      mapInstance.fitBounds(bounds);
-      setMap(mapInstance);
-      console.log("token in Bookingpage:", token);
-    },
+  // Map container
+  const containerStyle = {
+    width: "100%",
+    height: window.innerWidth < 768 ? "250px" : window.innerWidth < 1024 ? "400px" : "700px",
+    maxWidth: "100vw",
+    maxHeight: "80vh",
+  };
 
-    [center]
-  );
+  const onLoad = useCallback((mapInstance) => {
+    const bounds = new window.google.maps.LatLngBounds(center);
+    mapInstance.fitBounds(bounds);
+    setMap(mapInstance);
+  }, [center]);
 
   const onUnmount = useCallback(() => setMap(null), []);
-useEffect(() => {
-  if (query) {
-    setDestination(query);
-  }
-}, [query]);
 
-useEffect(() => {
-  if (destination) {
-    handleSearchDestination();
-  }
-  // eslint-disable-next-line
-}, [destination]);
-
+  // Update center based on user's current location
   useEffect(() => {
     navigator.geolocation?.getCurrentPosition(({ coords }) => {
-      const { latitude, longitude } = coords;
-      setCenter({ lng: longitude, lat: latitude });
+      setCenter({ lat: coords.latitude, lng: coords.longitude });
     });
   }, []);
-  console.log("user ", center.lat, center.lng);
 
-  const formatDate = (date) =>
-    date instanceof Date ? date.toISOString().split("T")[0] : "";
+  // Fetch destination on mount
+  useEffect(() => {
+    if (destination) {
+      handleSearchDestination(destination);
+    }
+  }, [destination]);
 
-  const handleSearchDestination = async (searchQuery) => {
-  const searchTerm = searchQuery || destination;
-  if (!searchTerm) return;
+  // Load Cashfree SDK
+  useEffect(() => {
+    const initCashfree = async () => {
+      try {
+        const sdk = await load({ mode: "sandbox" });
+        cashfreeRef.current = sdk;
+        console.log("✅ Cashfree SDK loaded");
+      } catch (e) {
+        console.error("❌ SDK Load Failed:", e);
+      }
+    };
+    initCashfree();
+  }, []);
 
-  try {
-    const geoRes = await fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-        searchTerm
-        )}&key=${GoogleApi}` // Use GoogleApi from utills.js
-      );
+  const handleSearchDestination = async (searchTerm) => {
+    const term = searchTerm || destination;
+    if (!term) return toast.error("Enter a destination");
+
+    try {
+      const geoRes = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(term)}&key=${GoogleApi}`);
       const geoData = await geoRes.json();
 
-      if (geoData.results.length) {
-        const location = geoData.results[0].geometry.location;
-        setCenter(location);
+      if (!geoData.results.length) return alert("Location not found");
 
-        const facilityRes = await axios.post(
-          `${ProductionApi}/map/facilitiesBySearch`,
-          { userCoordinates: [location.lng, location.lat] },
+      const location = geoData.results[0].geometry.location;
+      setCenter(location);
 
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+      const facilityRes = await axios.post(`${ProductionApi}/map/facilitiesBySearch`, {
+        userCoordinates: [location.lng, location.lat],
+      }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-        const fetchedFacilities = facilityRes.data.message;
-        setFacilities(fetchedFacilities);
+      const fetchedFacilities = facilityRes.data.message;
+      setFacilities(fetchedFacilities);
 
-        // Collect coordinates for markers and fcoord state
-        const coordsArray = [];
-        const newMarkers = fetchedFacilities
-          .map((facility) => {
-            const coords = facility.geolocation?.coordinates;
-            if (coords && coords.length === 2) {
-              coordsArray.push(coords); // Collect for state
-              return { lat: coords[1], lng: coords[0] };
-            }
-            return null;
-          })
-          .filter(Boolean);
-
-        setfcoord(coordsArray); // Set once with all coordinates
-        setMarkerPositions(newMarkers);
-        console.log("hello", fcoord);
-        for (let i = 0; i < coordsArray.length; i++) {
-          console.log("Coordinates:", coordsArray[i]);
-          try {
-            console.log("idhar dekh bhai : ", location.lat, location.lng);
-            const distance1 = await axios.post(
-              `${ProductionApi}/map/facilitiesDistanceTime`,
-              {
-                userCoordinates: [location.lng, location.lat],
-                facilityCoordinates: coordsArray[i], // coordsArray[i] is already an array
-              },
-              { withCredentials: true }, // optional third argument for cookies/auth
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              }
-            );
-
-            const distanceData = distance1.data;
-            setDistance1(distanceData);
-            setfDuration(distance1.data.message.duration);
-            console.log("time : ", distance1.data.message.duration);
-            console.log("Distance Data:", distanceData);
-            // console.log(distance1Data);?
-          } catch (error) {
-            console.error("Error setting coordinates:", error);
-          }
+      const coordsArray = [];
+      const newMarkers = fetchedFacilities.map((facility) => {
+        const coords = facility.geolocation?.coordinates;
+        if (coords?.length === 2) {
+          coordsArray.push(coords);
+          return { lat: coords[1], lng: coords[0] };
         }
+        return null;
+      }).filter(Boolean);
 
-        console.log("Coords to be set in fcoord:", coordsArray);
-        if (map && newMarkers.length > 0) {
-          map.panTo(newMarkers[0]);
-          map.setZoom(14);
-        }
-      } else {
-        alert("Location not found.");
+      setMarkerPositions(newMarkers);
+
+      const distances = await Promise.all(
+        coordsArray.map(coord =>
+          axios.post(`${ProductionApi}/map/facilitiesDistanceTime`, {
+            userCoordinates: [location.lng, location.lat],
+            facilityCoordinates: coord,
+          }, {
+            headers: { Authorization: `Bearer ${token}` },
+          }).then(res => res.data)
+        )
+      );
+
+      setDistanceInfo(distances);
+
+      if (map && newMarkers.length > 0) {
+        map.panTo(newMarkers[0]);
+        map.setZoom(14);
       }
     } catch (err) {
       console.error("Search error:", err);
     }
   };
-  // console.log("Selected Facility ID12:",facilityId);
 
-  const sliderSettings = {
-    dots: false,
-    infinite: true,
-    speed: 500,
-    slidesToShow:
-      window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 3,
-    slidesToScroll: 1,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
-        },
-      },
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          arrows: false,
-          dots: true,
-        },
-      },
-    ],
-    prevArrow: (
-      <div className="absolute -left-4 md:-left-8 top-1/2 transform -translate-y-1/2 z-10 cursor-pointer">
-        <BsArrowLeftCircle className="text-[#63C5DA] text-2xl md:text-4xl" />
-      </div>
-    ),
-    nextArrow: (
-      <div className="absolute -right-4 md:-right-8 top-1/2 transform -translate-y-1/2 z-10 cursor-pointer">
-        <BsArrowRightCircle className="text-[#63C5DA] text-2xl md:text-4xl" />
-      </div>
-    ),
-  };
-  const [facilityName, setfacilityName] = useState("");
-  // ✅ CORRECT: GET request - Single config object as second parameter
- 
   const handleBookNow = async (facilityId) => {
     dispatch({ type: "facilityId/setFacilityId", payload: facilityId });
-    console.log("Selected Facility ID1:", facilityId);
-    console.log(typeof facilityId);
-    console.log(token);
 
     try {
-      const response1 = await axios.get(
-        `${ProductionApi}/facility/get?id=${facilityId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setsfdata(response1.data);
-      setfAddress(response1.data.data.address);
-      setfTiming(response1.data.data.timing);
-      console.log("Facility Details:", response1.data);
-      setfacilityName(response1.data.data.name);
-      console.log("Facility Details Name:", response1.data.data.name);
-      console.log("above token", token);
+      const response = await axios.get(`${ProductionApi}/facility/get?id=${facilityId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setSelectedFacilityData(response.data.data);
     } catch (error) {
-      console.log("Error fetching facility details:", error);
+      console.error("Error fetching facility details:", error);
     }
   };
 
-  const name = useSelector((state) => state.details.name);
-  const phoneNo = useSelector((state) => state.details.phoneNo);
-  const email = useSelector((state) => state.details.email);
-  console.log("name in booking page:", name);
-  console.log("phoneNo in booking page:", phoneNo);
-  console.log("email in booking page:", email);
-
-
-  
-
-
-const cashfreeRef = useRef(null);
-
-
-useEffect(() => {
-  const initCashfree = async () => {
+  const getSessionId = async () => {
     try {
-      const sdk = await load({ mode: "sandbox" }); // or "production"
-      cashfreeRef.current = sdk;
-      console.log("✅ Cashfree SDK loaded");
-    } catch (e) {
-      console.error("❌ SDK Load Failed:", e);
-    }
-  };
+      const res = await axios.post(`${ProductionApi}/payment/create`, {
+        orderId,
+        orderAmount: 2.5,
+        customerEmail: email,
+        customerPhone: phoneNo,
+        customerName: name,
+      }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-  initCashfree();}, []);
-
-
-
-
-const getSessionId = async () => {
-    console.log("orderId in getSessionId:", orderId);
-    try {
-      let res = await axios.post(
-        `${ProductionApi}/payment/create`,
-        {
-          orderId: orderId,
-          orderAmount: 2.5,
-          customerEmail: email,
-          customerPhone: phoneNo,
-          customerName: name,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-    if(res.data && res.data.data.payment_session_id){
-
-        console.log(res.data)
-        setOrderId(res.data.order_id)
-        return res.data.data.payment_session_id
+      if (res.data?.data?.payment_session_id) {
+        return res.data.data.payment_session_id;
       }
-     
-
     } catch (error) {
-      console.log(error);
-      navigate("/profile")
-         toast.error("please add data");
+      toast.error("Please complete profile data");
+      navigate("/profile");
     }
   };
 
   const verifyPayment = async () => {
     try {
-      
-      let res = await axios.post(`${ProductionApi}/payment/verify?orderId=${orderId}`)
-
-      if(res && res.data){
-        alert("payment verified")
-        setisverified(true)
+      const res = await axios.post(`${ProductionApi}/payment/verify?orderId=${orderId}`);
+      if (res.data) {
+        toast.success("Payment verified!");
+        setIsVerified(true);
       }
-
     } catch (error) {
-      console.log(error)
+      console.error("Verification failed:", error);
     }
-  }
-
+  };
 
   const handleMakeBookingApi = async () => {
+    try {
+      const sessionId = await getSessionId();
 
-    console.log("yaha se dekh ::::::::");
-    console.log("Booking facility with ID:", facilityId);
-    console.log("Booking facility with Name:", facilityName);
-    console.log("Drop-off Date:", dropOffDate);
-    console.log("Pick-up Date:", pickUpDate);
-    console.log("token data :", token);
- try {
-    const sessionId = await getSessionId();
-
-    if (!cashfreeRef.current) {
-      toast.error("Cashfree SDK not ready");
-      return;
-    }
-
-    if (!sessionId) {
-      toast.error("Invalid payment session ID");
-      return;
-    }
-
-    await cashfreeRef.current.checkout({
-      paymentSessionId: sessionId,
-      redirectTarget: "_modal",
-    });
-
-    await verifyPayment();
-    if(isverified){
-      try {
-      const response = await axios.post(
-        `${ProductionApi}/booking/`,
-        {
-          area: facilityName,
-          dropIn: dropOffDate,
-          pickup: pickUpDate,
-          luggageType: "Bag",
-          facilityId: facilityId.facilityId,
-        },
-
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log("Booking successful:", response.data);
-      toast.success("Booking successful!");
-      navigate("/landingpage")
-    } catch (error) {
-      console.error("Error making booking:", error);
-      
-    }
-    }
-  } catch (err) {
-    console.error("❌ Booking error:", err);
-  }
-    
-  };
- useEffect(() => {
-  const handleBeforeUnload = (event) => {
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) {
-      try {
-        navigator.sendBeacon(
-          `${ProductionApi}/user/logout`,
-          JSON.stringify({})
-        );
-        localStorage.removeItem("token");
-      } catch (e) {
-        console.warn("Logout beacon failed:", e);
+      if (!cashfreeRef.current || !sessionId) {
+        toast.error("Payment setup failed");
+        return;
       }
+
+      await cashfreeRef.current.checkout({
+        paymentSessionId: sessionId,
+        redirectTarget: "_modal",
+      });
+
+      await verifyPayment();
+
+      if (isVerified) {
+        const res = await axios.post(`${ProductionApi}/booking/`, {
+          area: selectedFacilityData.name,
+          dropIn: bookingDates.dropOff,
+          pickup: bookingDates.pickUp,
+          luggageType: "Bag",
+          facilityId,
+        }, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        toast.success("Booking successful!");
+        navigate("/landingpage");
+      }
+    } catch (err) {
+      console.error("Booking failed:", err);
     }
   };
 
-  window.addEventListener("beforeunload", handleBeforeUnload);
+  // Logout on window close
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      const storedToken = localStorage.getItem("token");
+      if (storedToken) {
+        try {
+          navigator.sendBeacon(`${ProductionApi}/user/logout`, JSON.stringify({}));
+          localStorage.removeItem("token");
+        } catch (e) {
+          console.warn("Logout beacon failed:", e);
+        }
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, []);
 
-  return () => {
-    window.removeEventListener("beforeunload", handleBeforeUnload);
+  // Slider settings
+  const sliderSettings = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 3,
+    slidesToScroll: 1,
+    prevArrow: <BsArrowLeftCircle className="text-[#63C5DA] text-2xl md:text-4xl" />,
+    nextArrow: <BsArrowRightCircle className="text-[#63C5DA] text-2xl md:text-4xl" />,
   };
-}, []);
 
   return (
     <div className="main min-h-screen w-full">
@@ -469,6 +299,7 @@ const getSessionId = async () => {
               value={destination}
               onChange={(e) => setDestination(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSearchDestination()}
+              onClick={handleSearchDestination1()}
             />
             <span
               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#63C5DA] cursor-pointer"
