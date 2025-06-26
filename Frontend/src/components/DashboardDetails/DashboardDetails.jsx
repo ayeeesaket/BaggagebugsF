@@ -532,6 +532,7 @@ const isDetailsValid =
                       <input
                         type="number"
                         placeholder="0"
+                        value={capacity}
                         onChange={(e) => setCapacity(e.target.value)}
                         className="border-2 border-[#63C5DA] px-3 py-2 rounded text-[#FA8128]"
                       />
