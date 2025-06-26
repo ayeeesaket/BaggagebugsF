@@ -571,8 +571,8 @@ const Bookingpage = () => {
               <div className="w-full max-w-7xl">
                 <Slider {...sliderSettings} className="facility-slider">
                   {facilities.map((item, index) => (
-                    <div key={index} className="p-2 lg:p-4">
-                      <div className="flex flex-col sm:flex-row h-20 border-2 border-[#63C5DA] rounded-xl shadow-lg p-3 lg:p-4 bg-white  sm:h-[300px] lg:h-[350px]">
+                    <div key={index} className="p-2 h-20 lg:p-4">
+                      <div className="flex flex-col sm:flex-row  border-2 border-[#63C5DA] rounded-xl shadow-lg p-3 lg:p-4 bg-white  sm:h-[300px] lg:h-[350px]">
                         <div className="w-full sm:w-[35%] mb-3 sm:mb-0">
                           <img
                             src="/BookingPhoto.svg"
