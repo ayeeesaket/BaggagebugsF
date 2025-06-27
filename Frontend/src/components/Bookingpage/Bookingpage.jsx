@@ -8,8 +8,8 @@ import "../../styles/Bookingpage.css";
 import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import { GoogleApi } from "../../../utills";
-import { ProductionApi, LocalApi } from "../../../utills";
+// Assuming these are defined in a 'utills' directory
+import { GoogleApi, ProductionApi, LocalApi } from "../../../utills"; // Adjust path as needed
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { load } from "@cashfreepayments/cashfree-js";
@@ -45,6 +45,7 @@ const Bookingpage = () => {
   const [orderId, setOrderId] = useState(uuidv4());
   const [isverified, setisverified] = useState(false);
   const [facilityName, setfacilityName] = useState("");
+  const [facilityPhotos, setFacilityPhotos] = useState({}); // NEW: State to store photos by facility ID
 
   // Refs for component logic
   const [map, setMap] = useState(null);
@@ -72,6 +73,65 @@ const Bookingpage = () => {
     maxWidth: "100vw",
     maxHeight: "80vh",
   };
+
+  // Google Map options with refined styles
+  const mapOptions = {
+    styles: [
+      // Hide all standard points of interest first
+      {
+        featureType: "poi",
+        stylers: [{ visibility: "off" }]
+      },
+      // Then, explicitly show tourist attractions (geometry and labels)
+      {
+        featureType: "poi.attraction",
+        stylers: [{ visibility: "on" }]
+      },
+      // Keep transit features visible as per your latest options
+      {
+        featureType: "transit",
+        stylers: [{ visibility: "on" }]
+      },
+      // Keep general road labels visible as per your latest options
+      {
+        featureType: "road",
+        elementType: "labels",
+        stylers: [{ visibility: "on" }]
+      },
+      // Hide labels for *local* roads (which typically include "streets")
+      {
+        featureType: "road.local",
+        elementType: "labels",
+        stylers: [{ visibility: "off" }]
+      },
+      // Ensure labels for *arterial* roads are visible (major roads)
+      {
+        featureType: "road.arterial",
+        elementType: "labels",
+        stylers: [{ visibility: "on" }]
+      },
+      // Ensure labels for *highways* are visible
+      {
+        featureType: "road.highway",
+        elementType: "labels",
+        stylers: [{ visibility: "on" }]
+      },
+      // Keep administrative labels visible as per your latest options
+      {
+        featureType: "administrative",
+        stylers: [{ visibility: "on" }]
+      },
+      // Keep man-made landscape visible as per your latest options
+      {
+        featureType: "landscape.man_made",
+        stylers: [{ visibility: "on" }]
+      },
+      // Ensure traffic lights are not explicitly hidden (as it's not directly possible)
+      // Any other elements not explicitly set to 'off' will follow Google's defaults
+    ],
+    // You can add other options here, e.g., disableDefaultUI: true
+  };
+
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
@@ -124,6 +184,31 @@ const Bookingpage = () => {
           }));
           setMarkerPositions(newMarkers);
 
+          // --- NEW: Fetch Photos for each facility ---
+          const newFacilityPhotos = {};
+          for (const facility of fetchedFacilities) {
+            // Assuming your backend response for a facility includes its googlePlaceId
+            if (facility.googlePlaceId) {
+              try {
+                // Use Places Details API to get photo references
+                const placeDetailsRes = await axios.get(
+                  `https://maps.googleapis.com/maps/api/place/details/json?place_id=${facility.googlePlaceId}&fields=photos&key=${GoogleApi}`
+                );
+
+                if (placeDetailsRes.data.result && placeDetailsRes.data.result.photos && placeDetailsRes.data.result.photos.length > 0) {
+                  const photoReference = placeDetailsRes.data.result.photos[0].photo_reference;
+                  const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${GoogleApi}`;
+                  newFacilityPhotos[facility._id] = photoUrl; // Store by your facility ID
+                }
+              } catch (photoError) {
+                console.error("Error fetching photo for place:", facility.googlePlaceId, photoError);
+              }
+            }
+          }
+          setFacilityPhotos(newFacilityPhotos);
+          // --- END NEW PHOTO FETCHING ---
+
+
           for (const coords of coordsArray) {
             try {
               const distanceRes = await axios.post(
@@ -157,7 +242,7 @@ const Bookingpage = () => {
         toast.error("Failed to search for facilities.");
       }
     },
-    [destination, map, token, query]
+    [destination, map, token, query, GoogleApi] // Added GoogleApi to dependencies
   );
 
   const onLoad = useCallback(
@@ -338,7 +423,7 @@ const Bookingpage = () => {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, []);
+  }, [ProductionApi]); // Added ProductionApi to dependency array
 
   // Effect to close calendars when clicking outside
   useEffect(() => {
@@ -362,7 +447,7 @@ const Bookingpage = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []); // Empty dependency array means this effect runs once on mount
+  }, []);
 
   // --- JSX Rendering ---
   return (
@@ -373,7 +458,7 @@ const Bookingpage = () => {
         {/* Top row for mobile - Logo and hamburger */}
         <div className="flex justify-between items-center lg:contents">
           <div className="flex cursor-pointer" onClick={handleLogoClick}>
-            <div className="logo-bag" />
+            <div className="logo-bag" /> {/* Assuming these are CSS classes for logos */}
             <div className="logo" />
           </div>
           <div className="lg:hidden">
@@ -399,7 +484,7 @@ const Bookingpage = () => {
               value={destination}
               onChange={(e) => {
                 setDestination(e.target.value);
-                initialSearchPerformedRef.current = false;
+                initialSearchPerformedRef.current = false; // Allow re-search on change
               }}
               onKeyDown={(e) => e.key === "Enter" && handleSearchDestination()}
             />
@@ -446,13 +531,14 @@ const Bookingpage = () => {
                           d.getFullYear(),
                           d.getMonth(),
                           d.getDate(),
-                          12
+                          12 // Set to noon to avoid timezone issues with start/end of day
                         );
                         updateDate(normalizedDate);
                         toggleCal(false);
                       }}
                       value={date}
                       className="text-sm w-full"
+                      minDate={new Date()} // Prevent selecting past dates
                     />
                   </div>
                 )}
@@ -501,40 +587,7 @@ const Bookingpage = () => {
             zoom={10}
             onLoad={onLoad}
             onUnmount={onUnmount}
-             options={{
-    styles: [
-      {
-        featureType: "poi",
-        stylers: [{ visibility: "off" }]
-      },
-      {
-        featureType: "poi.attraction",
-        stylers: [{ visibility: "on" }] // Make sure tourist attractions are visible
-      },
-      {
-        featureType: "transit",
-        stylers: [{ visibility: "on" }]
-      },
-      {
-        featureType: "road",
-        elementType: "labels",
-        stylers: [{ visibility: "on" }]
-      },
-      {
-        featureType: "administrative",
-        stylers: [{ visibility: "on" }]
-      },
-      {
-        featureType: "road.local", // Targets local roads/streets
-        elementType: "labels",
-        stylers: [{ visibility: "off" }]
-      },
-      {
-        featureType: "landscape.man_made",
-        stylers: [{ visibility: "on" }]
-      }
-    ]
-  }}
+            options={mapOptions} // Apply the updated map styles here
           >
             {/* Multiple Markers */}
             {markerPositions.map((pos, idx) => (
@@ -550,16 +603,17 @@ const Bookingpage = () => {
           </GoogleMap>
           {/* Facility Cards Vertical List Overlay */}
           {!clicked && facilities.length > 0 && (
-            <div className="absolute left-4 top-[10%] bottom-[5%] w-[350px] p-4 flex flex-col gap-4 overflow-y-auto z-10">
+            <div className="absolute left-4 top-[10%] bottom-[5%] w-[350px] p-4 flex flex-col gap-4 overflow-y-auto z-10 bg-white rounded-lg shadow-lg">
               {facilities.map((item, index) => (
                 <div
-                  key={index}
+                  key={item._id || index} // Use item._id for a stable key if available
                   className="w-full flex flex-col sm:flex-row border-2 border-[#63C5DA] rounded-xl shadow-lg p-3 lg:p-4 bg-white"
                 >
                   <div className="w-full sm:w-[35%] mb-3 sm:mb-0">
                     <img
-                      src="/BookingPhoto.svg"
-                      alt="Storage"
+                      // Use the fetched photo URL, fallback to default if not available
+                      src={facilityPhotos[item._id] || "/BookingPhoto.svg"}
+                      alt={item?.name || "Storage"}
                       className="h-32 w-full object-cover rounded-lg shadow-md"
                     />
                   </div>
@@ -572,10 +626,10 @@ const Bookingpage = () => {
                         {item?.address || "Unknown address"}
                       </div>
                       <div className="flex items-center mt-1">
-                        {[...Array(item.rating)].map((_, i) => (
+                        {[...Array(item.rating || 0)].map((_, i) => ( // Ensure rating is a number
                           <img
                             key={i}
-                            src="/Rating.svg"
+                            src="/Rating.svg" // Make sure this path is correct
                             alt="Star"
                             className="w-4 h-4 lg:w-5 lg:h-5"
                           />
@@ -601,13 +655,23 @@ const Bookingpage = () => {
           )}
           {/* Facility Details Card Overlay */}
           {clicked && (
-            <div className="absolute inset-0 flex justify-center items-center p-4 bg-gray-50 bg-opacity-80 backdrop-blur-sm">
-              <div className="border-2 border-[#63C5DA] p-4 lg:p-6 shadow-lg bg-white transition-all hover:shadow-xl flex flex-col gap-y-4 divide-y divide-gray-300 max-w-sm lg:max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="absolute inset-0 flex justify-center items-center p-4 bg-gray-50 bg-opacity-80 backdrop-blur-sm z-20">
+              <div className="border-2 border-[#63C5DA] p-4 lg:p-6 shadow-lg bg-white transition-all hover:shadow-xl flex flex-col gap-y-4 divide-y divide-gray-300 max-w-sm lg:max-w-md w-full max-h-[90vh] overflow-y-auto rounded-lg">
+                {/* Close Button */}
+                <button
+                  className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
+                  onClick={() => setClicked(false)}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
                 {/* Image */}
                 <div className="w-full h-32 sm:h-48 bg-gray-100 rounded overflow-hidden">
                   <img
-                    src="/BookingPhoto.svg"
-                    alt="Storage"
+                    // Use the fetched photo URL, fallback to default if not available
+                    src={facilityPhotos[facilityIdFromRedux.facilityId] || "/BookingPhoto.svg"}
+                    alt={facilityName || "Storage"}
                     className="w-full h-full object-cover"
                   />
                 </div>
