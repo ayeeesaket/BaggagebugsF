@@ -542,7 +542,7 @@ const Bookingpage = () => {
                 key={idx}
                 position={pos}
                 icon={{
-      url: '/Carry On Bag.svg ', // Replace with your image path
+      url: '/LogoBag.svg ', // Replace with your image path
       scaledSize: new window.google.maps.Size(40, 40), // Adjust the size as needed
     }}
                 onClick={() => {
