@@ -501,6 +501,35 @@ const Bookingpage = () => {
             zoom={10}
             onLoad={onLoad}
             onUnmount={onUnmount}
+             options={{
+    styles: [
+      {
+        featureType: "poi",
+        stylers: [{ visibility: "off" }]
+      },
+      {
+        featureType: "poi.attraction",
+        stylers: [{ visibility: "on" }] // Make sure tourist attractions are visible
+      },
+      {
+        featureType: "transit",
+        stylers: [{ visibility: "off" }]
+      },
+      {
+        featureType: "road",
+        elementType: "labels",
+        stylers: [{ visibility: "off" }]
+      },
+      {
+        featureType: "administrative",
+        stylers: [{ visibility: "off" }]
+      },
+      {
+        featureType: "landscape.man_made",
+        stylers: [{ visibility: "off" }]
+      }
+    ]
+  }}
           >
             {/* Multiple Markers */}
             {markerPositions.map((pos, idx) => (
