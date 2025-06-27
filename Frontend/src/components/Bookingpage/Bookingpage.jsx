@@ -525,6 +525,11 @@ const Bookingpage = () => {
         stylers: [{ visibility: "on" }]
       },
       {
+        featureType: "road.local", // Targets local roads/streets
+        elementType: "labels",
+        stylers: [{ visibility: "off" }]
+      },
+      {
         featureType: "landscape.man_made",
         stylers: [{ visibility: "on" }]
       }
