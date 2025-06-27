@@ -541,7 +541,10 @@ const Bookingpage = () => {
               <Marker
                 key={idx}
                 position={pos}
-                styler={{ width: "30px", height: "30px", backgroundImage: "url(/Carry On Bag.svg)" }}
+                icon={{
+      url: '/Carry On Bag.svg ', // Replace with your image path
+      scaledSize: new window.google.maps.Size(40, 40), // Adjust the size as needed
+    }}
                 onClick={() => {
                   setClicked(true);
                   handleBookNow(facilities[idx]._id);
