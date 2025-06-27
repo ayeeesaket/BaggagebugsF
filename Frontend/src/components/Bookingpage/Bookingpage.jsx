@@ -53,13 +53,6 @@ const Bookingpage = () => {
   const dropOffCalendarRef = useRef(null); // Ref for Drop-off calendar
   const pickUpCalendarRef = useRef(null); // Ref for Pick-up calendar
 
-  // Define your custom marker icon
-  const customMarkerIcon = {
-    url: "/Carry On Bag.svg", // Path to your custom marker image
-    scaledSize: new window.google.maps.Size(40, 40), // Size of the icon
-    anchor: new window.google.maps.Point(20, 40), // Point of the icon that will be the "tip" (centered bottom)
-  };
-
   // --- Functions and Callbacks ---
   const handleLogoClick = () => {
     navigate("/landingpage");
@@ -508,47 +501,47 @@ const Bookingpage = () => {
             zoom={10}
             onLoad={onLoad}
             onUnmount={onUnmount}
-            options={{
-              styles: [
-                {
-                  featureType: "poi",
-                  stylers: [{ visibility: "off" }],
-                },
-                {
-                  featureType: "poi.attraction",
-                  stylers: [{ visibility: "on" }], // Make sure tourist attractions are visible
-                },
-                {
-                  featureType: "transit",
-                  stylers: [{ visibility: "on" }],
-                },
-                {
-                  featureType: "road",
-                  elementType: "labels",
-                  stylers: [{ visibility: "on" }],
-                },
-                {
-                  featureType: "administrative",
-                  stylers: [{ visibility: "on" }],
-                },
-                {
-                  featureType: "road.local", // Targets local roads/streets
-                  elementType: "labels",
-                  stylers: [{ visibility: "off" }],
-                },
-                {
-                  featureType: "landscape.man_made",
-                  stylers: [{ visibility: "on" }],
-                },
-              ],
-            }}
+             options={{
+    styles: [
+      {
+        featureType: "poi",
+        stylers: [{ visibility: "off" }]
+      },
+      {
+        featureType: "poi.attraction",
+        stylers: [{ visibility: "on" }] // Make sure tourist attractions are visible
+      },
+      {
+        featureType: "transit",
+        stylers: [{ visibility: "on" }]
+      },
+      {
+        featureType: "road",
+        elementType: "labels",
+        stylers: [{ visibility: "on" }]
+      },
+      {
+        featureType: "administrative",
+        stylers: [{ visibility: "on" }]
+      },
+      {
+        featureType: "road.local", // Targets local roads/streets
+        elementType: "labels",
+        stylers: [{ visibility: "off" }]
+      },
+      {
+        featureType: "landscape.man_made",
+        stylers: [{ visibility: "on" }]
+      }
+    ]
+  }}
           >
             {/* Multiple Markers */}
             {markerPositions.map((pos, idx) => (
               <Marker
                 key={idx}
                 position={pos}
-                icon={customMarkerIcon} // Apply the custom icon here
+                styler={{ width: "30px", height: "30px", backgroundImage: "url(/Carry On Bag.svg)" }}
                 onClick={() => {
                   setClicked(true);
                   handleBookNow(facilities[idx]._id);
