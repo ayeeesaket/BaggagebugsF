@@ -513,20 +513,20 @@ const Bookingpage = () => {
       },
       {
         featureType: "transit",
-        stylers: [{ visibility: "off" }]
+        stylers: [{ visibility: "on" }]
       },
       {
         featureType: "road",
         elementType: "labels",
-        stylers: [{ visibility: "off" }]
+        stylers: [{ visibility: "on" }]
       },
       {
         featureType: "administrative",
-        stylers: [{ visibility: "off" }]
+        stylers: [{ visibility: "on" }]
       },
       {
         featureType: "landscape.man_made",
-        stylers: [{ visibility: "off" }]
+        stylers: [{ visibility: "on" }]
       }
     ]
   }}
