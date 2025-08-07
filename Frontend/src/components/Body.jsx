@@ -15,6 +15,9 @@ import UserBookings from "./User/UserBookings";
 import Onboardingpage from "./OnBoarding/Onboardingpage";
 import Loginmid from "./login/logmid";
 import Registerpartner from "./Register/Registerpartner";
+import SuperAdmin from "./SuperAdmin/SuperAdmin";
+import SuperAdminUser from "./SuperAdmin/SuperAdminUser";
+
 const Body = () => {
   const approuter = createBrowserRouter([
     { path: "/", element: <Login /> },
@@ -32,6 +35,7 @@ const Body = () => {
     { path: "/reservation", element: <Reservation /> },
     { path: "/userbookings", element: <UserBookings /> },
     { path: "/onboarding", element: <Onboardingpage /> },
+    { path: "/superAdmin",element:<SuperAdminUser/>}
   ]);
   return (
     <div>

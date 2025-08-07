@@ -44,7 +44,9 @@ const Login = () => {
         { email, password },
         { withCredentials: true }
       );
-
+if(email == "admin1234@gmail.com"){
+  navigate(`/superadmin`)
+}
       dispatch({ type: "login/login" , payload: true }); // Set login state to true
 
 const { token,role } = response.data;
