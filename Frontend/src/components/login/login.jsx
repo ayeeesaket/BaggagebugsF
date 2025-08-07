@@ -33,38 +33,44 @@ const Login = () => {
   useEffect(() => {
     console.log("Redux isLoggedIn changed:", isLoggedIn);
   }, [isLoggedIn]);
+const handleLogin = async (e) => {
+  e.preventDefault();
+  setError("");
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError("");
-     
-    try {
-      const response = await axios.post(
-        `${ProductionApi}/user/login`,
-        { email, password },
-        { withCredentials: true }
-      );
-     if(email === "admin1234@gmail.com"){
-  navigate(`/superadmin`)
-    }
-      dispatch({ type: "login/login" , payload: true }); // Set login state to true
+  try {
+    const response = await axios.post(
+      `${ProductionApi}/user/login`,
+      { email, password },
+      { withCredentials: true }
+    );
 
-const { token,role } = response.data;
-    navigate(`/landingpage?token=${token}&role=${role}`);
+    const { token, role } = response.data;
+
+    dispatch({ type: "login/login", payload: true }); // ✅ Set Redux login state
+    toast.success("Login successful!");
+    localStorage.setItem("role", role);
+
+    // ✅ Admin check — navigate accordingly
+    if (email === "admin1234@gmail.com") {
+      navigate("/superadmin");
+      console.log("admin");
       
-      console.log(response.data);
-      toast.success("Login successful!");
-      localStorage.setItem("role", role);
-    } catch (err) {
-      console.log(err);
-      if (err.response && err.response.data) {
-        setError(err.response.data.message || "Login failed");
-      } else {
-        setError("An error occurred. Please try again.");
-      }
-      toast.error("Login failed!");
+    } else {
+      navigate(`/landingpage?token=${token}&role=${role}`);
     }
-  };
+
+    console.log(response.data);
+  } catch (err) {
+    console.log(err);
+    if (err.response && err.response.data) {
+      setError(err.response.data.message || "Login failed");
+    } else {
+      setError("An error occurred. Please try again.");
+    }
+    toast.error("Login failed!");
+  }
+};
+
 
   return (
     <div className="login-main flex flex-col md:flex-row w-full h-auto overflow-y-auto md:h-screen md:overflow-hidden">
