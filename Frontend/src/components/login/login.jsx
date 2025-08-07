@@ -51,8 +51,8 @@ const handleLogin = async (e) => {
     localStorage.setItem("role", role);
 
     // ✅ Admin check — navigate accordingly
-    if (email === "admin1234@gmail.com") {
-      localStorage.setItem("role", "admin");
+    if (email === "karmarkarpratham86@gmail.com") {
+      
       navigate(`/superadmin?token=${token}&role=${role}`);
       console.log("admin");
       
