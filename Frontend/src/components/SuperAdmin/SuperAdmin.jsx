@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
+import { useNavigate } from "react-router-dom";
 
 const SuperAdmin = () => {
-  const [viewType, setViewType] = useState("User"); // NEW state for toggle
+  const [viewType, setViewType] = useState("User"); 
+  const navigate = useNavigate();
 
   const tableRows = [
     { col1: "Row 2 - A", col2: "Row 2 - B", col3: "Row 2 - C" },
@@ -50,9 +52,18 @@ const SuperAdmin = () => {
         {/* 🔹 Toggle Button for User / Partner */}
         <div className="flex justify-end pr-10">
           <button
-            onClick={() =>
-              setViewType((prev) => (prev === "User" ? "Partner" : "User"))
-            }
+            onClick={() => {
+              setViewType((prev) => {
+                const newType = prev === "User" ? "Partner" : "User";
+                if (newType === "Partner") {
+                  navigate("/superAdminpartner");
+                }
+                else{
+                  navigate("/superAdmin");
+                }
+                return newType;
+              });
+            }}
             className="bg-[#FA8128] text-white px-6 py-2 rounded-lg shadow-md hover:bg-orange-600 transition"
           >
             {viewType}
@@ -67,7 +78,6 @@ const SuperAdmin = () => {
           </div>
 
           <div className="flex flex-wrap gap-4 items-center">
-            {/* Doubled-width search bar */}
             <div className="flex items-center border-2 border-[#63C5DA] rounded-[2rem] px-4 py-2 w-[500px] text-[#FA8128] bg-white shadow-md">
               <input
                 type="text"
@@ -98,7 +108,6 @@ const SuperAdmin = () => {
         </div>
 
         <div className="table-div flex flex-col gap-4 p-4 pl-10 pr-10">
-          {/* Static header row */}
           <div className="flex justify-between w-full items-center pb-2 border-b border-gray-300">
             <div className="flex-1 ">
               <p className="text-[#FA8128] font-bold">Full Name</p>
@@ -111,7 +120,6 @@ const SuperAdmin = () => {
             </div>
           </div>
 
-          {/* Dynamic rows from external array */}
           {tableRows.map((row, index) => (
             <div
               key={index}
