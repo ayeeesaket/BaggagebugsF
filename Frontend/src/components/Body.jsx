@@ -35,7 +35,7 @@ const Body = () => {
     { path: "/reservation", element: <Reservation /> },
     { path: "/userbookings", element: <UserBookings /> },
     { path: "/onboarding", element: <Onboardingpage /> },
-    { path: "/superAdmin",element:<SuperAdminUser/>},
+    { path: "/superAdminuser",element:<SuperAdminUser/>},
     { path: "/superAdminpartner",element:<SuperAdmin/>}
   ]);
   return (
