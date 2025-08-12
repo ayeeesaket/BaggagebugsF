@@ -6,6 +6,7 @@ const Reservation = () => {
   const navigate = useNavigate();
   const handleLogoClick = () => navigate("/landingpage");
 
+
   return (
     <div className="reservation-main flex flex-col min-h-screen w-full overflow-x-hidden overflow-y-auto px-4 sm:px-6">
       {/* NAVBAR */}

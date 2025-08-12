@@ -1,4 +1,4 @@
-import React, { useState , useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "../../styles/DashboardDetails.css";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { AiOutlinePlusCircle } from "react-icons/ai";
@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { ProductionApi, LocalApi } from "../../../utills";
+import { useSelector } from "react-redux";
+import "react-toastify/dist/ReactToastify.css";
 const DashboardDetails = () => {
   const navigate = useNavigate();
   const handleLogoClick = () => {
@@ -49,7 +51,7 @@ const DashboardDetails = () => {
 
   // Storage
 
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected] = useState();
   const [storageEdit, setStorageEdit] = useState(false);
   const [storageCapacity, setStorageCapacity] = useState("0");
   const [prevDetails, setPrevDetails] = useState(true);
@@ -66,8 +68,8 @@ const DashboardDetails = () => {
   const handleBankCancel = () => {
     setIsBankClicked(false);
   };
-  const [activeButtons, setActiveButtons] = useState("");
-
+  const [activeButtons, setActiveButtons] = useState([]);
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
   const handleClick = (button) => {
     setActiveButtons((prev) => {
       if (prev.includes(button)) {
@@ -104,7 +106,47 @@ const DashboardDetails = () => {
     typeof activeButtons
   );
 
+const [bankDetails, setBankDetails] = useState({
+  holderName: "",
+  email: "",
+  accountNumber: "",
+  address: "",
+  postCode: "",
+  city: "",
+  stateCode: "",
+  ifscCode: "",
+  bankName: "",
+  branchName: "",
+});
+
+// Validation for basic details (for button styling)
+const isBasicDetailsValid =
+  name.trim() !== "" &&
+  email.trim() !== "" &&
+  address.trim() !== "" &&
+  phone.trim() !== "";
+
+// Full validation including bank details (for API call)
+const isDetailsValid =
+  name.trim() !== "" &&
+  email.trim() !== "" &&
+  address.trim() !== "" &&
+  phone.trim() !== "" &&
+  bankDetails.holderName.trim() !== "" &&
+  bankDetails.email.trim() !== "" &&
+  bankDetails.accountNumber.trim() !== "" &&
+  bankDetails.address.trim() !== "" &&
+  bankDetails.postCode.trim() !== "" &&
+  bankDetails.city.trim() !== "" &&
+  bankDetails.stateCode.trim() !== "" ;
+
   const handleDetailsAPI = async () => {
+   // Check if all required fields are filled
+   if (!isDetailsValid) {
+     toast.error("Please fill out all required fields including bank details.");
+     return;
+   }
+
     try {
       const response = await axios.post(
         `${ProductionApi}/facility/register`,
@@ -121,33 +163,39 @@ const DashboardDetails = () => {
           type,
           timing,
         },
+
         {
-          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       console.log("Registered Successfully:", response.data);
-      if (response.status === 200) {
-        toast.success("Details added", {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-      }
+   
+        toast.success("Details added");
+        navigate("/landingpage");
+   
       // Optional: Log form data if response status is 400
     } catch (error) {
       console.error("Error while registering facility:", error);
+      toast.error("Failed to add details");
     }
   };
+  const [details, setDetails] = useState(true);
   const [facilities, setFacilities] = useState([]);
+
+
+
   const handleFacilityApi = async () => {
+   
     try {
       const response = await axios.get(
         `${ProductionApi}/facility/`,
+
         {
-          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       console.log("Facility Data:", response.data.data);
@@ -155,12 +203,58 @@ const DashboardDetails = () => {
     } catch (error) {
       console.error("Error fetching facility data:", error);
     }
+    try {
+      const response = await axios.get(
+        `${ProductionApi}/user/addBankAccount`,
+        {
+          accountNumber: "123456789012",
+          bankName: "State Bank of India",
+          ifscCode: "SBIN0001234",
+          accountHolderName: "John Doe",
+          holderAddress: "123 Main Street",
+          holderPostalCode: "110001",
+          holderCity: "New Delhi",
+          holderStateCode: "DL",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("Facility Data:", response.data.data);
+      setFacilities(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
     handleFacilityApi();
+    console.log("Token in DashboardDetails:", token);
   }, []);
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      const storedToken = localStorage.getItem("token");
+      if (storedToken) {
+        try {
+          navigator.sendBeacon(
+            `${ProductionApi}/user/logout`,
+            JSON.stringify({})
+          );
+          localStorage.removeItem("token");
+        } catch (e) {
+          console.warn("Logout beacon failed:", e);
+        }
+      }
+    };
 
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   return (
     <>
@@ -224,12 +318,17 @@ const DashboardDetails = () => {
                 </div>
               ))}
             </div>
-            <button
-              onClick={handleDetailsAPI}
-              className="bg-[#FA8128] text-white px-3 py-3  rounded-3xl cursor-pointer"
-            >
-              Save
-            </button>
+           <button
+  onClick={handleDetailsAPI}
+  disabled={!isDetailsValid}
+  className={`px-3 py-3 rounded-3xl cursor-pointer transition ${
+    isDetailsValid
+      ? "bg-[#FA8128] text-white"
+      : "bg-gray-400 text-white cursor-not-allowed"
+  }`}
+>
+  Save
+</button>
           </div>
 
           {/* RIGHT SECTION */}
@@ -238,7 +337,7 @@ const DashboardDetails = () => {
             {selectedItem === "Details" && (
               <>
                 {detailsAdded ? (
-                  <div className="details-div flex flex-col justify-between px-5 md:px-10 pt-10 text-[20px] md:text-[24px] h-full   font-bold">
+                  <div className="details-div flex flex-col justify-between px-5 md:px-10 pt-10 text-[20px] md:text-[24px] h-full   font-medium">
                     <div className="row-1 flex">
                       <div className="row-1-detail flex-[30%]">
                         Facility Name
@@ -247,6 +346,7 @@ const DashboardDetails = () => {
                         className="content-input flex-[35%] border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px] "
                         placeholder="Lorem ipsum"
                         onChange={(e) => setName(e.target.value)}
+                        value={name}
                       />
                       <div
                         className="edit text-[#63C5DA] flex-[25%] text-right"
@@ -287,6 +387,7 @@ const DashboardDetails = () => {
                         className="content-input flex-[35%] border-2 items-start border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px] focus:border-[#63C5DA] focus:ring-0"
                         placeholder="Shuddjdsi26@gmail.com"
                         onChange={(e) => setEmail(e.target.value)}
+                        value={email}
                       />
                       <div className="flex-[25%]"></div>
                     </div>
@@ -296,6 +397,7 @@ const DashboardDetails = () => {
                         className="content-input flex-[35%] border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
                         placeholder="+99 873629273839"
                         onChange={(e) => setPhone(e.target.value)}
+                        value={phone}
                       />
                       <div className="flex-[25%]"></div>
                     </div>
@@ -305,7 +407,8 @@ const DashboardDetails = () => {
                       </div>
                       <select
                         className="content-input border-2 flex-[35%] border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
-                        onChange={(e) => setType(e.target.value)} // Correct event handler
+                        onChange={(e) => setType(e.target.value)}
+                        value={type} // Correct event handler
                       >
                         <option value="airport-luggage">Airport Luggage</option>
                       </select>
@@ -320,6 +423,7 @@ const DashboardDetails = () => {
                         className="content-input flex-[35%] border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
                         placeholder="wolfer dog streetrnckclc"
                         onChange={(e) => setAddress(e.target.value)}
+                        value={address}
                       />
                       <div className="edit text-white flex-[25%] text-right">
                         Edit
@@ -329,45 +433,33 @@ const DashboardDetails = () => {
                       <div className="content flex-[30%]">
                         Bagpacker Services
                       </div>
-                      <div className="flex  flex-[35%] gap-2">
-                        <button
-                          className={`wifi border-2 border-[#63C5DA] flex-1/3 rounded px-1 py-1 ${
-                            activeButtons.includes("wifi")
-                              ? "bg-orange-500 text-white"
-                              : ""
-                          }`}
-                          onClick={() =>
-                            // setWifi(true)
-                            setWifi(true)
-                          }
-                        >
-                          Wifi
-                        </button>
-                        <button
-                          className={`restroom border-2 border-[#63C5DA] flex-1/3 rounded px-1 py-1 ${
-                            activeButtons.includes("restroom")
-                              ? "bg-orange-500 text-white"
-                              : ""
-                          }`}
-                          onClick={() =>
-                            setActiveButtons([...activeButtons, "button2"])
-                          }
-                        >
-                          Restroom
-                        </button>
-                        <button
-                          className={`CCtv border-2 border-[#63C5DA] rounded flex-1/3 px-1 py-1 ${
-                            activeButtons.includes("CCtv")
-                              ? "bg-orange-500 text-white"
-                              : ""
-                          }`}
-                          onClick={() =>
-                            setActiveButtons([...activeButtons, "button3"])
-                          }
-                        >
-                          CCtv
-                        </button>
+                      <div className="flex flex-[35%] gap-2">
+                        {["wifi", "restroom", "CCtv"].map((label) => (
+                          <button
+                            key={label}
+                            className={`border-2 border-[#63C5DA] rounded flex-1 px-1 py-1 capitalize ${
+                              activeButtons.includes(label)
+                                ? "bg-orange-500 text-white"
+                                : "bg-white text-[#FA8128]"
+                            }`}
+                            value={wifi}
+                            onClick={() => {
+                              setActiveButtons((prev) =>
+                                prev.includes(label)
+                                  ? prev.filter((item) => item !== label)
+                                  : [...prev, label]
+                              );
+                              // Set wifi flag separately if needed
+                              if (label === "wifi") {
+                                setWifi((prev) => !prev);
+                              }
+                            }}
+                          >
+                            {label}
+                          </button>
+                        ))}
                       </div>
+
                       <div className="content-edit text-white flex-[25%] text-right">
                         Edit
                       </div>
@@ -381,7 +473,7 @@ const DashboardDetails = () => {
                           <div className="reviews-div border-2 border-[#63C5DA] p-5 mb-2">
                             <div className="reviews-top flex flex-col md:flex-row justify-between items-start md:items-center p-4 border-b border-gray-200   gap-2">
                               <div className="name font-semibold text-lg">
-                                 {facility.name}
+                                {facility.name}
                               </div>
                               <div className="booking-id text-sm md:text-base">
                                 Facility : {facility._id}
@@ -389,7 +481,6 @@ const DashboardDetails = () => {
                             </div>
                             <div className="flex justify-between">
                               <div>
-                                
                                 <div className="address   text-sm md:text-base">
                                   {facility.address}
                                 </div>
@@ -441,6 +532,7 @@ const DashboardDetails = () => {
                       <input
                         type="number"
                         placeholder="0"
+                        value={capacity}
                         onChange={(e) => setCapacity(e.target.value)}
                         className="border-2 border-[#63C5DA] px-3 py-2 rounded text-[#FA8128]"
                       />
@@ -460,26 +552,30 @@ const DashboardDetails = () => {
                     <div className="Limited-storage">Limited Storage?</div>
 
                     <div className="options-div items-center flex w-full justify-between gap-[700px]">
-                      <div className="yes-no-options flex   gap-2">
+                      <div className="yes-no-options flex gap-2">
                         <button
-                          className={`border-[#63C5DA] border-2 px-3 py-2 ${
-                            selected === "yes"
+                          className={`border-[#63C5DA] border-2 px-3 py-2 rounded ${
+                            selected === true
                               ? "bg-[#FA8128] text-white"
                               : "bg-white text-[#FA8128]"
                           }`}
-                          onClick={() => setLimited(true)}
+                          onClick={() => {
+                            setLimited(true);
+                            setSelected(true);
+                          }}
                         >
                           Yes
                         </button>
 
                         <button
-                          className={`border-[#63C5DA] border-2 px-3 py-2 ${
-                            selected === "no"
+                          className={`border-[#63C5DA] border-2 px-3 py-2 rounded ${
+                            selected === false
                               ? "bg-[#FA8128] text-white"
                               : "bg-white text-[#FA8128]"
                           }`}
                           onClick={() => {
                             setLimited(false);
+                            setSelected(false);
                           }}
                         >
                           No
@@ -618,7 +714,7 @@ const DashboardDetails = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="available-right-item3 flex flex-col gap-2 text-[18px] md:text-[20px] text-black">
+                  <div className="available-right-item3 flex flex-col gap-2 text-[18px] md:text-[20px] text-black font-medium">
                     <div className="storage-capacity-text  ">
                       From Apr 18, 2025 to Apr 18, 2025 - Closed
                     </div>
@@ -647,19 +743,34 @@ const DashboardDetails = () => {
                   </div>
                 ) : (
                   <div>
-                    <div className="bank-yes-div flex flex-col gap-4 text-black font-bold">
+                    <div className="bank-yes-div flex flex-col gap-4 text-black font-medium">
                       <div className="bank-row-1 flex flex-col md:flex-row gap-2">
                         <div className="bank-row-1-detail md:w-1/2">
                           Account Holder Name
                         </div>
                         <input
+                          value={bankDetails.holderName}
+                          onChange={(e) =>
+                            setBankDetails({
+                              ...bankDetails,
+                              holderName: e.target.value,
+                            })
+                          }
                           className="content-input border-2 border-[#63C5DA] rounded px-2 py-2 w-full text-[18px] md:text-[20px]"
                           placeholder="Lorem ipsum"
                         />
                       </div>
+
                       <div className="bank-row-2 flex flex-col md:flex-row gap-2">
                         <div className="bank-row-2-detail md:w-1/2">Email</div>
                         <input
+                          value={bankDetails.email}
+                          onChange={(e) =>
+                            setBankDetails({
+                              ...bankDetails,
+                              email: e.target.value,
+                            })
+                          }
                           className="content-input border-2 border-[#63C5DA] rounded px-2 py-2 w-full text-[18px] md:text-[20px]"
                           placeholder="Lorem ipsum"
                         />
@@ -670,60 +781,87 @@ const DashboardDetails = () => {
                           Account Number
                         </div>
                         <input
+                          value={bankDetails.accountNumber}
+                          onChange={(e) =>
+                            setBankDetails({
+                              ...bankDetails,
+                              accountNumber: e.target.value,
+                            })
+                          }
                           className="content-input border-2 border-[#63C5DA] rounded px-2 py-2 w-full text-[18px] md:text-[20px]"
                           placeholder="Lorem ipsum"
                         />
                       </div>
+
                       <div className="bank-row-5 flex flex-col md:flex-row gap-2">
                         <div className="bank-row-5-detail md:w-1/2">
                           Account Holder's Address
                         </div>
                         <input
+                          value={bankDetails.address}
+                          onChange={(e) =>
+                            setBankDetails({
+                              ...bankDetails,
+                              address: e.target.value,
+                            })
+                          }
                           className="content-input border-2 border-[#63C5DA] rounded px-2 py-2 w-full text-[18px] md:text-[20px]"
                           placeholder="Lorem ipsum"
                         />
                       </div>
+
                       <div className="bank-row-6 flex flex-col md:flex-row gap-2">
                         <div className="bank-row-6-detail md:w-1/2">
                           Account Holder's Post Code
                         </div>
                         <input
+                          value={bankDetails.postCode}
+                          onChange={(e) =>
+                            setBankDetails({
+                              ...bankDetails,
+                              postCode: e.target.value,
+                            })
+                          }
                           className="content-input border-2 border-[#63C5DA] rounded px-2 py-2 w-full text-[18px] md:text-[20px]"
                           placeholder="Lorem ipsum"
                         />
                       </div>
+
                       <div className="bank-row-7 flex flex-col md:flex-row gap-2">
                         <div className="bank-row-7-detail md:w-1/2">
                           Account Holder's Town/City
                         </div>
                         <input
+                          value={bankDetails.city}
+                          onChange={(e) =>
+                            setBankDetails({
+                              ...bankDetails,
+                              city: e.target.value,
+                            })
+                          }
                           className="content-input border-2 border-[#63C5DA] rounded px-2 py-2 w-full text-[18px] md:text-[20px]"
                           placeholder="Lorem ipsum"
                         />
                       </div>
+
                       <div className="bank-row-8 flex flex-col md:flex-row gap-2">
                         <div className="bank-row-8-detail md:w-1/2">
                           State Code
                         </div>
                         <input
+                          value={bankDetails.stateCode}
+                          onChange={(e) =>
+                            setBankDetails({
+                              ...bankDetails,
+                              stateCode: e.target.value,
+                            })
+                          }
                           className="content-input border-2 border-[#63C5DA] rounded px-2 py-2 w-full text-[18px] md:text-[20px]"
                           placeholder="Lorem ipsum"
                         />
                       </div>
-                      <div className="bank-row-9 flex flex-col sm:flex-row gap-4 mt-4">
-                        <button
-                          className="bg-[#FA8128] text-white px-4 py-2 rounded-3xl w-full sm:w-auto"
-                          onClick={handleBankSave}
-                        >
-                          Save
-                        </button>
-                        <button
-                          className="bg-[#FA8128] text-white px-4 py-2 rounded-3xl w-full sm:w-auto"
-                          onClick={handleBankCancel}
-                        >
-                          Cancel
-                        </button>
-                      </div>
+
+                      <div className="bank-row-9 flex flex-col sm:flex-row gap-4 mt-4"></div>
                     </div>
                   </div>
                 )}
@@ -736,7 +874,7 @@ const DashboardDetails = () => {
                 <div className="income-right-item1 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                   <div className="total">Total Earnings</div>
                   <div className="opening-hours-text text-[#63C5DA] text-[18px] md:text-[20px] flex">
-                    <div className="amount px-3 py-1 border border-[#63C5DA] text-black">
+                    <div className="amount px-3 py-1 border border-[#63C5DA] text-black gont-medium">
                       100000
                     </div>
                     <div className="currency px-5 py-1 bg-[#FA8128] text-white">

@@ -1,12 +1,13 @@
 import React from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 
 const Reviews = () => {
   const navigate = useNavigate();
   const handleLogoClick = () => {
     navigate("/landingpage");
   };
+
 
   return (
     <div className="page-details px-4 sm:px-10 py-4 max-w-screen-xl mx-auto overflow-x-hidden min-h-screen w-full">

@@ -2,8 +2,10 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/Login.css";
 import axios from "axios";
-import { useSelector, useDispatch } from "react-redux";
+import {useDispatch ,useSelector} from "react-redux";
 import { ProductionApi, LocalApi } from "../../../utills";
+import { useState } from "react";
+import { useEffect } from "react";
 
 const UserOverview = () => {
   const navigate = useNavigate();
@@ -35,22 +37,52 @@ const UserOverview = () => {
     navigate("/userbookings");
   };
   const handleAssistanceClick = () => {};
+  const [token, setToken] = useState(
+    useSelector((state) => state.token.tokenValue)
+  );
   const handleLogoutClick = async () => {
     try {
       const response = await axios.post(
         `${ProductionApi}/user/logout`,
-        {},
         {
           withCredentials: true,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       console.log("logged out");
       navigate("/");
-      dispatch({ type: "login/login" });
+      dispatch({ type: "login/login", payload: false });
+      localStorage.removeItem("token");
     } catch (error) {
       console.log(error);
     }
   };
+useEffect(() => {
+  const handleBeforeUnload = (event) => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      try {
+        navigator.sendBeacon(
+          `${ProductionApi}/user/logout`,
+          JSON.stringify({})
+        );
+        localStorage.removeItem("token");
+      } catch (e) {
+        console.warn("Logout beacon failed:", e);
+      }
+    }
+  };
+
+  window.addEventListener("beforeunload", handleBeforeUnload);
+
+  return () => {
+    window.removeEventListener("beforeunload", handleBeforeUnload);
+  };
+}, []);
 
   return (
     <div className="flex flex-col md:flex-row h-screen w-full overflow-hidden">
@@ -87,21 +119,13 @@ const UserOverview = () => {
               text="My Profile"
               onClick={handleProfileClick}
             />
-            <SocialButton
-              icon={<FacebookIcon />}
-              text="Account Settings"
-              onClick={handleSettingsClick}
-            />
+
             <SocialButton
               icon={<StoreIcon />}
               text="My Bookings"
               onClick={handleBookingsClick}
             />
-            <SocialButton
-              icon={<StarIcon />}
-              text="Assistance"
-              onClick={handleAssistanceClick}
-            />
+
             <SocialButton
               icon={<LogoutIcon />}
               text="Logout"

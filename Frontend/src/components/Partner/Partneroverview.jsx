@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import "../../styles/Login.css";
 import axios from "axios";
 import { ProductionApi, LocalApi } from "../../../utills";
-
+import { useSelector, useDispatch } from "react-redux";
+import { useState,useEffect} from "react";
 const Partneroverview = () => {
   const navigate = useNavigate();
 
@@ -34,21 +35,51 @@ const Partneroverview = () => {
     navigate("/reviews");
   };
   const handleAssistanceClick = () => {};
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
+  const dispatch = useDispatch();
   const handleLogoutClick = async () => {
     try {
       const response = await axios.post(
         `${ProductionApi}/user/logout`,
-        {},
         {
           withCredentials: true,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       console.log("logged out");
+      dispatch({ type: "login/login", payload: false }); // Set login state to false
+      localStorage.removeItem("token");
       navigate("/");
     } catch (error) {
       console.log(error);
     }
   };
+useEffect(() => {
+  const handleBeforeUnload = (event) => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      try {
+        navigator.sendBeacon(
+          `${ProductionApi}/user/logout`,
+          JSON.stringify({})
+        );
+        localStorage.removeItem("token");
+      } catch (e) {
+        console.warn("Logout beacon failed:", e);
+      }
+    }
+  };
+
+  window.addEventListener("beforeunload", handleBeforeUnload);
+
+  return () => {
+    window.removeEventListener("beforeunload", handleBeforeUnload);
+  };
+}, []);
 
   return (
     <div className="flex flex-col md:flex-row h-screen w-full overflow-hidden">
@@ -85,11 +116,7 @@ const Partneroverview = () => {
               text="My Profile"
               onClick={handleProfileClick}
             />
-            <SocialButton
-              icon={<FacebookIcon />}
-              text="Account Settings"
-              onClick={handleSettingsClick}
-            />
+
             <SocialButton
               icon={<StoreIcon />}
               text="My Bookings"
@@ -100,11 +127,7 @@ const Partneroverview = () => {
               text="My Reviews"
               onClick={handleReviewsClick}
             />
-            <SocialButton
-              icon={<StarIcon />}
-              text="Assistance"
-              onClick={handleAssistanceClick}
-            />
+
             <SocialButton
               icon={<LogoutIcon />}
               text="Logout"

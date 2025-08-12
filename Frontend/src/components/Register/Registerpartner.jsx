@@ -16,7 +16,7 @@ const SocialButton = ({ icon, text }) => (
   </button>
 );
 
-const Register = () => {
+const Registerpartner = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -37,7 +37,7 @@ const Register = () => {
     }
 
     try {
-      const response = await axios.post(`${ProductionApi}/user/register`, {
+      const response = await axios.post(`${ProductionApi}/partner/register`, {
         firstName,
         lastName,
         email,
@@ -51,7 +51,7 @@ const Register = () => {
       toast.success("Registration successful!");
       console.log(response.data);
       
-      navigate("/");
+     navigate("/login/partner");
       dispatch({ type: "login/login", payload: true });
     } catch (error) {
       console.log(error);
@@ -75,7 +75,7 @@ const Register = () => {
           <div className="flex justify-between items-center w-full mb-10 px-4">
             <h1 className="text-3xl md:text-3xl font-bold flex gap-2">
               <span className="text-[#FA8128]">Hello,</span>
-              <span className="text-[#28d3fa]">bagpacker</span>
+              <span className="text-[#28d3fa]">Partner</span>
             </h1>
 
             <button
@@ -141,4 +141,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Registerpartner;

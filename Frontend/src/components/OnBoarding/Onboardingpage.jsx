@@ -14,6 +14,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { ProductionApi, LocalApi } from "../../../utills";
+// adjust path as needed
 const Onboardingpage = () => {
   const [count, setCount] = useState(5);
   const [earnings, setEarnings] = useState(15);
@@ -53,6 +54,28 @@ const Onboardingpage = () => {
     { name: "Jane Smith", review: "Highly Recommend!", img: "/person.svg" },
     { name: "Mark Johnson", review: "Very Satisfied!", img: "/person.svg" },
   ];
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      const storedToken = localStorage.getItem("token");
+      if (storedToken) {
+        try {
+          navigator.sendBeacon(
+            `${ProductionApi}/user/logout`,
+            JSON.stringify({})
+          );
+          localStorage.removeItem("token");
+        } catch (e) {
+          console.warn("Logout beacon failed:", e);
+        }
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   const settings2 = {
     dots: false,
@@ -76,20 +99,34 @@ const Onboardingpage = () => {
     console.log("logged in ? : ", isLoggedIn);
   }, []);
   const dispatch = useDispatch();
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
+
   const handleLogoutApi = async () => {
     try {
       const response = await axios.post(
         `${ProductionApi}/user/logout`,
-        {},
         {
           withCredentials: true,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       console.log("logged out");
-      navigate("/");
-      dispatch({ type: "login/login" });
+      navigate("/register/partner");
+      dispatch({ type: "login/login", payload: false }); // Set login state to false
+      localStorage.removeItem("token");
     } catch (error) {
       console.log("error : ", error);
+    }
+  };
+
+  const handleLogoClick = () => {
+    navigate("/landingpage");
+    if (!isLoggedIn) {
+      dispatch({ type: "login/login" });
     }
   };
 
@@ -101,7 +138,7 @@ const Onboardingpage = () => {
           {/* Mobile layout: visible on small screens only */}
           <div className="md:hidden flex flex-col gap-4 p-4">
             <div className="flex justify-between items-center">
-              <div className="flex">
+              <div className="flex" onClick={handleLogoClick}>
                 <div className="logo-bag"></div>
                 <div className="logo"></div>
               </div>
@@ -139,7 +176,7 @@ const Onboardingpage = () => {
           <div className="hidden md:block">
             <div className="navbar flex p-2 pl-15 pr-15  m-4 justify-between text-2xl ">
               {/* === Your original code stays untouched here === */}
-              <div className="flex">
+              <div className="flex " onClick={handleLogoClick}>
                 <div className="logo-bag"></div>
                 <div className="logo"></div>
               </div>
@@ -195,8 +232,10 @@ const Onboardingpage = () => {
               <button
                 className="bg-[#FA8128] w-60 md:w-72 z-[1] text-white font-semibold px-6 py-2 rounded-full shadow-md hover:bg-[#FA8128] transition border-5 border-[#FFA480] cursor-pointer"
                 onClick={() => {
-                  isLoggedIn ? handleLogoutApi() : navigate("/");
-                  dispatch({ type: "partner/setIsPartner" });
+                  // Set isPartner to true
+                  isLoggedIn
+                    ? handleLogoutApi()
+                    : navigate("/register/partner");
                 }}
               >
                 Become a partner
@@ -530,18 +569,6 @@ const Onboardingpage = () => {
                 Your luggage will always have a{" "}
                 <span className="text-[#FA8128] font-bold">safe place</span>,
                 allowing you to enjoy your journey to the fullest!
-              </div>
-              <div className="mt-10">
-                <button
-                  onClick={() => {
-                    setIsPartner(true);
-                    navigate("/partneroverview");
-                    console.log("Become a Partner clicked", isPartner);
-                  }}
-                  className="bg-[#FA8128] text-white px-3 py-2 rounded-lg shadow-md hover:bg-[#f77a20] transition cursor-pointer"
-                >
-                  Become a Partner
-                </button>
               </div>
             </div>
           </div>

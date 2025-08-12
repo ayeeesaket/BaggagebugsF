@@ -1,14 +1,20 @@
 import React from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { useState } from "react";
+import { useState , useEffect } from "react";
+import { useSelector } from "react-redux";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ProductionApi, LocalApi } from "../../../utills";
+import { useDispatch } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const Profile = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleLogoClick = () => {
     navigate("/landingpage");
+    dispatch({ type: "login/login" });
   };
   const menuItems = [
     "My Profile",
@@ -25,20 +31,32 @@ const Profile = () => {
   const [email, setEmail] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [phoneNo, setPhoneNo] = useState("");
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
 
   const handleApi = async (e) => {
-   
+    console.log("your token which is stored", token);
+    
     e.preventDefault();
     try {
       const response = await axios.post(
-        `https://baggagebugs-81tp.onrender.com/api/v1/user/addDetails`,
+        `${ProductionApi}/user/addDetails`,
         { firstName, lastName, email, dateOfBirth, phoneNo },
+
         {
-          withCredentials: true, // ✅ REQUIRED to send cookies
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
-      console.log("Data Added", response.data);
+      toast.success("Profile data saved!");
+     if (response.data == 200) {
+      navigate("/landingpage")
+     }
+      dispatch({type : "details/setName", payload: firstName});
+      dispatch({type : "details/setEmail", payload: email});
+      dispatch({type : "details/setPhoneNo", payload: phoneNo});
     } catch (error) {
+      toast.error("Failed to save profile data!");
       console.log("Error", error);
     }
   };
@@ -54,13 +72,18 @@ const Profile = () => {
           newPassword: newPassWord,
           confirmPassword: confirmPassWord,
         },
+
         {
-          withCredentials: true, // ✅ REQUIRED to send cookies
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
+toast.success("Password changed successfully!");
       console.log("Data Added", response.data);
     } catch (error) {
       console.log("error", error);
+      toast.error("Failed to change password!");
     }
   };
   const [toggleEmail, setToggleEmail] = useState(false);
@@ -73,6 +96,11 @@ const Profile = () => {
         `${ProductionApi}/user/toggleEmail`,
         {
           status: toggleEmail,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       console.log("Toggle Email added", response.data);
@@ -84,6 +112,58 @@ const Profile = () => {
   const handleBankClick = () => {
     setIsBankClicked(!isBankClicked);
   };
+  useEffect(() => {
+  const handleBeforeUnload = (event) => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      try {
+        navigator.sendBeacon(
+          `${ProductionApi}/user/logout`,
+          JSON.stringify({})
+        );
+        localStorage.removeItem("token");
+      } catch (e) {
+        console.warn("Logout beacon failed:", e);
+      }
+    }
+  };
+
+  window.addEventListener("beforeunload", handleBeforeUnload);
+
+  return () => {
+    window.removeEventListener("beforeunload", handleBeforeUnload);
+  };
+}, []);
+useEffect(() => {
+  const fetchUserDetails = async () => {
+    try {
+      const response = await axios.get(`${ProductionApi}/user/getUser`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = response.data;
+console.log(data);
+
+      // Assuming response data structure looks like:
+      // { firstName: "John", lastName: "Doe", email: "...", ... }
+      setFirstName(data.data.firstName || "" );
+      setLastName(data.data.lastName || "");
+      setEmail(data.data.email|| "" );
+      setDateOfBirth(data.data.dateOfBirth || "");
+      setPhoneNo(data.data.phoneNo || "");
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+      toast.error("Failed to load profile data");
+    }
+  };
+
+  if (token) {
+    fetchUserDetails();
+  }
+}, [token]);
+
   return (
     <>
       <div className="page-details p-2 sm:px-10">
@@ -149,36 +229,41 @@ const Profile = () => {
               <div className="profile-div flex flex-col gap-10 px-5 md:px-10 pt-10 text-[20px] md:text-[24px] h-full text-[#FA8128] font-bold">
                 <div className="my-profile"> My Profile</div>
                 <div className="flex flex-col gap-14">
-                  <div className="row-1 flex justify-between items-center">
+                  <div className="row-1 flex justify-between items-center font-light">
                     <input
                       className="content-input  text-black border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
-                      placeholder="First Name"
+                      placeholder={firstName}
+                      value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                     />
                     <input
                       className="content-input  text-black border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
-                      placeholder="Last Name"
+                      placeholder={lastName}
+                      value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
                     />
                   </div>
-                  <div className="row-2 flex justify-between items-center">
+                  <div className="row-2 flex justify-between items-center font-light">
                     <input
                       type="date"
                       className="content-input text-black  border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
-                      placeholder="Date of Birth"
+                      placeholder={dateOfBirth}
+                      value={dateOfBirth}
                       onChange={(e) => setDateOfBirth(e.target.value)}
                     />
                     <input
                       className="content-input text-black border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
-                      placeholder="Email"
+                      placeholder={email}
+                      value={email}
                       onChange={(e) => setEmail(e.target.value)}
                     />
                   </div>
-                  <div className="row-3 flex justify-between items-center">
+                  <div className="row-3 flex justify-between items-center font-light">
                     <input
                       type="number"
+                      value={phoneNo}
                       className="content-input text-black border-2 border-[#63C5DA] rounded px-2 py-2 w-full max-w-[400px] text-[18px] md:text-[20px]"
-                      placeholder="Phone Number"
+                      placeholder={phoneNo}
                       onChange={(e) => setPhoneNo(e.target.value)}
                     />
                   </div>
@@ -195,7 +280,7 @@ const Profile = () => {
             {selectedItem === "Notifications" && (
               <div className="notification-div flex flex-col gap-10 px-5 md:px-10 pt-10 text-[20px] md:text-[24px] h-full text-[#FA8128] font-bold">
                 <div className="my-notifications"> My Notifications</div>
-                <div className="text-black text-[18px]">
+                <div className="text-black text-[18px] font-medium">
                   {" "}
                   Choose your notification preferences and how you prefer to be
                   contacted.
@@ -203,7 +288,7 @@ const Profile = () => {
                 <div className="text-[#FA8128] text-[18px]">
                   Message/Reminders
                 </div>
-                <div className="text-black text-[18px]">
+                <div className="text-black text-[18px] font-medium">
                   Recieve my booking information
                 </div>
                 <div className="flex items-center justify-between w-full">
@@ -234,7 +319,7 @@ const Profile = () => {
                   </>
                 ) : (
                   <div>
-                    <div className="bank-yes-div flex flex-col gap-4 text-black font-bold">
+                    <div className="bank-yes-div flex flex-col gap-4 text-black font-medium">
                       <div className="bank-row-1 flex flex-col md:flex-row gap-2">
                         <div className="bank-row-1-detail md:w-1/2">
                           Account Holder Name
@@ -297,7 +382,7 @@ const Profile = () => {
                           placeholder="Lorem ipsum"
                         />
                       </div>
-                      <div className="bank-row-9 flex flex-col sm:flex-row gap-4 mt-4">
+                      <div className="bank-row-9 flex flex-col sm:flex-row gap-4 mt-4 font-bold">
                         <button className="bg-[#FA8128] text-white px-4 py-2 rounded-3xl w-full sm:w-auto">
                           Save
                         </button>
@@ -311,7 +396,7 @@ const Profile = () => {
               </div>
             )}
             {selectedItem === "Passwords" && (
-              <div className="password-div flex flex-col gap-10 px-5 md:px-10 pt-10 text-[20px] md:text-[24px] h-full text-[#FA8128] font-bold">
+              <div className="password-div flex flex-col gap-10 px-5 md:px-10 pt-10 text-[20px] md:text-[24px] h-full text-[#FA8128] font-medium">
                 <div className="passwordAndSecurity">Password and Security</div>
                 <div className="row-1 flex justify-between items-center">
                   <input

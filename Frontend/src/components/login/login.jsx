@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import { ProductionApi } from "../../../utills";
-
+import { ProductionApi, LocalApi } from "../../../utills";
+import { ToastContainer , toast } from "react-toastify";
 const GoogleIcon = () => <span className="googleimg"></span>;
 const FacebookIcon = () => <span className="fbimg"></span>;
 const StoreIcon = () => <span className="bimg"></span>;
@@ -25,7 +25,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
+   const isPartner = useSelector((state) => state.partner.isPartner);
   const handleRegister = () => navigate("/register");
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
   const dispatch = useDispatch();
@@ -33,27 +33,45 @@ const Login = () => {
   useEffect(() => {
     console.log("Redux isLoggedIn changed:", isLoggedIn);
   }, [isLoggedIn]);
+const handleLogin = async (e) => {
+  e.preventDefault();
+  setError("");
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError("");
-    try {
-      const response = await axios.post(
-        `https://baggagebugs-81tp.onrender.com/api/v1/user/login`,
-        { email, password },
-        { withCredentials: true }
-      );
-      if (response.data.success) {
-        dispatch({ type: "login/login" });
-        navigate("/landingpage");
-      }
-      console.log(response.data);
-    } catch (err) {
-      setError(
-        err.response?.data?.message || "An error occurred during login."
-      );
+  try {
+    const response = await axios.post(
+      `${ProductionApi}/user/login`,
+      { email, password },
+      { withCredentials: true }
+    );
+
+    const { token, role } = response.data;
+
+    dispatch({ type: "login/login", payload: true }); // ✅ Set Redux login state
+    toast.success("Login successful!");
+    localStorage.setItem("role", role);
+
+    // ✅ Admin check — navigate accordingly
+    if (email === "admin@gmail.com") {
+      
+      navigate(`/superadmin?token=${token}&role=${role}`);
+      console.log("admin");
+      
+    } else {
+      navigate(`/landingpage?token=${token}&role=${role}`);
     }
-  };
+
+    console.log(response.data);
+  } catch (err) {
+    console.log(err);
+    if (err.response && err.response.data) {
+      setError(err.response.data.message || "Login failed");
+    } else {
+      setError("An error occurred. Please try again.");
+    }
+    toast.error("Login failed!");
+  }
+};
+
 
   return (
     <div className="login-main flex flex-col md:flex-row w-full h-auto overflow-y-auto md:h-screen md:overflow-hidden">
@@ -127,9 +145,8 @@ const Login = () => {
               icon={<GoogleIcon />}
               text="Continue with Google"
               onClick={() => {
-                window.location.href =
-                  `https://baggagebugs-81tp.onrender.com/api/v1/user/auth/google`;
-               
+                window.location.href = `${ProductionApi}/user/auth/google`;
+                
               }}
               className="w-full"
             />

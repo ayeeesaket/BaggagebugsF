@@ -1,12 +1,36 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
+
 const UserBookings = () => {
   const [isbooking, setIsBooking] = useState(false);
   const navigate = useNavigate();
   const handleLogoClick = () => {
     navigate("/landingpage");
   };
+  useEffect(() => {
+  const handleBeforeUnload = (event) => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      try {
+        navigator.sendBeacon(
+          `${ProductionApi}/user/logout`,
+          JSON.stringify({})
+        );
+        localStorage.removeItem("token");
+      } catch (e) {
+        console.warn("Logout beacon failed:", e);
+      }
+    }
+  };
+
+  window.addEventListener("beforeunload", handleBeforeUnload);
+
+  return () => {
+    window.removeEventListener("beforeunload", handleBeforeUnload);
+  };
+}, []);
+
   return (
     <>
       <div className="page-details p-2 sm:px-10">

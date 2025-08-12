@@ -11,6 +11,7 @@ import { BsArrowLeftCircle } from "react-icons/bs";
 import { BsArrowRightCircle } from "react-icons/bs";
 import { HiArrowNarrowRight } from "react-icons/hi";
 import Slider from "react-slick";
+import { useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -22,40 +23,75 @@ import { useSearchParams } from "react-router-dom";
 import { Cookie } from "lucide-react";
 import setTokenValue from "../redux/features/tokenSlice";
 import setRoleValue from "../redux/features/roleSlice";
+
 const LandingPage = () => {
-  // const location = useLocation();
-  // const[isLoggedIn, setIsLoggedIn] = useState(false);
-  // const isLoggedIn1 = location.state?.isLoggedIn;
-  // React.useEffect(() => {
-  //   if (location.state?.isLoggedIn) {
-  //     setIsLoggedIn(true);
-  //   }
-  // }, [location.state]);
-  // const navigate = useNavigate();
-  // console.log("Is Logged In:", isLoggedIn);
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
-  const isReduxPartner = useSelector((state) => state.partner.isPartner);
+  const isPartner = useSelector((state) => state.partner.isPartner);
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const dispatch = useDispatch();
-  // const [searchParams] = useSearchParams();
-  useEffect(() => {
-    const token = Cookies.get("token");
-    const role = Cookies.get("role");
 
-    if (token)
-      dispatch({
-        type: "token/setTokenValue",
-        payload: token,
-      });
-    if (role)
-      dispatch({
-        type: "role/setRoleValue",
-        payload: role,
-      });
+  // const [searchParams] = useSearchParams();
+const location = useLocation();
+const tokenFromLogin = location.state?.token;
+const roleFromLogin = location.state?.role;
+console.log(tokenFromLogin);
+
+  useEffect(() => {
+    const urlToken = new URLSearchParams(window.location.search).get("token");
+    const urlRole = new URLSearchParams(window.location.search).get("role");
+    if (urlRole === "partner") {
+      dispatch({ type: "partner/setIsPartner", payload: true });
+    }
+    const storedToken = localStorage.getItem("token");
+    
+    console.log("ispartner : ", isPartner);
+    const tokenf = urlToken || tokenFromLogin 
+    if (urlToken && !storedToken) {
+      
+     
+      localStorage.setItem("token", tokenf);
+      dispatch({ type: "token/setTokenValue", payload: urlToken });
+      dispatch({ type: "login/login", payload: true }); // Set login state to true
+      console.log("Token from URL saved and user logged in.");
+    } else if (storedToken) {
+      dispatch({ type: "login/login", payload: true }); // Set login state to true
+      console.log("Token from localStorage found, user logged in.");
+    }
+  }, [dispatch]);
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      const storedToken = localStorage.getItem("token");
+      if (storedToken) {
+        try {
+          navigator.sendBeacon(
+            `${ProductionApi}/user/logout`,
+            JSON.stringify({})
+          );
+          localStorage.removeItem("token");
+        } catch (e) {
+          console.warn("Logout beacon failed:", e);
+        }
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
   }, []);
+
+  // useEffect(()=>{
+  //  const token1 = localStorage.getItem("token");
+
+  //  if(token1) {
+
+  //   console.log("Token found, logout dispatched.");}
+  // },[])
+
   const token = useSelector((state) => state.token.tokenValue);
-  const role = useSelector((state) => state.role.roleValue);
+
   const imgArr = [
     {
       img: "/Tower.svg",
@@ -153,45 +189,10 @@ const LandingPage = () => {
     }
     //  Cookies.set("token", token, { expires: 1});
     //  Cookies.set("role", role, { expires: 1 }); // Assuming role is 'user' for this example
-    //   dispatch({ type: "login/login" });
   }, []);
-  const [isUser, setIsUser] = React.useState(false);
-
-  React.useEffect(() => {
-    const callPostLoginAPI = async () => {
-      try {
-        const token = Cookies.get("token");
-        const role = Cookies.get("role");
-
-        if (!token || !role) {
-          console.warn("Missing token or role");
-          navigate("/");
-          return;
-        }
-
-        const res = await axios.post(
-          `${ProductionApi}/user/setCookies`,
-          { token, role },
-          { withCredentials: true }
-        );
-
-        console.log("User session verified:", res.data);
-        dispatch({ type: "login/login" });
-        navigate("/landingpage");
-      } catch (err) {
-        console.error("Session check failed:", err);
-        navigate("/");
-      }
-    };
-
-    callPostLoginAPI();
-  }, []);
-
-  // ✅ Runs only when isUser becomes true
-
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: GoogleApi, // Replace with your key
+    googleMapsApiKey: GoogleApi,
   });
 
   const onLoad = React.useCallback(
@@ -206,7 +207,6 @@ const LandingPage = () => {
   const onUnmount = React.useCallback(function callback(map) {
     setMap(null);
   }, []);
-  const [isPartner, setIsPartner] = useState(false);
 
   const handleLogoutClick = async () => {
     try {
@@ -215,11 +215,16 @@ const LandingPage = () => {
         {},
         {
           withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       console.log("logged out");
       navigate("/");
-      dispatch({ type: "login/login" });
+      dispatch({ type: "login/login", payload: false }); // Set login state to false
+      dispatch({ type: "partner/setIsPartner", payload: false }); // Set isPartner to false
+      localStorage.removeItem("token");
     } catch (error) {
       console.log(error);
     }
@@ -263,12 +268,15 @@ const LandingPage = () => {
               >
                 {isLoggedIn ? "Logout" : "Login"}
               </div>
-              <div
-                className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 px-4 cursor-pointer bg-white text-center"
-                onClick={() => navigate("/onboarding")}
-              >
-                Partner
-              </div>
+              {!isPartner && (
+                <div
+                  className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 px-4 cursor-pointer bg-white text-center"
+                  onClick={() => navigate("/onboarding")}
+                >
+                  Partner
+                </div>
+              )}
+
               <div className="relative w-full">
                 <select className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 pr-10 bg-white w-full">
                   <option value="en">English</option>
@@ -304,12 +312,14 @@ const LandingPage = () => {
                 >
                   {isLoggedIn ? "Logout" : "Login"}
                 </div>
-                <div
-                  className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 px-4 cursor-pointer bg-white"
-                  onClick={() => navigate("/onboarding")}
-                >
-                  Partner
-                </div>
+                {!isPartner && (
+                  <div
+                    className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 px-4 cursor-pointer bg-white"
+                    onClick={() => navigate("/onboarding")}
+                  >
+                    Partner
+                  </div>
+                )}
                 <div className="relative">
                   <select className="appearance-none border-2 border-[#FA8128] rounded-lg p-2 pr-10 bg-white">
                     <option value="en">English</option>
@@ -375,10 +385,13 @@ const LandingPage = () => {
                     placeholder="Barcelona"
                     type="text"
                     onChange={(e) => setQuery(e.target.value)}
-                    onKeyDown={(e) =>
-                      e.key === "Enter" &&
-                      navigate("/bookingpage", { state: { query, isLoggedIn } })
-                    }
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && isLoggedIn) {
+                        navigate("/bookingpage", {
+                          state: { query, isLoggedIn },
+                        });
+                      }
+                    }}
                   />
                   <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#63C5DA]">
                     <IoIosSearch size={24} />
@@ -476,16 +489,16 @@ const LandingPage = () => {
         </div>
 
         <div className="section-3 mt-40">
-          <div className="text-[#63C5DA] text-[30px] md:text-[45px] font-bold text-center">
+          <div className="text-[#63C5DA] ml-52 text-[30px] md:text-[45px] font-bold text-center">
             We have your back for the{" "}
-            <span className="text-[#FA8128] ml-3 md:ml-7">Luggage</span>
+            <span className="text-[#FA8128] ml-3  md:ml-1">Luggage</span>
           </div>
           <div className="relative">
             <div className="w-[90%] md:w-[50%] mx-auto md:ml-[4%] mt-10 md:mt-28 p-5 md:p-10 md:pr-20 border-2 border-[#63C5DA] md:border-l-0">
               <div className="text-[32px] md:text-[50px] font-bold text-end leading-tight">
                 <div className="text-[#FA8128]">Services starting</div>
                 <div className="text-[#FA8128]">from just</div>
-                <div className="text-[#63C5DA]">€4.5</div>
+                <div className="text-[#63C5DA]">€2.5</div>
               </div>
 
               <div className="text-[#FA8128] text-end text-[18px] md:text-[22px] leading-tight mt-4 md:mt-5">
@@ -495,7 +508,7 @@ const LandingPage = () => {
             </div>
 
             {/* ✅ Hidden on mobile only */}
-            <div className="suitcase z-10 absolute translate-x-[176%] -translate-y-[80%] hidden md:block"></div>
+            <div className="suitcase z-10 absolute lg:translate-x-[176%] -translate-y-[80%] hidden md:block"></div>
           </div>
         </div>
 
@@ -778,18 +791,6 @@ const LandingPage = () => {
                 Your luggage will always have a{" "}
                 <span className="text-[#FA8128] font-bold">safe place</span>,
                 allowing you to enjoy your journey to the fullest!
-              </div>
-              <div className="mt-10">
-                <button
-                  onClick={() => {
-                    setIsPartner(true);
-                    navigate("/partneroverview");
-                    console.log("Become a Partner clicked", isPartner);
-                  }}
-                  className="bg-[#FA8128] text-white px-3 py-2 rounded-lg shadow-md hover:bg-[#f77a20] transition cursor-pointer"
-                >
-                  Become a Partner
-                </button>
               </div>
             </div>
           </div>
